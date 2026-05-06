@@ -1,0 +1,127 @@
+// src/api/habit.js
+import request from '../utils/request'
+
+export const habitApi = {
+  // 获取习惯列表
+  getList(type) {
+    return request({
+      url: '/api/habit/getList',
+      method: 'post',
+      data: {
+        type: type.toString()
+      }
+    })
+  },
+
+  // 新增习惯
+  create(name, type) {
+    return request({
+      url: '/api/habit/create',
+      method: 'post',
+      data: {
+        name,
+        type: type.toString()
+      }
+    })
+  },
+
+  // 显示/隐藏习惯
+  hide(id, isShow) {
+    return request({
+      url: '/api/habit/hide',
+      method: 'post',
+      data: {
+        id: id.toString(),
+        is_show: !isShow ? 1 : 0
+      }
+    })
+  },
+
+  // 删除习惯
+  delete(id) {
+    return request({
+      url: '/api/habit/delete',
+      method: 'post',
+      data: {
+        id: id.toString()
+      }
+    })
+  },
+
+  // 今日打卡/取消打卡
+  toggleCheck(id) {
+    return request({
+      url: '/api/habit/check/toggle',
+      method: 'post',
+      data: {
+        id: id.toString()
+      }
+    })
+  },
+
+  // 获取今日打卡记录
+  getTodayChecks() {
+    return request({
+      url: '/api/habit/check/today',
+      method: 'get'
+    })
+  },
+
+  // 获取打卡统计数据（最近1年）
+  getCheckStats() {
+    return request({
+      url: '/api/habit/stat',
+      method: 'get',
+    })
+  },
+
+  // 新增数值记录
+  createValue(habitId, value, recordStartTime, note, noteImage) {
+    return request({
+      url: '/api/habit/value/create',
+      method: 'post',
+      data: {
+        habit_id: parseInt(habitId),
+        value: parseInt(value),
+        record_start_time: recordStartTime,
+        note: note,
+        note_image: noteImage
+      }
+    })
+  },
+
+  // 删除数值记录
+  deleteValue(id) {
+    return request({
+      url: '/api/habit/value/del',
+      method: 'post',
+      data: {
+        id: id.toString()
+      }
+    })
+  },
+
+  // 编辑数值记录
+  editValue(id, value, recordStartTime) {
+    return request({
+      url: '/api/habit/value/edit',
+      method: 'post',
+      data: {
+        id: id.toString(),
+        value: parseInt(value),
+        record_start_time: recordStartTime
+      }
+    })
+  },
+
+  // 获取数值记录列表
+  getValueList(lastDate) {
+    // 如果lastDate为空就不传参数
+    const params = lastDate ? { last_date: lastDate } : {}
+    return request({
+      url: '/api/habit/value/list',
+      method: 'get',
+      params: params
+    })
+  }
+}
