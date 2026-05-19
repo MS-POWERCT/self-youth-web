@@ -1,13 +1,23 @@
 <template>
   <div class="habit-page">
-     <van-nav-bar
-      title="习惯管理"
-      left-arrow
-      @click-left="$router.go(-1)"
-    />
-    
+    <div class="text-center font-bold text-lg">
+      <br/>
+        <IconifyIcon icon="fluent-color:circle-multiple-hint-checkmark-48" width="16" class="mr-2"/>
+        习惯管理
+    </div>
+      <!-- left-arrow
+      @click-left="$router.go(-1)" -->
+      <!-- <template #right>
+        <van-icon
+          name="edit"
+          size="18"
+          @click="$router.push('/habits/edit?tab=' + (activeTab === 'check' ? '1' : '2'))"
+          style="cursor: pointer;"
+        />
+      </template>
+    </van-nav-bar> -->
     <div class="habit-tabs">
-      <van-tabs v-model:active="activeTab" @change="onTabChange">
+      <van-tabs v-model:active="activeTab" @update:active="onTabChange">
         <van-tab title="打卡习惯" name="check">
           <CheckHabits />
         </van-tab>
@@ -21,8 +31,8 @@
     <div class="stats-button" @click="$router.push('/habits/stats')">
       <van-icon name="chart-trending-o" size="24" />
     </div>
-    
-   
+
+
   </div>
 </template>
 
@@ -33,11 +43,6 @@ import ValueHabits from '../components/habit/ValueHabits.vue'
 import { useHabitStore } from '../stores/habit'
 
 const habitStore = useHabitStore()
-
-const newHabit = ref({
-  name: '',
-  type: '1'
-})
 
 // 从localStorage恢复标签页状态
 const savedTab = localStorage.getItem('habit-active-tab')
@@ -62,7 +67,6 @@ onMounted(() => {
 <style scoped>
 .habit-page {
   background: #f7f8fa;
-  min-height: 100vh;
 }
 
 .habit-tabs {

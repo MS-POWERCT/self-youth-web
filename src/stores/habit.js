@@ -4,6 +4,7 @@ import { habitApi } from '../api/habit'
 export const useHabitStore = defineStore('habit', {
   state: () => ({
     habits: [],
+    editableHabits: [],
     todayChecks: [],
     valueRecords: [],
     statsRecords: [],
@@ -24,11 +25,24 @@ export const useHabitStore = defineStore('habit', {
         this.loading = false
       }
     },
-
-    // 创建习惯
-    async createHabit(name, type) {
+    // 获取编辑习惯列表
+    async fetchEditableList(type){
       try {
-        await habitApi.create(name, type)
+        this.loading = true
+        const response = await habitApi.getEditableList(type)
+        this.editableHabits = response || []
+        return response
+      } catch (error) {
+        console.error('获取习惯列表失败', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+    // 创建习惯
+    async createHabit(name, type, icon) {
+      try {
+        await habitApi.create(name, type, icon)
         // 重新获取习惯列表
         await this.fetchHabits(type)
       } catch (error) {
@@ -36,7 +50,17 @@ export const useHabitStore = defineStore('habit', {
         throw error
       }
     },
-
+    // 编辑习惯
+    async editHabit(name, type, icon) {
+      try {
+        await habitApi.edit(name, type, icon)
+        // 重新获取习惯列表
+        await this.fetchHabits(type)
+      } catch (error) {
+        console.error('编辑习惯失败', error)
+        throw error
+      }
+    },
     // 显示/隐藏习惯
     async toggleHabitVisibility(id, isShow) {
       try {
@@ -93,38 +117,39 @@ export const useHabitStore = defineStore('habit', {
       try {
         await habitApi.createValue(habitId, value, recordStartTime, note, noteImage)
         // 重新获取数值记录列表
-        const today = new Date().toISOString().split('T')[0]
-        await this.fetchValueRecords(today)
+        await this.fetchValueRecords()
       } catch (error) {
         console.error('创建数值记录失败', error)
         throw error
       }
     },
 
-    // 删除数值记录
-    async deleteValueRecord(id) {
+    // 编辑数值记录
+    async editValueRecord(id, value, recordStartTime, note, noteImage) {
       try {
-        await habitApi.deleteValue(id)
-        // 从本地状态中移除
-        this.valueRecords = this.valueRecords.filter(r => r.id !== id)
+         // 获取当前日期
+        await habitApi.editValue(id, value, recordStartTime, note, noteImage)
+        // 更新本地状态
+        // const record = this.valueRecords.find(r => r.id === id)
+        // if (record) {
+        //   record.value = value
+        //   record.record_start_time = recordStartTime
+        // }
       } catch (error) {
-        console.error('删除数值记录失败', error)
+        console.error('编辑数值记录失败', error)
         throw error
       }
     },
 
-    // 编辑数值记录
-    async editValueRecord(id, value, recordStartTime) {
+
+    // 删除数值记录
+    async deleteValueRecord(id) {
       try {
-        await habitApi.editValue(id, value, recordStartTime)
-        // 更新本地状态
-        const record = this.valueRecords.find(r => r.id === id)
-        if (record) {
-          record.value = value
-          record.record_start_time = recordStartTime
-        }
+        await habitApi.deleteValue(id)
+        // 从本地状态中移除，由于有双重列表，所以这个就不需要了
+        // this.valueRecords = this.valueRecords.filter(r => r.id !== id)
       } catch (error) {
-        console.error('编辑数值记录失败', error)
+        console.error('删除数值记录失败', error)
         throw error
       }
     },

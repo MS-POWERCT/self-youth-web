@@ -14,11 +14,11 @@
         <span class="legend-text">多</span>
       </div>
     </div>
-    
+
     <div class="chart-container">
       <div class="months-label">
-        <div 
-          v-for="(month, index) in monthLabels" 
+        <div
+          v-for="(month, index) in monthLabels"
           :key="index"
           class="month-label"
           :style="{ left: month.left + 'px' }"
@@ -26,17 +26,17 @@
           {{ month.name }}
         </div>
       </div>
-      
+
       <div class="chart-grid">
         <div class="weekdays-label">
           <div class="weekday-label" v-for="day in weekdays" :key="day">
             {{ day }}
           </div>
         </div>
-        
+
         <div class="weeks-container">
-          <div 
-            v-for="(week, weekIndex) in weeks" 
+          <div
+            v-for="(week, weekIndex) in weeks"
             :key="weekIndex"
             class="week"
           >
@@ -53,7 +53,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="chart-summary" v-if="totalChecks > 0">
       <span class="summary-text">
         已连续打卡 <strong>{{ currentStreak }}</strong> 天，
@@ -64,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 
 const props = defineProps({
   data: {
@@ -99,7 +99,7 @@ const generateDateGrid = () => {
   // 生成52周的数据
   for (let week = 0; week < 52; week++) {
     const weekData = []
-    
+
     for (let day = 0; day < 7; day++) {
       // 如果当前日期超过今天，则不显示
       if (currentDate > today) {
@@ -110,18 +110,18 @@ const generateDateGrid = () => {
         String(currentDate.getMonth() + 1).padStart(2, '0') + '-' +
         String(currentDate.getDate()).padStart(2, '0')
         const count = props.data[dateStr] || 0
-        
+
         weekData.push({
           date: new Date(currentDate),
           dateStr: dateStr,
           count: count,
           level: getLevel(count)
         })
-        
+
         currentDate.setDate(currentDate.getDate() + 1)
       }
     }
-    
+
     grid.push(weekData)
   }
 
@@ -140,16 +140,16 @@ const getLevel = (count) => {
 // 计算月份标签
 const monthLabels = computed(() => {
   const labels = []
-  const months = ['一月', '二月', '三月', '四月', '五月', '六月', 
+  const months = ['一月', '二月', '三月', '四月', '五月', '六月',
                   '七月', '八月', '九月', '十月', '十一月', '十二月']
-  
+
   if (weeks.value.length > 0) {
     const firstDate = weeks.value[0].find(d => d.date)?.date
     if (firstDate) {
       for (let i = 0; i < 12; i++) {
         const monthDate = new Date(firstDate)
         monthDate.setMonth(firstDate.getMonth() + i)
-        
+
         if (monthDate <= new Date()) {
           const weekIndex = Math.floor((monthDate.getTime() - firstDate.getTime()) / (7 * 24 * 60 * 60 * 1000))
           if (weekIndex >= 0 && weekIndex < weeks.value.length) {
@@ -162,7 +162,7 @@ const monthLabels = computed(() => {
       }
     }
   }
-  
+
   return labels
 })
 
@@ -175,21 +175,21 @@ const totalChecks = computed(() => {
 const currentStreak = computed(() => {
   const today = new Date()
   let streak = 0
-  
+
   // 从今天开始往前查找连续打卡
   for (let i = 0; i < 365; i++) {
     const checkDate = new Date(today)
     checkDate.setDate(today.getDate() - i)
     const dateStr = checkDate.toISOString().split('T')[0]
     const count = props.data[dateStr] || 0
-    
+
     if (count > 0) {
       streak++
     } else if (i > 0) { // 今天没打卡不算断
       break
     }
   }
-  
+
   return streak
 })
 

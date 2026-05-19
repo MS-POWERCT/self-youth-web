@@ -41,7 +41,6 @@
 
 <script setup>
 import { ref, onBeforeUnmount } from 'vue'
-import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
 import { useUserStore } from '../../stores/user'
 import { globalApi } from '../../api/global'
@@ -57,7 +56,6 @@ const countdown = ref(60)
 const countdownTimer = ref(null)
 
 const userStore = useUserStore()
-const router = useRouter()
 
 const clearCountdownTimer = () => {
   if (countdownTimer.value) {

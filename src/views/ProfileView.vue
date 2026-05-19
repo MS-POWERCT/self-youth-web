@@ -1,5 +1,6 @@
 <template>
   <div class="profile-container">
+
     <!-- <van-nav-bar title="个人中心" left-arrow @click-left="goBack" /> -->
     <div v-if="userStore.token && userStore.user" class="profile-content">
       <van-image
@@ -8,15 +9,27 @@
         height="100"
         :src="userStore.user.avatar || 'https://img.yzcdn.cn/vant/cat.jpeg'"
       />
-  
- 
+
+
       <h2 class="username">{{ userStore.user.name || '用户名' }}</h2>
       <van-cell-group inset>
         <van-cell title="邮箱" :value="userStore.user.email || '未设置'" />
-        <van-cell 
-          title="习惯管理" 
-          is-link 
+        <van-cell
+          title="习惯管理"
+          is-link
           @click="$router.push('/habits')"
+        >
+          <template #right-icon>
+            <van-icon name="arrow" />
+          </template>
+        </van-cell>
+
+
+        <!-- 测试组件 -->
+         <van-cell
+          title="测试组件"
+          is-link
+          @click="$router.push('/demo/test-tool')"
         >
           <template #right-icon>
             <van-icon name="arrow" />
@@ -26,27 +39,39 @@
 
       <!-- 如果userNextLover 有内容 -->
     </div>
-
+    <!-- <van-button
+          size="small"
+          type="primary"
+          @click="handlePrintDeviceInfo"
+          :loading="printingDeviceInfo"
+        >
+          获取设备信息
+        </van-button> -->
     <van-button type="danger" block @click="handleLogout" class="logout-btn"> 退出登录 </van-button>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
 import { useRouter } from 'vue-router'
-import { showToast } from 'vant'
-import { Icon } from '@iconify/vue'
 
+// const printingDeviceInfo = ref(false)
 const userStore = useUserStore()
 const router = useRouter()
-
-const canCheckIn = ref(true)
-const showCheckInAnimation = ref(false)
-const isCheckingIn = ref(false)
-const checkInSuccess = ref(true)
-const userNextLover = ref(null)
-const progress = ref(0)
+// 处理打印设备信息
+// const handlePrintDeviceInfo = async () => {
+//   try {
+//     printingDeviceInfo.value = true
+//     await printDeviceInfo()
+//     // showToast('设备信息已打印到控制台')
+//   } catch (error) {
+//     console.error('获取设备信息失败:', error)
+//     // showToast('获取设备信息失败')
+//   } finally {
+//     printingDeviceInfo.value = false
+//   }
+// }
 
 onMounted(async () => {
   await userStore.getUserInfo()
@@ -60,7 +85,7 @@ const handleLogout = () => {
 
 <style scoped>
 .profile-container {
-  min-height: 100vh;
+  /* min-height: 100vh; */
   background-color: #f8f8f8;
 }
 

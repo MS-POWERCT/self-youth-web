@@ -1,20 +1,8 @@
 <template>
   <div class="check-habits">
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-      <!-- 空状态 -->
-      <div v-if="!loading && habits.length === 0" class="empty-state">
-        <div class="empty-content">
-          <van-icon name="calendar-o" size="48" color="#c8c9cc" />
-          <h3>暂无打卡习惯</h3>
-          <p>开始创建你的第一个习惯吧</p>
-          <van-button type="primary" round @click="$emit('add-habit')">
-            添加习惯
-          </van-button>
-        </div>
-      </div>
-
       <!-- 习惯列表 -->
-      <div v-else class="habits-list">
+      <div class="habits-list">
         <div
           v-for="habit in activeHabits"
           :key="habit.id"
@@ -24,13 +12,16 @@
         >
           <div class="habit-left">
             <div class="habit-icon">
-              <van-icon 
-                :name="isCheckedToday(habit.id) ? 'success' : 'circle'" 
+              <van-icon
+                :name="isCheckedToday(habit.id) ? 'success' : 'circle'"
                 :color="isCheckedToday(habit.id) ? '#07c160' : '#c8c9cc'"
                 size="20"
               />
             </div>
             <div class="habit-info">
+              <svg class="icon" aria-hidden="true">
+                <use :xlink:href="'#' + habit.icon" />
+              </svg>
               <h4 class="habit-name">{{ habit.name }}</h4>
               <div class="habit-streak" v-if="habit.streak > 0">
                 <van-icon name="fire" color="#ff6b6b" size="12" />
@@ -38,7 +29,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="habit-right">
             <van-button
               size="small"
@@ -52,18 +43,17 @@
           </div>
         </div>
       </div>
+
     </van-pull-refresh>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { showToast, showConfirmDialog } from 'vant'
-import { useRouter } from 'vue-router'
+import { showToast } from 'vant'
 import { useHabitStore } from '../../stores/habit'
 
 const habitStore = useHabitStore()
-const router = useRouter()
 const loading = ref(false)
 const refreshing = ref(false)
 const checkingId = ref(null)
@@ -71,32 +61,8 @@ const checkingId = ref(null)
 const habits = computed(() => habitStore.habits)
 const todayChecks = computed(() => habitStore.todayChecks)
 
-// 计算属性
-const todayDate = computed(() => {
-  return new Date().toLocaleDateString('zh-CN', {
-    month: 'long',
-    day: 'numeric',
-    weekday: 'long'
-  })
-})
-
-const totalHabits = computed(() => habits.value.length)
-
-const completedToday = computed(() => {
-  return habits.value.filter(habit => isCheckedToday(habit.id)).length
-})
-
-const completionRate = computed(() => {
-  if (totalHabits.value === 0) return 0
-  return Math.round((completedToday.value / totalHabits.value) * 100)
-})
-
 const activeHabits = computed(() => {
   return habits.value.filter(habit => habit.is_show)
-})
-
-const hiddenHabits = computed(() => {
-  return habits.value.filter(habit => !habit.is_show)
 })
 
 // 检查今日是否已打卡
@@ -146,11 +112,6 @@ const toggleCheck = async (habit) => {
   }
 }
 
-// 编辑习惯
-const editHabit = (habit) => {
-  router.push(`/habits/edit/${habit.id}`)
-}
-
 onMounted(() => {
   loadHabits()
 })
@@ -159,7 +120,6 @@ onMounted(() => {
 <style scoped>
 .check-habits {
   background: #ffffff;
-  min-height: 100vh;
   position: relative;
 }
 
@@ -216,7 +176,7 @@ onMounted(() => {
 }
 
 /* 习惯项 */
-.habit-item {
+.habit-item{
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -228,6 +188,7 @@ onMounted(() => {
   border: 1px solid #f5f5f5;
   transition: all 0.2s ease;
 }
+
 
 .habit-item:last-child {
   margin-bottom: 0;
@@ -283,16 +244,16 @@ onMounted(() => {
   .habits-list {
     padding: 8px;
   }
-  
+
   .habit-item {
     padding: 12px;
     margin-bottom: 6px;
   }
-  
+
   .habit-name {
     font-size: 15px;
   }
-  
+
   .habit-streak {
     font-size: 11px;
   }

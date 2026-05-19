@@ -4,25 +4,25 @@
     <van-tabbar v-model="active" route v-if="showTabbar">
       <van-tabbar-item to="/habits">
         <template #icon>
-          <Icon icon="fluent-color:beach-28" width="24" />
+          <IconifyIcon icon="fluent-color:circle-multiple-hint-checkmark-48" width="24" />
         </template>
         <div>习惯</div>
       </van-tabbar-item>
-      <!-- <van-tabbar-item to="/about">
+      <van-tabbar-item to="/mark">
         <template #icon>
-          <Icon icon="fluent-color:beach-28" width="24" />
+          <IconifyIcon icon="noto:kiss-mark" width="24" />
         </template>
-        <div>情侣</div>
-      </van-tabbar-item>-->
-      <van-tabbar-item to="/find/moments">
+        <div>标记</div>
+      </van-tabbar-item>
+      <van-tabbar-item to="/find">
         <template #icon>
-          <Icon icon="fluent-color:beach-28" width="24" />
+          <IconifyIcon icon="fluent-color:alert-24" width="24" />
         </template>
-        <div>社交</div>
-      </van-tabbar-item> 
+        <div>发现</div>
+      </van-tabbar-item>
       <van-tabbar-item to="/profile">
         <template #icon>
-          <Icon icon="fluent-color:beach-28" width="24" />
+          <IconifyIcon icon="fluent-color:person-starburst-32" width="24" />
         </template>
         <div>我</div>
       </van-tabbar-item>
@@ -33,14 +33,13 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { Icon } from '@iconify/vue'
 
 const route = useRoute()
 const active = ref(0)
 
 const showTabbar = computed(() => {
   // 在这里定义需要显示 tabbar 的路由名称
-  const showTabbarRoutes = ['profile']
+  const showTabbarRoutes = ['profile', 'habits', 'mark', 'find']
   return showTabbarRoutes.includes(route.name)
 })
 </script>

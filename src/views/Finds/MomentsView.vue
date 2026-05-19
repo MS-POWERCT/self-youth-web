@@ -45,7 +45,7 @@
                 />
               </div>
               <div class="flex justify-between">
-                <span>{{ formatTime(item.created_at) }}</span>
+                <span>{{ getRelativeTime(item.created_at) }}</span>
                 <van-popover
                   placement="left"
                   :show-arrow="false"
@@ -75,13 +75,13 @@
                       icon="fa6-solid:ellipsis"
                       width="28"
                       height="18"
-                      class="bg-white-233 radius-4 text-default"
+                      class="bg-white-200 radius-4 text-default"
                     />
                   </template>
                 </van-popover>
               </div>
               <div
-                class="mt-4 bg-edeeef radius-4 p-2"
+                class="mt-4 bg-white-200 radius-4 p-2"
                 v-if="item.likes.length > 0 || item.comment.length > 0"
               >
                 <div class="flex" v-if="item.likes.length > 0">
@@ -110,7 +110,7 @@
           />
           <van-action-sheet v-model:show="showAction" :closeable="false" :round="false">
             <van-cell-group inset class="m-4">
-              <van-field v-model="commentContent" class="bg-white-233" placeholder="发表评论：" />
+              <van-field v-model="commentContent" class="bg-white-200" placeholder="发表评论：" />
               <!-- 提交按钮 -->
               <van-button
                 type="primary"
@@ -136,7 +136,7 @@ import { showToast } from 'vant'
 import { useUserStore } from '../../stores/user'
 import { loverCircleApi } from '../../api/lover_circle'
 import { Icon } from '@iconify/vue'
-import { formatTime } from '../../utils/utils'
+import { getRelativeTime } from '../../utils/date'
 
 const userStore = useUserStore()
 const router = useRouter()

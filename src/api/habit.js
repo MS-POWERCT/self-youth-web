@@ -12,15 +12,44 @@ export const habitApi = {
       }
     })
   },
-
+// 获取编辑习惯列表
+  getEditableList(type) {
+    return request({
+      url: '/api/habit/getEditableList',
+      method: 'post',
+       data: {
+        type: type.toString()
+      }
+    })
+  },
+  // 获取可以选择的icon
+  getIconList(){
+    return request({
+      url: '/api/habit/getIconList',
+      method: 'get',
+    })
+  },
   // 新增习惯
-  create(name, type) {
+  create(name, type, icon) {
     return request({
       url: '/api/habit/create',
       method: 'post',
       data: {
         name,
-        type: type.toString()
+        type: type.toString(),
+        icon: icon.toString()
+      }
+    })
+  },
+  // 编辑习惯
+  edit(name, type, icon) {
+    return request({
+      url: '/api/habit/edit',
+      method: 'post',
+      data: {
+        name,
+        type: type.toString(),
+        icon: icon.toString()
       }
     })
   },
@@ -48,6 +77,14 @@ export const habitApi = {
     })
   },
 
+  // 获取打卡统计数据（最近1年）
+  getCheckStats() {
+    return request({
+      url: '/api/habit/stat',
+      method: 'get',
+    })
+  },
+
   // 今日打卡/取消打卡
   toggleCheck(id) {
     return request({
@@ -67,13 +104,6 @@ export const habitApi = {
     })
   },
 
-  // 获取打卡统计数据（最近1年）
-  getCheckStats() {
-    return request({
-      url: '/api/habit/stat',
-      method: 'get',
-    })
-  },
 
   // 新增数值记录
   createValue(habitId, value, recordStartTime, note, noteImage) {
