@@ -9,7 +9,12 @@ import { useGlobalStore } from './stores/global'
 import 'vant/lib/index.css'
 import './assets/main.css'
 import { Icon } from '@iconify/vue'
+import { CapacitorService } from './utils/capacitor'
 
+// 导入 VConsole 插件
+import VConsole from 'vconsole'
+// 初始化 VConsole
+new VConsole()
 // 导入需要的 Vant 组件
 import {
   Icon as VanIcon,
@@ -37,8 +42,12 @@ import {
   Tab,
   Tabs,
   Popup,
-  Tag
+  Tag,
+  BackTop
 } from 'vant'
+
+// 1. 引入 Capacitor 核心和平台判断
+import { Capacitor } from '@capacitor/core'
 
 async function initApp() {
   const app = createApp(App)
@@ -75,6 +84,7 @@ async function initApp() {
   app.use(Tabs)
   app.use(Popup)
   app.use(Tag)
+  app.use(BackTop)
   // 获取全局 store
   const globalStore = useGlobalStore()
 
@@ -90,6 +100,9 @@ async function initApp() {
 
   // 挂载应用
   app.mount('#app')
+
+  // 初始化 Capacitor 服务
+  CapacitorService.setupBackButtonListener()
 }
 
 // 调用初始化函数

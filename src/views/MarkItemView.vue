@@ -56,10 +56,18 @@
             :src="item.img_url"
           />
           <div class="item-name ml-4" :class="{ 'small-font': item.title.length > 8 }">
-            {{ getRankText(index, item.title) }}
-            <svg class="icon" aria-hidden="true" @click="handleCopy(item.title)">
-              <use xlink:href="#icon-fuzhi" />
-            </svg>
+            <div>
+              {{ (index + 1) + '.' + item.title }}
+              <svg class="icon" aria-hidden="true" @click="handleCopy(item.title)">
+                <use xlink:href="#icon-fuzhi" />
+              </svg>
+            </div>
+            <!-- 根据不同类型显示不同 -->
+            <div class="item-desc">
+              <!-- 评分 -->
+              <div v-if="item.star > 0">{{ item.star_ }}</div>
+              <div v-if="item.desc" @click="itemDescClick(item.desc)">{{ item.desc_ }}</div>
+            </div>
           </div>
         </div>
 
@@ -80,6 +88,11 @@
 
         </div>
       </div>
+
+
+      <van-back-top right="42%" bottom="10vh" class="custom-back-top">
+        <IconifyIcon icon="glyphs:arrow-bold" width="24" />
+      </van-back-top>
     </div>
   </div>
 </template>
@@ -87,7 +100,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { NavBar as VanNavBar } from 'vant'
+import { NavBar as VanNavBar, showToast } from 'vant'
 import { useMarkStore } from '../stores/mark'
 import { markApi } from '../api/mark'
 import { copyToClipboard } from '@/utils/copy.js'
@@ -123,22 +136,39 @@ const filteredList = computed(() => {
   return itemList.value.filter(item => item.mark_type === filterStatus.value)
 })
 
-const getRankText = (index, title) => {
-  if (index === 0) return '🥇.' + title
-  if (index === 1) return '🥈.' + title
-  if (index === 2) return '🥉.' + title
-  return index + 1 + '.' + title
-}
+// const getRankText = (index, title) => {
+//   if (index === 0) return '🥇.' + title
+//   if (index === 1) return '🥈.' + title
+//   if (index === 2) return '🥉.' + title
+//   return index + 1 + '.' + title
+// }
 
 const handleCopy = (title) => {
   copyToClipboard(title)
   console.log('复制成功')
 }
 
+const itemDescClick = (desc) => {
+  showToast(desc);
+}
+
 const getItemList = async () => {
   try {
      const data = await markStore.fetchItemList(moduleId.value)
      itemList.value = data.list || []
+    //  处理desc最多14个字符
+    itemList.value.forEach(item => {
+      if (item.desc && item.desc.length > 12) {
+        item.desc_ = item.desc.substring(0, 12) + '..'
+      }else{
+        item.desc_ = item.desc
+      }
+      // 如果type=default 则显示默认图标
+      if (item.type === 'video') {
+        // 处理评分增加豆瓣:
+        item.star_ = '豆瓣:' + item.star
+      }
+    })
      pv.value = data.pv || 0
      participant.value = data.participant || 0
     itemListTotal.value = itemList.value.length
@@ -213,6 +243,23 @@ onMounted(() => {
     font-size: 12px;
   }
 }
+
+.item-desc{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  // 第一个div 处理
+  div:first-child{
+    color: #4686b5;
+    font-weight: 500;
+  }
+  // 第二个div 处理
+  div:nth-child(2){
+    color: #9b8c8c;
+  }
+}
+
 .item-btn {
   border-radius: 4px;
   font-size: 12px;
@@ -230,5 +277,9 @@ onMounted(() => {
 .im{
   width: 80px;
   border-radius: 12px;
+}
+
+.custom-back-top{
+  background: #f0f1f3;
 }
 </style>

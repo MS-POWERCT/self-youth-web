@@ -35,6 +35,12 @@ a,
 
 /* 添加通用 class */
 
+
+/* 变成块元素 */
+.inline-block {
+  display:inline-block
+}
+
 /* 圆角 */
 .radius-2 {
   border-radius: 2px;
@@ -280,6 +286,9 @@ a,
 }
 
 /* 字体大小 */
+.text-s {
+  font-size: 0.7rem;
+}
 .text-sm {
   font-size: 0.875rem;
 }
