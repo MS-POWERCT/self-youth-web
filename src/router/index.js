@@ -11,7 +11,9 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/login',
+      name: 'home',
+      component: FindView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/login',
@@ -82,9 +84,17 @@ const router = createRouter({
   ],
 })
 
-// 简单的路由守卫
+// 路由守卫
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('user-token')
+
+  // 如果用户已认证且访问登录页，自动跳转到首页
+  if (to.path === '/login' && isAuthenticated) {
+    next('/')
+    return
+  }
+
+  // 如果需要认证但未登录，跳转到登录页
   if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated) {
     next('/login')
   } else {
