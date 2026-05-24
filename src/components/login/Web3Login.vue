@@ -1,32 +1,163 @@
 <template>
   <div class="web3">
     <div class="web3-copy">
-      Web3 登录将使用钱包地址 /
-      签名完成鉴权。当前版本仅保留入口与信息结构，避免影响现有账号体系。
+      使用 Web3 钱包进行身份验证，无需邮箱或密码。
     </div>
+
     <van-field
       v-model="walletAddress"
       readonly
       label="钱包地址"
-      placeholder="（预留）连接钱包后自动填充"
+      placeholder="点击下方按钮连接钱包"
     />
-    <van-button block round type="primary" disabled class="primary-btn">
-      连接钱包并登录（敬请期待）
+
+    <div v-if="walletAddress" class="wallet-info">
+      <van-tag type="success" size="medium">
+        {{ walletName }}
+      </van-tag>
+    </div>
+
+    <van-button
+      v-if="!walletAddress"
+      block
+      round
+      type="primary"
+      class="primary-btn"
+      @click="handleConnect"
+      :loading="connecting"
+    >
+      {{ connecting ? '连接中...' : '连接钱包' }}
     </van-button>
-    <van-button block round plain type="primary" @click="handleWeb3Placeholder">
-      查看预留说明
+
+    <van-button
+      v-else
+      block
+      round
+      type="primary"
+      class="primary-btn"
+      @click="handleLogin"
+      :loading="logging"
+    >
+      {{ logging ? '登录中...' : '钱包登录' }}
     </van-button>
+
+    <van-button
+      block
+      round
+      plain
+      type="primary"
+      @click="handleDisconnect"
+      v-if="walletAddress"
+    >
+      断开连接
+    </van-button>
+
+    <div v-if="error" class="error-message">
+      {{ error }}
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { showToast } from 'vant'
+import { connectWallet, getCurrentAccount, signMessage } from '@/utils/web3'
+import { useUserStore } from '@/stores/user'
+
+const emit = defineEmits(['login-success'])
 
 const walletAddress = ref('')
+const walletName = ref('')
+const connecting = ref(false)
+const logging = ref(false)
+const error = ref('')
+const userStore = useUserStore()
 
-const handleWeb3Placeholder = () => {
-  showToast('Web3：预留入口。后续接入 provider + 签名 + 后端验签换取 token。')
+onMounted(async () => {
+  await checkExistingConnection()
+})
+
+async function checkExistingConnection() {
+  try {
+    const account = await getCurrentAccount()
+    if (account) {
+      walletAddress.value = formatAddress(account)
+      walletName.value = '已连接'
+    }
+  } catch (err) {
+    console.log('No existing connection')
+    error.value = err.message || '连接失败'
+    showToast({ message: error.value, position: 'bottom' })
+    return
+  }
+}
+
+async function handleConnect() {
+  error.value = ''
+  connecting.value = true
+
+  try {
+    const result = await connectWallet()
+    walletAddress.value = formatAddress(result.address)
+    walletName.value = result.wallet
+
+    showToast({ message: '钱包连接成功', position: 'bottom' })
+  } catch (err) {
+    error.value = err.message || '连接失败'
+    if (err.message?.includes('用户拒绝')) {
+      showToast({ message: '用户取消了连接', position: 'bottom' })
+    }
+  } finally {
+    connecting.value = false
+  }
+}
+
+async function handleLogin() {
+  error.value = ''
+  logging.value = true
+
+  try {
+    const fullAddress = await getCurrentAccount()
+
+    if (!fullAddress) {
+      throw new Error('请先连接钱包')
+    }
+
+    await userStore.web3Sign()
+    const nonce = userStore.nonce
+
+    const message = `Self Youth Login\n\nAddress: ${fullAddress}\nNonce: ${nonce}`
+
+    const signature = await signMessage(message)
+
+    await userStore.web3Login({
+      address: fullAddress,
+      signature,
+      nonce
+    })
+    showToast({ message: '登录成功', position: 'bottom' })
+    emit('login-success')
+
+  } catch (err) {
+    error.value = err.message || '登录失败'
+    if (err.message?.includes('用户拒绝')) {
+      showToast({ message: '用户取消了签名', position: 'bottom' })
+    }
+  } finally {
+    logging.value = false
+  }
+}
+
+function handleDisconnect() {
+  walletAddress.value = ''
+  walletName.value = ''
+  error.value = ''
+  showToast({ message: '已断开连接', position: 'bottom' })
+}
+
+function formatAddress(address) {
+  if (!address) return ''
+  return `${address.slice(0, 6)}...${address.slice(-4)}`
 }
 </script>
 
@@ -47,6 +178,22 @@ const handleWeb3Placeholder = () => {
 
 .primary-btn {
   margin-top: 6px;
+}
+
+.wallet-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 6px;
+}
+
+.error-message {
+  font-size: 13px;
+  color: #ee0a24;
+  padding: 8px 6px;
+  background: rgba(238, 10, 36, 0.08);
+  border-radius: 8px;
+  text-align: center;
 }
 
 :deep(.van-field) {

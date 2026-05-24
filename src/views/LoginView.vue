@@ -39,6 +39,7 @@
             邮箱+密码
           </button>
           <button
+            v-if="web3Support.supported"
             type="button"
             class="mode-pill"
             :class="{ active: loginMode === 'web3' }"
@@ -47,6 +48,11 @@
             Web3
           </button>
         </div>
+
+        <!-- <div v-if="!web3Support.supported && web3Support.reason === 'no_wallet'" class="web3-warning">
+          <span class="warning-icon">⚠️</span>
+          <span>{{ web3Support.message }}</span>
+        </div> -->
 
         <EmailCodeLogin
           v-if="loginMode === 'email_code'"
@@ -58,7 +64,16 @@
         />
         <Web3Login
           v-else
+          @login-success="handleLoginSuccess"
         />
+
+        <div class="visitor-login">
+          <button type="button" class="visitor-btn" @click="handleVisitorLogin">
+            <span class="visitor-icon">👤</span>
+            <span>游客登录</span>
+          </button>
+          <p class="visitor-hint">无需注册，直接体验</p>
+        </div>
       </section>
     </div>
   </div>
@@ -70,10 +85,20 @@ import { useRouter } from 'vue-router'
 import EmailCodeLogin from '../components/login/EmailCodeLogin.vue'
 import EmailPasswordLogin from '../components/login/EmailPasswordLogin.vue'
 import Web3Login from '../components/login/Web3Login.vue'
+import { getVisitorId } from '../utils/visitor'
+import { checkWeb3Support } from '../utils/web3'
+import { showToast } from 'vant'
+import { useUserStore } from '../stores/user'
+
 
 const LOGIN_MODE_STORAGE_KEY = 'self_youth_login_mode_v1'
 const loginMode = ref('email_code')
+const web3Support = checkWeb3Support()
 const router = useRouter()
+const userStore = useUserStore()
+
+const emit = defineEmits(['login-success'])
+
 
 const apiBase = import.meta.env.VITE_API_URL || ''
 const apiBaseDisplay = computed(() => (apiBase ? apiBase : '（未配置 VITE_API_URL）'))
@@ -105,6 +130,21 @@ const setLoginMode = (mode) => {
 }
 
 const handleLoginSuccess = () => {
+  router.push('/profile')
+}
+
+const handleVisitorLogin = async () => {
+  const uuid = await getVisitorId()
+  try {
+    await userStore.loginVisitor({
+      uuid: uuid
+    })
+    showToast('登录成功')
+  } catch (error) {
+    console.error('visitor login failed', error)
+    showToast(error?.message || '登录失败')
+  }
+  emit('login-success')
   router.push('/profile')
 }
 
@@ -281,6 +321,64 @@ onMounted(() => {
   border-color: rgba(99, 102, 241, 0.35);
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(34, 211, 238, 0.12));
   color: rgba(11, 18, 32, 0.92);
+}
+
+.visitor-login {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(11, 18, 32, 0.08);
+  text-align: center;
+}
+
+.visitor-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border: 1px solid rgba(11, 18, 32, 0.1);
+  background: rgba(255, 255, 255, 0.6);
+  color: rgba(11, 18, 32, 0.72);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    background 120ms ease,
+    border-color 120ms ease;
+}
+
+.visitor-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(99, 102, 241, 0.3);
+  background: rgba(99, 102, 241, 0.06);
+}
+
+.visitor-icon {
+  font-size: 16px;
+}
+
+.visitor-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(11, 18, 32, 0.45);
+}
+
+.web3-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 8px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: rgba(11, 18, 32, 0.7);
+}
+
+.warning-icon {
+  font-size: 16px;
 }
 
 </style>

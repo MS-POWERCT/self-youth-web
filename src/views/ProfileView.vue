@@ -11,9 +11,9 @@
       />
 
 
-      <h2 class="username">{{ userStore.user.name || '用户名' }}</h2>
+      <!-- <h2 class="username">{{ userStore.user.name || '用户名' }}</h2> -->
       <van-cell-group inset>
-        <van-cell title="邮箱" :value="userStore.user.email || '未设置'" />
+        <!-- <van-cell title="邮箱" :value="userStore.user.email || '未设置'" /> -->
         <van-cell
           title="习惯管理"
           is-link

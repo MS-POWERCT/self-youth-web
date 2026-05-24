@@ -39,7 +39,7 @@ const active = ref(0)
 
 const showTabbar = computed(() => {
   // 在这里定义需要显示 tabbar 的路由名称
-  const showTabbarRoutes = ['profile', 'habits', 'mark', 'find']
+  const showTabbarRoutes = ['profile', 'habits', 'mark', 'find', 'home']
   return showTabbarRoutes.includes(route.name)
 })
 </script>

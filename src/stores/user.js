@@ -7,6 +7,7 @@ export const useUserStore = defineStore('user', {
     allWallet: JSON.parse(localStorage.getItem('allWallet')) || null,
     token: localStorage.getItem('user-token') || null,
     user_sign: null,
+    nonce: null,
   }),
   actions: {
     setUser(userData) {
@@ -16,6 +17,9 @@ export const useUserStore = defineStore('user', {
     setToken(token) {
       this.token = token
       localStorage.setItem('user-token', token)
+    },
+    setNonce(nonce) {
+      this.nonce = nonce
     },
     async login(credentials) {
       try {
@@ -38,6 +42,16 @@ export const useUserStore = defineStore('user', {
         throw error
       }
     },
+    async loginVisitor(credentials) {
+      try {
+        const response = await userApi.loginVisitor(credentials)
+        this.setToken(response.access_token)
+        this.getUserInfo()
+      } catch (error) {
+        console.error('Login failed', error)
+        throw error
+      }
+    },
     // 获取用户信息
     async getUserInfo() {
       try {
@@ -53,6 +67,25 @@ export const useUserStore = defineStore('user', {
       this.token = null
       this.user_sign = null
       localStorage.removeItem('user-token')
+    },
+    async web3Sign() {
+      try {
+        const nonceResult = await userApi.web3Sign()
+        this.setNonce(nonceResult)
+      } catch (error) {
+        console.error('web3Sign failed', error)
+        throw error
+      }
+    },
+    async web3Login(data) {
+      try {
+        const response =  await userApi.web3Login(data)
+        this.setToken(response.access_token)
+        this.getUserInfo()
+      } catch (error) {
+        console.error('web3Login failed', error)
+        throw error
+      }
     },
   },
 })

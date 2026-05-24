@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import HabitView from '../views/HabitView.vue'
@@ -7,12 +7,12 @@ import TestToolDemoView from '../views/TestToolDemoView.vue'
 import FindView from '../views/FindView.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       name: 'home',
-      component: FindView,
+      component: ProfileView,
       meta: { requiresAuth: true },
     },
     {
@@ -87,6 +87,7 @@ const router = createRouter({
 // 路由守卫
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('user-token')
+  const isVisitor = localStorage.getItem('visitor_id')
 
   // 如果用户已认证且访问登录页，自动跳转到首页
   if (to.path === '/login' && isAuthenticated) {
@@ -94,9 +95,13 @@ router.beforeEach((to, from, next) => {
     return
   }
 
-  // 如果需要认证但未登录，跳转到登录页
-  if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated) {
-    next('/login')
+  // 如果需要认证但未登录，检查是否有游客身份
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!isAuthenticated && !isVisitor) {
+      next('/login')
+    } else {
+      next()
+    }
   } else {
     next()
   }
