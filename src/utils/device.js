@@ -1,7 +1,87 @@
-// 获取设备信息工具函数
+import { Capacitor } from '@capacitor/core'
+
+export const deviceType = getDeviceType()
+
+export function getDeviceType() {
+  const platform = Capacitor.getPlatform()
+
+  if (platform === 'android') {
+    return 'app_android'
+  } else if (platform === 'ios') {
+    return 'app_ios'
+  }
+
+  const ua = navigator.userAgent.toLowerCase()
+
+  if (/micromessenger/.test(ua)) {
+    return 'wechat'
+  }
+  if (/miniprogram|miniProgram/.test(ua)) {
+    return 'miniprogram'
+  }
+  if (/android/.test(ua)) {
+    return 'android'
+  }
+  if (/iphone|ipad|ipod/.test(ua)) {
+    return 'ios'
+  }
+  if (/mobile/.test(ua)) {
+    return 'mobile'
+  }
+  return 'web'
+}
+
+export function getVisitorId() {
+  let vid = localStorage.getItem('visitor_id')
+  if (vid) {
+    return vid
+  }
+
+  let deviceId
+  const type = getDeviceType()
+
+  if (Capacitor.isNativePlatform()) {
+    deviceId = getNativeDeviceId()
+  } else {
+    deviceId = createUUID()
+  }
+
+  vid = `visitor_${type}_${deviceId}`
+  localStorage.setItem('visitor_id', vid)
+
+  return vid
+}
+
+async function getNativeDeviceId() {
+  try {
+    const { Device } = await import('@capacitor/device')
+    const info = await Device.getId()
+    return info.uuid
+  } catch {
+    return createUUID()
+  }
+}
+
+function createUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+export function isVisitor() {
+  const token = localStorage.getItem('user-token')
+  const visitorId = localStorage.getItem('visitor_id')
+  return !token && visitorId
+}
+
+export function clearVisitor() {
+  localStorage.removeItem('visitor_id')
+}
+
 export const getDeviceInfo = async () => {
   const deviceInfo = {
-    // 系统信息
     system: {
       userAgent: navigator.userAgent,
       platform: navigator.platform,
@@ -16,8 +96,6 @@ export const getDeviceInfo = async () => {
       appName: navigator.appName,
       appCodeName: navigator.appCodeName
     },
-
-    // 屏幕信息
     screen: {
       width: screen.width,
       height: screen.height,
@@ -28,8 +106,6 @@ export const getDeviceInfo = async () => {
       orientation: screen.orientation?.type || 'unknown',
       devicePixelRatio: window.devicePixelRatio
     },
-
-    // 窗口信息
     window: {
       innerWidth: window.innerWidth,
       innerHeight: window.innerHeight,
@@ -38,8 +114,6 @@ export const getDeviceInfo = async () => {
       scrollX: window.scrollX,
       scrollY: window.scrollY
     },
-
-    // 浏览器信息
     browser: {
       name: getBrowserName(),
       version: getBrowserVersion(),
@@ -47,8 +121,6 @@ export const getDeviceInfo = async () => {
       isTablet: isTabletDevice(),
       isDesktop: isDesktopDevice()
     },
-
-    // 时间信息
     time: {
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       timezoneOffset: new Date().getTimezoneOffset(),
@@ -56,8 +128,6 @@ export const getDeviceInfo = async () => {
       utcTime: new Date().toUTCString(),
       timestamp: Date.now()
     },
-
-    // 网络信息
     network: {
       connection: navigator.connection ? {
         effectiveType: navigator.connection.effectiveType,
@@ -67,8 +137,6 @@ export const getDeviceInfo = async () => {
       } : null,
       online: navigator.onLine
     },
-
-    // 存储信息
     storage: {
       localStorage: {
         used: getLocalStorageUsed(),
@@ -79,8 +147,6 @@ export const getDeviceInfo = async () => {
         available: getSessionStorageAvailable()
       }
     },
-
-    // 性能信息
     performance: {
       memory: performance.memory ? {
         usedJSHeapSize: performance.memory.usedJSHeapSize,
@@ -93,15 +159,10 @@ export const getDeviceInfo = async () => {
         domContentLoaded: performance.timing.domContentLoadedEventEnd
       } : null
     },
-
-    // 地理位置信息（需要权限）
     geolocation: null,
-
-    // 设备唯一标识（生成一个基于设备信息的指纹）
     fingerprint: null
   }
 
-  // 尝试获取地理位置
   try {
     const position = await getCurrentPosition()
     deviceInfo.geolocation = position
@@ -114,7 +175,6 @@ export const getDeviceInfo = async () => {
   return deviceInfo
 }
 
-// 获取浏览器名称
 function getBrowserName() {
   const userAgent = navigator.userAgent
   if (userAgent.indexOf('Firefox') > -1) return 'Firefox'
@@ -125,7 +185,6 @@ function getBrowserName() {
   return 'Unknown'
 }
 
-// 获取浏览器版本
 function getBrowserVersion() {
   const userAgent = navigator.userAgent
   const browserName = getBrowserName()
@@ -152,23 +211,19 @@ function getBrowserVersion() {
   return version
 }
 
-// 检测是否为移动设备
 function isMobileDevice() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
 
-// 检测是否为平板设备
 function isTabletDevice() {
   const userAgent = navigator.userAgent
   return /iPad|Android(?!.*Mobile)/i.test(userAgent) || (isMobileDevice() && window.innerWidth >= 768)
 }
 
-// 检测是否为桌面设备
 function isDesktopDevice() {
   return !isMobileDevice() && !isTabletDevice()
 }
 
-// 获取本地存储使用情况
 function getLocalStorageUsed() {
   try {
     let used = 0
@@ -183,7 +238,6 @@ function getLocalStorageUsed() {
   }
 }
 
-// 获取本地存储可用空间
 function getLocalStorageAvailable() {
   try {
     const test = 'test'
@@ -195,7 +249,6 @@ function getLocalStorageAvailable() {
   }
 }
 
-// 获取会话存储使用情况
 function getSessionStorageUsed() {
   try {
     let used = 0
@@ -210,7 +263,6 @@ function getSessionStorageUsed() {
   }
 }
 
-// 获取会话存储可用空间
 function getSessionStorageAvailable() {
   try {
     const test = 'test'
@@ -222,7 +274,6 @@ function getSessionStorageAvailable() {
   }
 }
 
-// 获取当前位置
 function getCurrentPosition() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
@@ -257,24 +308,21 @@ function getCurrentPosition() {
 
 function generateFingerprint(deviceInfo) {
   const fingerprintData = {
-  // 现有信息
-  userAgent: deviceInfo.system.userAgent,
-  platform: deviceInfo.system.platform,
-  language: deviceInfo.system.language,
-  screen: `${deviceInfo.screen.width}x${deviceInfo.screen.height}`,
-  colorDepth: deviceInfo.screen.colorDepth,
-  timezone: deviceInfo.time.timezone,
-  hardwareConcurrency: deviceInfo.system.hardwareConcurrency,
-
-  // 新增信息
-  devicePixelRatio: deviceInfo.screen.devicePixelRatio,
-  maxTouchPoints: deviceInfo.system.maxTouchPoints,
-  cookieEnabled: deviceInfo.system.cookieEnabled,
-  vendor: deviceInfo.system.vendor
-}
+    userAgent: deviceInfo.system.userAgent,
+    platform: deviceInfo.system.platform,
+    language: deviceInfo.system.language,
+    screen: `${deviceInfo.screen.width}x${deviceInfo.screen.height}`,
+    colorDepth: deviceInfo.screen.colorDepth,
+    timezone: deviceInfo.time.timezone,
+    hardwareConcurrency: deviceInfo.system.hardwareConcurrency,
+    devicePixelRatio: deviceInfo.screen.devicePixelRatio,
+    maxTouchPoints: deviceInfo.system.maxTouchPoints,
+    cookieEnabled: deviceInfo.system.cookieEnabled,
+    vendor: deviceInfo.system.vendor
+  }
 
   const str = JSON.stringify(fingerprintData)
-  let hash = 2166136261 // FNV offset basis
+  let hash = 2166136261
 
   for (let i = 0; i < str.length; i++) {
     hash ^= str.charCodeAt(i)
@@ -285,8 +333,6 @@ function generateFingerprint(deviceInfo) {
   return (hash >>> 0).toString(16)
 }
 
-
-// 打印设备信息
 export const printDeviceInfo = async () => {
   try {
     console.log('🔍 正在获取设备信息...')

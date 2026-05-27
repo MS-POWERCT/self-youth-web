@@ -131,7 +131,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { showToast } from 'vant'
 import { useHabitStore } from '../../stores/habit'
-import { getCurrentTime, formatDate, formatTime, getRelativeTime } from '@/utils/date'
+import { getCurrentTime, formatDate, formatTime, getRelativeTime } from '@/utils/common'
 
 import WheelDateTimePicker from '../../components/tools/WheelDateTimePicker.vue'
 import WheelTimePicker from '../../components/tools/WheelTimePicker.vue'
@@ -308,13 +308,13 @@ onMounted(() => {
   margin: 0 0 4px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #323233;
+  color: var(--gray700);
 }
 
 .header-date {
   margin: 0;
   font-size: 12px;
-  color: #969799;
+  color: var(--gray500);
 }
 
 /* 记录列表容器 */
@@ -330,7 +330,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  color: #969799;
+  color: var(--gray500);
 }
 
 .empty-state p {
@@ -343,14 +343,14 @@ onMounted(() => {
   display: flex;
   gap: 16px;
   padding: 16px;
-  background: white;
+  background: var(--white);
   border-radius: 12px;
   margin-bottom: 16px;
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .habit-list::-webkit-scrollbar {
@@ -386,12 +386,12 @@ onMounted(() => {
 .habit-icon svg {
   width: 24px;
   height: 24px;
-  color: #1989fa;
+  color: var(--info-blue);
 }
 
 .habit-name {
   font-size: 12px;
-  color: #323233;
+  color: var(--gray700);
   text-align: center;
   font-weight: 500;
 }
@@ -402,12 +402,12 @@ onMounted(() => {
 }
 
 .record-item {
-  background: white;
+  background: var(--white);
   border-radius: 12px;
   margin-bottom: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  border: 1px solid #f5f5f5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-light);
   transition: all 0.2s ease;
 
 }
@@ -417,7 +417,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid var(--border-light);
   border-radius: 8px;
   margin: 8px;
 }
@@ -425,7 +425,7 @@ onMounted(() => {
 .record-habit {
   flex: 1;
   font-size: 14px;
-  color: #323233;
+  color: var(--gray700);
   font-weight: 500;
 }
 
@@ -434,13 +434,13 @@ onMounted(() => {
   text-align: center;
 }
 .record-value2 {
-  color: #f15d5d;
+  color: var(--danger-pink);
   min-width: 60px;
   text-align: center;
 }
 .record-time {
   font-size: 12px;
-  color: #969799;
+  color: var(--gray500);
   min-width: 60px;
   text-align: right;
 }
@@ -457,7 +457,7 @@ onMounted(() => {
 .header-title {
   font-size: 16px;
   font-weight: 500;
-  color: #323233;
+  color: var(--gray700);
 }
 
 .header-left .van-icon,
@@ -495,13 +495,13 @@ onMounted(() => {
 .habit-info-display svg {
   width: 24px;
   height: 24px;
-  color: #1989fa;
+  color: var(--info-blue);
 }
 
 .habit-info-display span {
   font-size: 14px;
   font-weight: 500;
-  color: #323233;
+  color: var(--gray700);
 }
 
 .form-fields {

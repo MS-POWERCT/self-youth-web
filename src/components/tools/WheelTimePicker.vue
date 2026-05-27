@@ -255,12 +255,12 @@ onUnmounted(() => {
   .picker-title {
     font-size: 16px;
     font-weight: 600;
-    color: #333;
+    color: var(--gray700);
   }
 
   .keyboard-input {
     font-size: 14px;
-    color: #3b82f6;
+    color: var(--info-primary);
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
@@ -323,14 +323,14 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  color: #999;
+  color: var(--gray500);
   transition: all 0.2s ease;
   width: 100%;
   text-align: center;
 }
 
 .wheel-item.active {
-  color: #3b82f6;
+  color: var(--info-primary);
   font-size: 22px;
   font-weight: 600;
 }
@@ -343,7 +343,7 @@ onUnmounted(() => {
 
   .unit {
     font-size: 16px;
-    color: #666;
+    color: var(--gray600);
     font-weight: 500;
   }
 }
@@ -367,8 +367,8 @@ onUnmounted(() => {
   transform: translate(-50%, -50%);
   width: 80px;
   height: 44px;
-  border-top: 2px solid #3b82f6;
-  border-bottom: 2px solid #3b82f6;
+  border-top: 2px solid var(--info-primary);
+  border-bottom: 2px solid var(--info-primary);
   background: rgba(59, 130, 246, 0.08);
   pointer-events: none;
   z-index: 10;
@@ -389,9 +389,9 @@ onUnmounted(() => {
   justify-content: center;
   gap: 8px;
   padding: 20px 40px;
-  background: #fff;
+  background: var(--white);
   border-radius: 12px;
-  border: 2px solid #3b82f6;
+  border: 2px solid var(--info-primary);
   cursor: pointer;
   transition: all 0.2s;
 
@@ -402,14 +402,14 @@ onUnmounted(() => {
   .display-value {
     font-size: 36px;
     font-weight: 700;
-    color: #3b82f6;
+    color: var(--info-primary);
     min-width: 80px;
     text-align: center;
   }
 
   .display-unit {
     font-size: 18px;
-    color: #666;
+    color: var(--gray600);
     font-weight: 500;
   }
 }

@@ -5,9 +5,9 @@
       left-arrow
       @click-left="$router.go(-1)"
     />
-    <div class="bg-white radius-bottom-12 p-4">
-      <div class="text-2xl font-bold">{{ moduleName }}</div>
-      <div class="text-sm">{{ moduleTitle }}</div>
+    <div class="bg-white radius-bottom-12 p-8">
+      <div class="text-30 font-bold">{{ moduleName }}</div>
+      <div class="text-14">{{ moduleTitle }}</div>
       <ProgressBar
         :current="itemListCurrent"
         :total="itemListTotal"
@@ -28,21 +28,21 @@
           :class="{ active: filterStatus === 0 }"
           @click="filterStatus = 0"
         >
-          未看 ({{ counts[0] }})
+          {{ moduleTypeList[2] }} ({{ counts[0] }})
         </div>
         <div
           class="filter-tab"
           :class="{ active: filterStatus === 1 }"
           @click="filterStatus = 1"
         >
-          想看 ({{ counts[1] }})
+          {{ moduleTypeList[0] }} ({{ counts[1] }})
         </div>
         <div
           class="filter-tab"
           :class="{ active: filterStatus === 2 }"
           @click="filterStatus = 2"
         >
-          已看 ({{ counts[2] }})
+          {{ moduleTypeList[1] }} ({{ counts[2] }})
         </div>
       </div>
 
@@ -55,7 +55,7 @@
             loading-icon="photo-o"
             :src="item.img_url"
           />
-          <div class="item-name ml-4" :class="{ 'small-font': item.title.length > 8 }">
+          <div class="item-name ml-8" :class="{ 'small-font': item.title.length > 8 }">
             <div>
               {{ (index + 1) + '.' + item.title }}
               <svg class="icon" aria-hidden="true" @click="handleCopy(item.title)">
@@ -72,18 +72,18 @@
         </div>
 
         <div v-if="item.mark_type == 0" class="mr-2">
-          <div class="item-btn bg-yellow-600" @click="markItem(item, 1)">想看</div>
-          <div class="item-btn bg-default" @click="markItem(item, 2)">已看</div>
+          <div class="item-btn bg-accent" @click="markItem(item, 1)">{{ moduleTypeList[0] }}</div>
+          <div class="item-btn bg-primary" @click="markItem(item, 2)">{{ moduleTypeList[1] }}</div>
         </div>
         <div v-else class="mr-2">
           <!-- 可以删除 使用一个不太明显的x图标 -->
-          <span v-if="item.mark_type === 1" class="mark-status text-yellow-600">
-            想看
-            <van-icon name="close" class="text-yellow-600" @click="markItem(item, 0)" size="16"/>
+          <span v-if="item.mark_type === 1" class="mark-status text-accent">
+            {{ moduleTypeList[0] }}
+            <van-icon name="close" class="text-accent" @click="markItem(item, 0)" size="16"/>
           </span>
-          <span v-else class="mark-status text-blue-600">
-            已看
-            <van-icon name="close" class="text-blue-600" @click="markItem(item, 0)" size="16"/>
+          <span v-else class="mark-status text-primary">
+            {{ moduleTypeList[1] }}
+            <van-icon name="close" class="text-primary" @click="markItem(item, 0)" size="16"/>
           </span>
 
         </div>
@@ -103,14 +103,39 @@ import { useRoute } from 'vue-router'
 import { NavBar as VanNavBar, showToast } from 'vant'
 import { useMarkStore } from '../stores/mark'
 import { markApi } from '../api/mark'
-import { copyToClipboard } from '@/utils/copy.js'
+import { copyToClipboard } from '@/utils/common'
 import ProgressBar from '@/components/tools/ProgressBar.vue'
 
 const markStore = useMarkStore()
 const route = useRoute()
 
+const moduleId = ref(0)
 const moduleName = ref('')
 const moduleTitle = ref('')
+const moduleTypeList = ref([])
+const moduleTypeConfig = ref({
+  1 : [
+    '想看',
+    '已看',
+    '未看',
+  ],
+  2 : [
+    '想看',
+    '已看',
+    '未看',
+  ],
+  3 : [
+    '想去',
+    '已去',
+    '未去',
+  ],
+  4 : [
+    '想完成',
+    '已完成',
+    '未完成',
+  ],
+})
+
 const pv = ref(0)
 const participant = ref(0)
 const itemList = ref([])
@@ -118,7 +143,6 @@ const itemListCurrent = ref(0)
 const itemListTotal = ref(0)
 const filterStatus = ref('all')
 
-const moduleId = ref(0)
 
 const counts = computed(() => {
   return {
@@ -189,6 +213,9 @@ onMounted(() => {
   moduleId.value = route.query.id || 0
   moduleName.value = route.query.name || '详情'
   moduleTitle.value = route.query.title || '详情'
+
+  // 这里进行加载用户操作的名称，比如moduleid=1和2 ，都是想看。已看，未看，如果是3 就是想去，已去，未去，4 完成，未完成，想完成
+  moduleTypeList.value = moduleTypeConfig.value[markStore.activeCategoryId] || []
   getItemList()
 })
 </script>
@@ -214,30 +241,30 @@ onMounted(() => {
   flex-shrink: 0;
   padding: 6px 12px;
   border-radius: 8px;
-  background: #fff;
-  color: #666;
+  background: var(--white);
+  color: var(--gray600);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
 
   &.active {
-    background: #6f8fce;
-    color: #fff;
+    background: var(--primary);
+    color: var(--white);
   }
 }
 
 .item-card {
-  background: #ffffff;
+  background: var(--white);
   border-radius: 12px;
   padding: 8px;
   margin-bottom: 12px;
   font-size: 14px;
-  color: #333;
+  color: var(--gray700);
 }
 
 .item-name {
   font-size: 14px;
-  color: #333;
+  color: var(--gray700);
 
   &.small-font {
     font-size: 12px;
@@ -251,12 +278,12 @@ onMounted(() => {
   font-size: 12px;
   // 第一个div 处理
   div:first-child{
-    color: #4686b5;
+    color: var(--secondary);
     font-weight: 500;
   }
   // 第二个div 处理
   div:nth-child(2){
-    color: #9b8c8c;
+    color: var(--gray500);
   }
 }
 
@@ -266,7 +293,7 @@ onMounted(() => {
   font-weight: 600;
   padding: 2px 6px;
   margin-top: 6px;
-  color: #fff;
+  color: var(--white);
 }
 
 .mark-status {

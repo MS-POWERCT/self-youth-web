@@ -8,7 +8,7 @@ export const habitApi = {
       url: '/api/habit/getList',
       method: 'post',
       data: {
-        type: type.toString()
+        type
       }
     })
   },
@@ -18,7 +18,7 @@ export const habitApi = {
       url: '/api/habit/getEditableList',
       method: 'post',
        data: {
-        type: type.toString()
+        type
       }
     })
   },
@@ -36,8 +36,8 @@ export const habitApi = {
       method: 'post',
       data: {
         name,
-        type: type.toString(),
-        icon: icon.toString()
+        type,
+        icon
       }
     })
   },
@@ -48,8 +48,8 @@ export const habitApi = {
       method: 'post',
       data: {
         name,
-        type: type.toString(),
-        icon: icon.toString()
+        type,
+        icon
       }
     })
   },
@@ -60,7 +60,7 @@ export const habitApi = {
       url: '/api/habit/hide',
       method: 'post',
       data: {
-        id: id.toString(),
+        id,
         is_show: !isShow ? 1 : 0
       }
     })
@@ -72,7 +72,7 @@ export const habitApi = {
       url: '/api/habit/delete',
       method: 'post',
       data: {
-        id: id.toString()
+        id
       }
     })
   },
@@ -91,7 +91,7 @@ export const habitApi = {
       url: '/api/habit/check/toggle',
       method: 'post',
       data: {
-        id: id.toString()
+        id
       }
     })
   },
@@ -111,10 +111,10 @@ export const habitApi = {
       url: '/api/habit/value/create',
       method: 'post',
       data: {
-        habit_id: parseInt(habitId),
-        value: parseInt(value),
+        habit_id: habitId,
+        value,
         record_start_time: recordStartTime,
-        note: note,
+        note,
         note_image: noteImage
       }
     })
@@ -126,7 +126,7 @@ export const habitApi = {
       url: '/api/habit/value/del',
       method: 'post',
       data: {
-        id: id.toString()
+        id
       }
     })
   },
@@ -137,8 +137,8 @@ export const habitApi = {
       url: '/api/habit/value/edit',
       method: 'post',
       data: {
-        id: id.toString(),
-        value: parseInt(value),
+        id,
+        value,
         record_start_time: recordStartTime
       }
     })
@@ -153,5 +153,5 @@ export const habitApi = {
       method: 'get',
       params: params
     })
-  }
+  },
 }

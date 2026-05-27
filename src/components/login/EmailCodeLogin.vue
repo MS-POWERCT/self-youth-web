@@ -103,12 +103,6 @@ const sendCode = async () => {
   }
 }
 
-const clearAuthArtifactsForFreshLogin = () => {
-  localStorage.removeItem('user-token')
-  localStorage.removeItem('user')
-  userStore.token = null
-  userStore.user = null
-}
 
 const handleLogin = async () => {
   if (isSubmitting.value) return
@@ -123,7 +117,7 @@ const handleLogin = async () => {
 
   try {
     isSubmitting.value = true
-    clearAuthArtifactsForFreshLogin()
+    userStore.logout()
     await userStore.loginEmail({
       email: email.value,
       code: verificationCode.value,

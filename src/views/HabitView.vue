@@ -1,5 +1,5 @@
 <template>
-  <div class="habit-page">
+  <div class="habit-page bg-gray50">
     <div class="text-center font-bold text-lg">
       <br/>
         <IconifyIcon icon="fluent-color:circle-multiple-hint-checkmark-48" width="16" class="mr-2"/>
@@ -16,7 +16,7 @@
         />
       </template>
     </van-nav-bar> -->
-    <div class="habit-tabs">
+    <div class="habit-tabs mt-12">
       <van-tabs v-model:active="activeTab" @update:active="onTabChange">
         <van-tab title="打卡习惯" name="check">
           <CheckHabits />
@@ -65,14 +65,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.habit-page {
-  background: #f7f8fa;
-}
-
-.habit-tabs {
-  margin-top: 12px;
-}
-
 .stats-button {
   position: fixed;
   bottom: 80px;

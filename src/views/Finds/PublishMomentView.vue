@@ -1,11 +1,11 @@
 <template>
-  <div class="publish-container">
-    <van-nav-bar left-text="取消" @click-left="goBack">
+  <div class="publish-container bg-gray50">
+    <van-nav-bar left-text="取消" @click-left="goBack" class="bg-white">
       <template #right>
         <van-button type="primary" size="small" @click="handleSubmit">发布</van-button>
       </template>
     </van-nav-bar>
-    <van-form @submit="handleSubmit">
+    <van-form @submit="handleSubmit" class="p-16">
       <van-field
         v-model="content"
         type="textarea"
@@ -14,6 +14,7 @@
         placeholder="分享你的动态..."
         maxlength="500"
         show-word-limit
+        class="mb-16"
       />
       <van-uploader
         v-model="images"
@@ -21,6 +22,7 @@
         :after-read="afterRead"
         multiple
         :max-count="4"
+        class="mt-16"
       />
       {{ files }}
     </van-form>
@@ -89,22 +91,5 @@ const handleSubmit = async () => {
 <style scoped>
 .publish-container {
   min-height: 100vh;
-  background-color: #f7f7f7;
-}
-
-.van-nav-bar {
-  background-color: #fff;
-}
-
-.van-form {
-  padding: 16px;
-}
-
-.van-field {
-  margin-bottom: 16px;
-}
-
-.van-uploader {
-  margin-top: 16px;
 }
 </style>

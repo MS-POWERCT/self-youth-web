@@ -1,20 +1,20 @@
 <template>
-  <div class="moments-container">
+  <div class="moments-container bg-gray50">
     <div class="background-image"></div>
 
-    <div class="nav-bar mt-2">
+    <div class="nav-bar flex justify-between items-center px-16">
       <Icon icon="carbon:chevron-left" @click="goBack" width="24" class="nav-icon" height="24" />
       <Icon icon="ion:camera" @click="publishMoment" width="24" class="nav-icon" height="24" />
     </div>
 
     <!-- 用户信息 -->
-    <div class="user-info">
-      <span class="user-name">{{ userStore.user.name }}</span>
+    <div class="user-info flex items-center justify-end gap-10 p-15 text-white">
+      <span class="user-name text-16 font-bold">{{ userStore.user.name }}</span>
       <img class="user-avatar" :src="userStore.user.avatar" alt="用户头像" />
     </div>
 
     <!-- 朋友圈内容 -->
-    <div class="moments-content">
+    <div class="moments-content p-20">
       <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <van-list
           v-model:loading="loading"
@@ -22,20 +22,20 @@
           finished-text="没有更多了"
           @load="onLoad"
         >
-          <div v-for="(item, index) in momentsList" :key="index" class="moment-item">
-            <img :src="item.user.avatar" alt="头像" class="moment-avatar" />
-            <div class="moment-content">
-              <div class="moment-user">{{ item.user.name }}</div>
-              <div class="moment-text">
+          <div v-for="(item, index) in momentsList" :key="index" class="moment-item flex mb-20">
+            <img :src="item.user.avatar" alt="头像" class="moment-avatar mr-10" />
+            <div class="moment-content flex-1">
+              <div class="moment-user font-bold mb-5">{{ item.user.name }}</div>
+              <div class="moment-text mb-10">
                 <van-text-ellipsis
                   rows="3"
                   :content="item.content"
                   expand-text="全文"
                   collapse-text="收起"
-                  class="text-ellipsis"
+                  class="text-ellipsis flex flex-col"
                 />
               </div>
-              <div v-if="item.images && item.images.length" class="moment-images">
+              <div v-if="item.images && item.images.length" class="moment-images flex flex-wrap">
                 <img
                   v-for="(img, imgIndex) in item.images"
                   :key="imgIndex"
@@ -94,7 +94,7 @@
                 <div>
                   <div v-for="(comm, commentIndex) in item.comment" :key="commentIndex">
                     <div>
-                      <span class="moment-user">{{ comm.name }}</span
+                      <span class="moment-user font-bold">{{ comm.name }}</span
                       >:
                       <span class="moment-text">{{ comm.content }}</span>
                     </div>
@@ -136,7 +136,7 @@ import { showToast } from 'vant'
 import { useUserStore } from '../../stores/user'
 import { loverCircleApi } from '../../api/lover_circle'
 import { Icon } from '@iconify/vue'
-import { getRelativeTime } from '../../utils/date'
+import { getRelativeTime } from '../../utils/common'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -251,7 +251,6 @@ const submitComment = async () => {
 <style scoped>
 .moments-container {
   min-height: 100vh;
-  background-color: #f7f7f7;
 }
 
 .background-image {
@@ -271,10 +270,6 @@ const submitComment = async () => {
   left: 0;
   right: 0;
   height: 44px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
   z-index: 10;
   transition: background-color 0.3s;
   font-size: 24px;
@@ -283,13 +278,7 @@ const submitComment = async () => {
 
 .user-info {
   position: relative;
-  padding: 15px;
   margin-top: 240px;
-  color: #fff;
-  display: flex;
-  align-items: center; /* 垂直居中 */
-  justify-content: flex-end; /* 整体靠右 */
-  gap: 10px; /* 头像和文字的间距 */
 }
 
 .user-avatar {
@@ -298,46 +287,16 @@ const submitComment = async () => {
   border-radius: 5px;
 }
 
-.user-name {
-  font-size: 16px;
-  font-weight: bold;
-}
-
 .moments-content {
   min-height: calc(100vh - 200px);
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
-  padding: 20px;
-}
-
-.moment-item {
-  display: flex;
-  margin-bottom: 20px;
 }
 
 .moment-avatar {
   width: 40px;
   height: 40px;
   border-radius: 5px;
-  margin-right: 10px;
-}
-
-.moment-content {
-  flex: 1;
-}
-
-.moment-user {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.moment-text {
-  margin-bottom: 10px;
-}
-
-.moment-images {
-  display: flex;
-  flex-wrap: wrap;
 }
 
 .moment-images img {
@@ -345,11 +304,6 @@ const submitComment = async () => {
   height: 100px;
   object-fit: cover;
   margin-bottom: 5px;
-}
-
-.text-ellipsis {
-  display: flex;
-  flex-direction: column;
 }
 
 .moment-active > div {
@@ -360,6 +314,6 @@ const submitComment = async () => {
 }
 
 .text-ellipsis .van-text-ellipsis__expand {
-  margin-top: 8px; /* 控制 "全文" 与内容之间的间距 */
+  margin-top: 8px;
 }
 </style>

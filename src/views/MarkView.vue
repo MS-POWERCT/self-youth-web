@@ -5,17 +5,17 @@
         <IconifyIcon icon="noto:kiss-mark" width="16" class="mr-2"/>
         标记吧
     </div>
-    <div class="category-section">
+    <div class="category-section mt-16">
       <div
         v-for="category in categoryList"
         :key="category.id"
-        class="category-card mt-8"
+        class="category-card flex flex-col items-center justify-center mt-8 radius-24"
         :class="{ active: activeCategory === category.id }"
         :style="{ background: getCategoryGradient(category.id) }"
         @click="handleCategoryClick(category.id)"
       >
         <IconifyIcon :icon="category.icon" width="32" class="mb-2"/>
-        <div class="category-name">{{ category.name }}</div>
+        <div class="category-name text-white text-18 font-bold">{{ category.name }}</div>
       </div>
     </div>
 
@@ -23,11 +23,11 @@
       <div
         v-for="module in moduleList"
         :key="module.id"
-        class="module-card"
+        class="module-card flex items-center bg-white radius-12 p-12 mb-12"
         @click="navigateToItem(module)"
       >
         <van-image
-          class="module-cover"
+          class="radius-8"
           radius="8"
           width="72"
           height="96"
@@ -35,19 +35,18 @@
           loading-icon="photo-o"
           :src="module.cover_url || getDefaultCover(module.id)"
         />
-        <div class="module-info">
-          <div class="module-title">{{ module.name }}</div>
-          <div class="module-meta">
-            <div class="progress">
-              <span class="progress-text">{{ module.participant || 0 }} 人参与</span>
+        <div class="ml-12 flex-1">
+          <div class="font-bold text-gray700 text-16 text-ellipsis">{{ module.name }}</div>
+          <div class="flex items-center gap-3 mt-16">
+            <div class="px-6 py-2 radius-8 bg-gray100">
+              <span class="text-gray600 text-12">{{ module.participant || 0 }} 人参与</span>
             </div>
-            <div class="progress">
-              <span class="progress-text">{{ module.pv || 0 }} 次访问</span>
+            <div class="px-6 py-2 radius-8 bg-gray100">
+              <span class="text-gray600 text-12">{{ module.pv || 0 }} 次访问</span>
             </div>
           </div>
         </div>
         <IconifyIcon icon="mingcute:arrow-right-fill" class="mr-2" width="24" height="24" />
-        <!-- <IconifyIcon icon="uim:arrow-circle-right" class="cell-icon" width="24" height="24" /> -->
       </div>
     </div>
   </div>
@@ -134,7 +133,7 @@ onMounted(() => {
 
 .category-section {
   display: flex;
-  padding: 0px 22px 30px 22px;
+  padding: 0 22px 30px;
   gap: 20px;
   overflow-x: auto;
   white-space: nowrap;
@@ -147,14 +146,8 @@ onMounted(() => {
 }
 
 .category-card {
-  flex-shrink: 0;
   width: 90px;
   height: 160px;
-  border-radius: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   transition: transform 0.25s ease;
 
   &.active {
@@ -163,9 +156,6 @@ onMounted(() => {
 }
 
 .category-name {
-  color: #fff;
-  font-size: 18px;
-  font-weight: 600;
   text-shadow: 0 4px 4px rgba(18, 15, 15, 0.5);
 }
 
@@ -174,80 +164,12 @@ onMounted(() => {
 }
 
 .module-card {
-  display: flex;
-  align-items: center;
-  background: #fff;
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 12px var(--shadow-md-color);
   transition: transform 0.2s, box-shadow 0.2s;
 
   &:active {
     transform: scale(0.98);
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 6px var(--shadow-md-color);
   }
-}
-
-.module-cover {
-  flex-shrink: 0;
-  border-radius: 8px;
-}
-
-.module-info {
-  flex: 1;
-  margin-left: 12px;
-  min-width: 0;
-}
-
-.module-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.module-author {
-  font-size: 12px;
-  color: #999;
-  margin-top: 4px;
-}
-
-.module-meta {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.rating {
-  display: flex;
-  align-items: center;
-}
-
-.star {
-  width: 14px;
-  height: 14px;
-  color: #ffc107;
-  margin-right: 1px;
-}
-
-.rating-text {
-  font-size: 12px;
-  color: #ff9800;
-  margin-left: 4px;
-}
-
-.progress {
-  background: #f0f0f0;
-  padding: 0px 6px;
-  border-radius: 8px;
-}
-
-.progress-text {
-  font-size: 11px;
-  color: #666;
 }
 </style>

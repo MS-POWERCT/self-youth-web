@@ -43,12 +43,6 @@ const userStore = useUserStore()
 
 const isValidEmail = (value) => /^\S+@\S+\.\S+$/.test(String(value || '').trim())
 
-const clearAuthArtifactsForFreshLogin = () => {
-  localStorage.removeItem('user-token')
-  localStorage.removeItem('user')
-  userStore.token = null
-  userStore.user = null
-}
 
 const handleLogin = async () => {
   if (isSubmitting.value) return
@@ -63,7 +57,7 @@ const handleLogin = async () => {
 
   try {
     isSubmitting.value = true
-    clearAuthArtifactsForFreshLogin()
+    userStore.logout()
     await userStore.login({
       email: email.value,
       password: password.value,

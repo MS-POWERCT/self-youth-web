@@ -3,6 +3,7 @@
 import axios from 'axios'
 import { showToast, showDialog } from 'vant'
 import { useUserStore } from '../stores/user'
+import { deviceType } from './device'
 
 const service = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -16,6 +17,10 @@ service.interceptors.request.use(
     if (userStore.token) {
       config.headers['Authorization'] = `Bearer ${userStore.token}`
     }
+    if(deviceType) {
+      config.headers['device_type'] = deviceType
+    }
+
     return config
   },
   (error) => {
@@ -26,13 +31,13 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
   (response) => {
-    
+
     const res = response.data
     // 检查res是否为对象
     if (typeof res !== 'object' || res === null) {
       return res
     }
-    
+
     if ('res_code' in res) {
       if (res.res_code !== 0) {
         showToast(res.res_msg || 'Error')

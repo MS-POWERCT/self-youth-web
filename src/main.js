@@ -13,8 +13,10 @@ import { CapacitorService } from './utils/capacitor'
 
 // 导入 VConsole 插件
 import VConsole from 'vconsole'
-// 初始化 VConsole
-new VConsole()
+// 💡 建议: 仅在开发环境启用 VConsole，生产环境应禁用
+if (import.meta.env.DEV) {
+  new VConsole()
+}
 // 导入需要的 Vant 组件
 import {
   Icon as VanIcon,
@@ -86,6 +88,7 @@ async function initApp() {
   app.use(Tag)
   app.use(BackTop)
   // 获取全局 store
+  // 💡 建议: globalStore 在此处获取但未在组件中使用，需确认是否必需
   const globalStore = useGlobalStore()
 
   try {

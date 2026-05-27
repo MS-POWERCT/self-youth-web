@@ -124,12 +124,13 @@ async function handleLogin() {
     }
 
     await userStore.web3Sign()
-    const nonce = userStore.nonce
+    const nonce = userStore.web3_nonce
 
     const message = `Self Youth Login\n\nAddress: ${fullAddress}\nNonce: ${nonce}`
 
     const signature = await signMessage(message)
 
+    userStore.logout()
     await userStore.web3Login({
       address: fullAddress,
       signature,
@@ -189,7 +190,7 @@ function formatAddress(address) {
 
 .error-message {
   font-size: 13px;
-  color: #ee0a24;
+  color: var(--danger-error);
   padding: 8px 6px;
   background: rgba(238, 10, 36, 0.08);
   border-radius: 8px;

@@ -128,7 +128,7 @@ export const useHabitStore = defineStore('habit', {
     async editValueRecord(id, value, recordStartTime, note, noteImage) {
       try {
          // 获取当前日期
-        await habitApi.editValue(id, value, recordStartTime, note, noteImage)
+        await habitApi.editValue(id, value, recordStartTime)
         // 更新本地状态
         // const record = this.valueRecords.find(r => r.id === id)
         // if (record) {

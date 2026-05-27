@@ -1,18 +1,18 @@
 <template>
-  <div class="habit-stats-page">
+  <div class="habit-stats-page bg-gray50">
     <van-nav-bar
       title="习惯统计"
       left-arrow
       @click-left="$router.go(-1)"
     />
-    
+
     <div class="stats-content">
       <!-- 调试信息 -->
-      <div class="debug-info" style="padding: 10px; background: #f0f0f0; margin: 10px; border-radius: 5px;">
+      <div class="debug-info p-10 bg-gray100 m-10 radius-4">
         <p>统计数据数量: {{ Object.keys(statsData).length }}</p>
         <p>总打卡次数: {{ totalChecks }}</p>
         <button @click="loadStatsData" style="padding: 5px 10px; margin: 5px;">重新加载数据</button>
-        <div style="max-height: 100px; overflow-y: auto; font-size: 12px;">
+        <div class="debug-scroll">
           <p v-for="(count, date) in statsData" :key="date">
             {{ date }}: {{ count }}次
           </p>
@@ -49,10 +49,10 @@ const loadStatsData = async () => {
   try {
     loading.value = true
     console.log('开始加载统计数据...')
-    
+
     const response = await habitStore.checkStatsRecords()
     console.log('API响应:', response)
-    
+
     // 处理API返回的数据格式
     if (response) {
       statsData.value = response
@@ -81,7 +81,6 @@ onMounted(() => {
 
 <style scoped>
 .habit-stats-page {
-  background: #f7f8fa;
   min-height: 100vh;
 }
 
@@ -91,5 +90,11 @@ onMounted(() => {
 
 .debug-info p {
   margin: 5px 0;
+}
+
+.debug-scroll {
+  max-height: 100px;
+  overflow-y: auto;
+  font-size: 12px;
 }
 </style>

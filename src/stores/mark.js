@@ -6,7 +6,7 @@ export const useMarkStore = defineStore('mark', {
     categoryList: [],
     moduleList: [],
     itemList: [],
-    activeCategoryId: null,
+    activeCategoryId: 0,
     loading: false
   }),
   actions: {

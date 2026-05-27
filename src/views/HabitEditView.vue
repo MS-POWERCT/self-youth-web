@@ -1,27 +1,27 @@
 <template>
-  <div class="habit-edit-page" :class="$attrs.class">
+  <div class="habit-edit-page bg-gray50" :class="$attrs.class">
     <van-nav-bar
       :title="activeTab == 1 ? '打卡习惯' : '数值习惯'"
       left-arrow
       @click-left="$router.go(-1)"
     />
     <!-- 习惯列表 -->
-    <div class="habits-list">
-      <div class="habit-add" @click="showPopup()"> + </div>
+    <div class="habits-list p-4">
+      <div class="habit-add text-center p-2 mb-12 bg-white radius-8" @click="showPopup()"> + </div>
       <div
         v-for="habit in editableHabits"
         :key="habit.id"
-        class="habit-item"
+        class="habit-item flex items-center justify-between p-4 mb-12 bg-white radius-8"
         :class="{ hidden: !habit.is_show }"
       >
-        <div class="habit-info">
+        <div class="habit-info flex items-center gap-3 flex-1">
            <svg class="icon" aria-hidden="true">
                 <use :xlink:href="'#' + habit.icon" />
               </svg>
-          <span>{{ habit.name }}</span>
+          <span class="text-14 text-gray700">{{ habit.name }}</span>
           <van-tag v-if="habit.fixed" type="warning" size="small">系统默认</van-tag>
         </div>
-        <div class="habit-actions">
+        <div class="habit-actions flex gap-2">
           <van-button
             size="mini"
             type="danger"
@@ -60,8 +60,8 @@
       round
       @click-overlay="closePopup"
     >
-      <div class="add-popup">
-        <div class="popup-content">
+      <div class="add-popup p-4">
+        <div class="popup-content mb-4">
           <van-field
             v-model="addForm.name"
             label="习惯名称"
@@ -84,7 +84,7 @@
             </template>
           </van-field>
         </div>
-        <div class="popup-footer">
+        <div class="popup-footer mt-4">
           <van-button
             type="primary"
             block
@@ -103,20 +103,20 @@
       position="bottom"
       :style="{ height: '50%' }"
     >
-      <div class="icon-picker">
-        <div class="picker-title">选择图标</div>
-        <div class="icon-grid">
+      <div class="icon-picker p-4">
+        <div class="picker-title text-16 font-bold text-center mb-4 text-gray700">选择图标</div>
+        <div class="icon-grid grid grid-cols-4 gap-3">
           <div
             v-for="icon in iconList"
             :key="icon.id"
-            class="icon-item"
+            class="icon-item flex flex-col items-center justify-center px-2 py-3 radius-8"
             :class="{ active: addForm.icon === icon.icon }"
             @click="selectIcon(icon)"
           >
-            <svg class="icon" aria-hidden="true">
+            <svg class="icon mb-2" aria-hidden="true">
               <use :xlink:href="'#' + icon.icon" />
             </svg>
-            <span>{{ icon.name }}</span>
+            <span class="text-gray600 text-center">{{ icon.name }}</span>
           </div>
         </div>
       </div>

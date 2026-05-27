@@ -62,12 +62,12 @@ const percent = computed(() => {
 .progress-percent {
   font-size: 26px;
   font-weight:900;
-  color: #333;
+  color: var(--gray700);
 }
 
 .progress-track {
   height: 8px;
-  background: #eee;
+  background: var(--gray100);
   border-radius: 6px;
   overflow: hidden;
   position: relative;

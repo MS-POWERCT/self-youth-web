@@ -1,8 +1,8 @@
 <template>
-  <div class="profile-container">
+  <div class="profile-container bg-gray200">
 
     <!-- <van-nav-bar title="个人中心" left-arrow @click-left="goBack" /> -->
-    <div v-if="userStore.token && userStore.user" class="profile-content">
+    <div v-if="userStore.token && userStore.user" class="profile-content p-20 flex flex-col items-center">
       <van-image
         round
         width="100"
@@ -47,7 +47,7 @@
         >
           获取设备信息
         </van-button> -->
-    <van-button type="danger" block @click="handleLogout" class="logout-btn"> 退出登录 </van-button>
+    <van-button type="danger" block @click="handleLogout" class="logout-btn mt-10"> 退出登录 </van-button>
   </div>
 </template>
 
@@ -84,68 +84,7 @@ const handleLogout = () => {
 </script>
 
 <style scoped>
-.profile-container {
-  /* min-height: 100vh; */
-  background-color: #f8f8f8;
-}
-
-.profile-content {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.username {
-  margin: 15px 0;
-  font-size: 1.2rem;
-  color: #333;
-}
-
-.check-in-btn {
-  margin-top: 20px;
-}
-
-.logout-btn {
-  margin-top: 10px;
-}
-
-.login-btn {
-  margin-top: 20px;
-}
-
-.check-in-animation {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  animation: fadeIn 0.5s;
-}
-
-.check-in-animation p {
-  margin-top: 10px;
-  color: #fff;
-  font-size: 18px;
-}
-
-.check-in-info {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f8f8f8;
-  border-radius: 8px;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.info-item span {
-  font-size: 14px;
-}
-
+/* 保留注释掉的样式，因为模板中对应的元素也被注释了 */
 @keyframes fadeIn {
   from {
     opacity: 0;

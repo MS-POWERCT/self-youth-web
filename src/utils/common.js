@@ -1,10 +1,44 @@
-/**
- * 获取当前日期时间
- * @param {string} format - 格式类型：'datetime'(默认) | 'date' | 'time'
- * @returns {string} 格式化后的日期时间字符串
- */
-export const getCurrentTime = (format = 'datetime', now = new Date()) => {
+export const copyToClipboard = async (text, successMsg = '复制成功') => {
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text)
+      return true
+    } catch (error) {
+      console.error('Clipboard API 复制失败:', error)
+      return fallbackCopy(text, successMsg)
+    }
+  } else {
+    return fallbackCopy(text, successMsg)
+  }
+}
 
+const fallbackCopy = (text, successMsg) => {
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.style.position = 'fixed'
+  textarea.style.top = '-200px'
+  textarea.style.left = '0'
+  textarea.style.opacity = '0'
+  document.body.appendChild(textarea)
+
+  textarea.select()
+  textarea.setSelectionRange(0, textarea.value.length)
+
+  try {
+    const success = document.execCommand('copy')
+    if (success) {
+      return true
+    } else {
+      return false
+    }
+  } catch (err) {
+    return false
+  } finally {
+    document.body.removeChild(textarea)
+  }
+}
+
+export const getCurrentTime = (format = 'datetime', now = new Date()) => {
   const year = now.getFullYear()
   const month = String(now.getMonth() + 1).padStart(2, '0')
   const day = String(now.getDate()).padStart(2, '0')
@@ -24,20 +58,10 @@ export const getCurrentTime = (format = 'datetime', now = new Date()) => {
   }
 }
 
-/**
- * 格式化日期为 "MM月DD日" 格式
- * @param {string|Date} dateInput - 日期字符串、时间戳或Date对象
- * @param {string} separator - 分隔符，默认 '月' 和 '日'，可自定义如 '/'
- * @returns {string} 格式化后的日期，如 "05月09日"
- * @example
- * formatDate('2026-05-09') // "05月09日"
- * formatDate('2026-05-09', '/') // "05/09"
- */
 export const formatDate = (dateInput, separator = '月') => {
   if (!dateInput) return ''
 
   const date = new Date(dateInput)
-  // 校验日期是否有效
   if (isNaN(date.getTime())) return ''
 
   const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -49,22 +73,10 @@ export const formatDate = (dateInput, separator = '月') => {
   return `${month}${separator}${day}`
 }
 
-/**
- * 格式化时间为 "HH:MM" 格式（24小时制）
- * @param {string|Date} timeInput - 日期字符串、时间戳或Date对象
- * @param {boolean} showSeconds - 是否显示秒，默认 false
- * @param {boolean} use12Hour - 是否使用12小时制，默认 false
- * @returns {string} 格式化后的时间，如 "14:30" 或 "02:30 PM"
- * @example
- * formatTime('2026-05-09 14:30:25') // "14:30"
- * formatTime('2026-05-09 14:30:25', true) // "14:30:25"
- * formatTime('2026-05-09 14:30:25', false, true) // "02:30 PM"
- */
 export const formatTime = (timeInput, showSeconds = false, use12Hour = false) => {
   if (!timeInput) return ''
 
   const date = new Date(timeInput)
-  // 校验日期是否有效
   if (isNaN(date.getTime())) return ''
 
   if (use12Hour) {
@@ -86,14 +98,6 @@ export const formatTime = (timeInput, showSeconds = false, use12Hour = false) =>
   return `${hour}:${minute}`
 }
 
-/**
- * 格式化完整日期时间
- * @param {string|Date} dateInput - 日期字符串、时间戳或Date对象
- * @param {Object} options - 配置选项
- * @returns {string} 格式化后的日期时间
- * @example
- * formatDateTime('2026-05-09 14:30:25') // "05月09日 14:30"
- */
 export const formatDateTime = (dateInput, options = {}) => {
   const { dateSeparator = '月', showSeconds = false, use12Hour = false } = options
   const date = formatDate(dateInput, dateSeparator)
@@ -101,20 +105,17 @@ export const formatDateTime = (dateInput, options = {}) => {
   return `${date} ${time}`
 }
 
-
-// 给一个时间之前的时间返回距离现在过了多久了，然后是负数就返回未来
 export const getRelativeTime = (targetTime) => {
   const now = new Date()
   const target = new Date(targetTime)
   const diffMs = target - now
   const diffSeconds = Math.floor(Math.abs(diffMs) / 1000)
   const isFuture = diffMs > 0
-  // 刚刚/即将
+
   if (diffSeconds < 60) {
     return isFuture ? '即将' : '刚刚'
   }
 
-  // 计算时间差
   const intervals = [
     { label: '年', seconds: 31536000 },
     { label: '个月', seconds: 2592000 },

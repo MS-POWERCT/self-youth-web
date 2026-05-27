@@ -86,6 +86,10 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
+  // 💡 建议: 直接读取 localStorage 而非使用 store，可能导致状态不一致
+  // 💡       建议改为: import { useUserStore } from '../stores/user'
+  // 💡       const userStore = useUserStore()
+  // 💡       const isAuthenticated = !!userStore.token
   const isAuthenticated = localStorage.getItem('user-token')
   const isVisitor = localStorage.getItem('visitor_id')
 

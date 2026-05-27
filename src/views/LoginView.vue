@@ -4,27 +4,27 @@
 
     <div class="login-shell">
       <section class="brand" aria-label="品牌信息">
-        <div class="brand-mark">
+        <div class="brand-mark flex items-center justify-center">
           <img class="brand-logo" src="/logo.png" alt="Logo" />
         </div>
         <div class="brand-title">Self Youth</div>
         <div class="brand-subtitle">更轻快的登录体验 · 三种方式可选</div>
       </section>
 
-      <section class="card" aria-label="登录表单">
+      <section class="card bg-white" aria-label="登录表单">
         <header class="card-header">
-          <div class="card-kicker">欢迎回来</div>
-          <div class="card-title">登录账号</div>
-          <div class="card-meta">
+          <div class="card-kicker text-12">欢迎回来</div>
+          <div class="card-title text-22 font-bold">登录账号</div>
+          <div class="card-meta flex items-center text-12">
             <span class="dot" />
             <span class="mono">{{ apiBaseDisplay }}</span>
           </div>
         </header>
 
-        <div class="mode-row" role="tablist" aria-label="登录方式">
+        <div class="mode-row flex gap-2" role="tablist" aria-label="登录方式">
           <button
             type="button"
-            class="mode-pill"
+            class="mode-pill flex-1 radius-9999 text-12 font-bold"
             :class="{ active: loginMode === 'email_code' }"
             @click="setLoginMode('email_code')"
           >
@@ -32,7 +32,7 @@
           </button>
           <button
             type="button"
-            class="mode-pill"
+            class="mode-pill flex-1 radius-9999 text-12 font-bold"
             :class="{ active: loginMode === 'email_password' }"
             @click="setLoginMode('email_password')"
           >
@@ -41,7 +41,7 @@
           <button
             v-if="web3Support.supported"
             type="button"
-            class="mode-pill"
+            class="mode-pill flex-1 radius-9999 text-12 font-bold"
             :class="{ active: loginMode === 'web3' }"
             @click="setLoginMode('web3')"
           >
@@ -67,12 +67,12 @@
           @login-success="handleLoginSuccess"
         />
 
-        <div class="visitor-login">
-          <button type="button" class="visitor-btn" @click="handleVisitorLogin">
-            <span class="visitor-icon">👤</span>
+        <div class="visitor-login text-center">
+          <button type="button" class="visitor-btn inline-flex items-center gap-2 radius-9999 text-14 font-bold" @click="handleVisitorLogin">
+            <span class="visitor-icon text-16">👤</span>
             <span>游客登录</span>
           </button>
-          <p class="visitor-hint">无需注册，直接体验</p>
+          <p class="visitor-hint text-12">无需注册，直接体验</p>
         </div>
       </section>
     </div>
@@ -85,7 +85,7 @@ import { useRouter } from 'vue-router'
 import EmailCodeLogin from '../components/login/EmailCodeLogin.vue'
 import EmailPasswordLogin from '../components/login/EmailPasswordLogin.vue'
 import Web3Login from '../components/login/Web3Login.vue'
-import { getVisitorId } from '../utils/visitor'
+import { getVisitorId } from '../utils/device'
 import { checkWeb3Support } from '../utils/web3'
 import { showToast } from 'vant'
 import { useUserStore } from '../stores/user'
@@ -159,7 +159,7 @@ onMounted(() => {
   min-height: 100vh;
   position: relative;
   overflow: hidden;
-  color: #0b1220;
+  color: var(--gray900);
 }
 
 .login-bg {
