@@ -4,7 +4,7 @@
     <!-- 记录列表 -->
     <div class="records-container">
       <div class="habit-list">
-        <div class="habit-item" v-for="value in habits" :key="value.id" @click="showRecordForm(value, 'add')">
+        <div class="habit-item bg-gray100" v-for="value in habits" :key="value.id" @click="showRecordForm(value, 'add')">
           <div class="habit-icon">
             <svg class="icon" aria-hidden="true">
               <use :xlink:href="'#' + value.icon" />
@@ -291,14 +291,12 @@ onMounted(() => {
 
 <style scoped>
 .value-habits {
-  background: #ffffff;
   display: flex;
   flex-direction: column;
 }
 
 /* 页面头部 */
 .page-header {
-  background: white;
   padding: 16px 20px;
   text-align: center;
   border-bottom: 1px solid #ebedf0;
@@ -306,15 +304,11 @@ onMounted(() => {
 
 .page-header h2 {
   margin: 0 0 4px 0;
-  font-size: 18px;
   font-weight: 600;
-  color: var(--gray700);
 }
 
 .header-date {
   margin: 0;
-  font-size: 12px;
-  color: var(--gray500);
 }
 
 /* 记录列表容器 */
@@ -330,12 +324,10 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  color: var(--gray500);
 }
 
 .empty-state p {
   margin: 12px 0 0 0;
-  font-size: 14px;
 }
 
 /* 习惯列表 */
@@ -343,7 +335,6 @@ onMounted(() => {
   display: flex;
   gap: 16px;
   padding: 16px;
-  background: var(--white);
   border-radius: 12px;
   margin-bottom: 16px;
   overflow-x: auto;
@@ -365,16 +356,11 @@ onMounted(() => {
   padding: 12px;
   min-width: 80px;
   border-radius: 8px;
-  background: #f8f9fa;
   transition: all 0.2s ease;
   flex-shrink: 0; /* 防止收缩 */
   white-space: nowrap; /* 防止文字换行 */
 }
 
-.habit-item:hover {
-  background: #e8f4ff;
-  transform: translateY(-2px);
-}
 
 .habit-icon {
   display: flex;
@@ -386,12 +372,9 @@ onMounted(() => {
 .habit-icon svg {
   width: 24px;
   height: 24px;
-  color: var(--info-blue);
 }
 
 .habit-name {
-  font-size: 12px;
-  color: var(--gray700);
   text-align: center;
   font-weight: 500;
 }
@@ -402,7 +385,6 @@ onMounted(() => {
 }
 
 .record-item {
-  background: var(--white);
   border-radius: 12px;
   margin-bottom: 12px;
   overflow: hidden;
@@ -424,8 +406,6 @@ onMounted(() => {
 
 .record-habit {
   flex: 1;
-  font-size: 14px;
-  color: var(--gray700);
   font-weight: 500;
 }
 
@@ -434,13 +414,10 @@ onMounted(() => {
   text-align: center;
 }
 .record-value2 {
-  color: var(--danger-pink);
   min-width: 60px;
   text-align: center;
 }
 .record-time {
-  font-size: 12px;
-  color: var(--gray500);
   min-width: 60px;
   text-align: right;
 }
@@ -455,9 +432,7 @@ onMounted(() => {
 }
 
 .header-title {
-  font-size: 16px;
   font-weight: 500;
-  color: var(--gray700);
 }
 
 .header-left .van-icon,
@@ -470,14 +445,11 @@ onMounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  /* 上蓝下浅蓝 */
-  background: linear-gradient(180deg, #aacff1 0%, #c2dbe7 100%);
 }
 
 .form-content {
   flex: 1;
   overflow-y: auto;
-  background: white;
   border-radius: 12px;
   max-height: 70vh;
 }
@@ -487,7 +459,6 @@ onMounted(() => {
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: #f8f9fa;
   border-radius: 8px;
   margin-bottom: 16px;
 }
@@ -495,13 +466,10 @@ onMounted(() => {
 .habit-info-display svg {
   width: 24px;
   height: 24px;
-  color: var(--info-blue);
 }
 
 .habit-info-display span {
-  font-size: 14px;
   font-weight: 500;
-  color: var(--gray700);
 }
 
 .form-fields {

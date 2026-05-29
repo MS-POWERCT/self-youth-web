@@ -12,7 +12,7 @@
         <p>统计数据数量: {{ Object.keys(statsData).length }}</p>
         <p>总打卡次数: {{ totalChecks }}</p>
         <button @click="loadStatsData" style="padding: 5px 10px; margin: 5px;">重新加载数据</button>
-        <div class="debug-scroll">
+        <div class="debug-scroll text-12">
           <p v-for="(count, date) in statsData" :key="date">
             {{ date }}: {{ count }}次
           </p>
@@ -95,6 +95,5 @@ onMounted(() => {
 .debug-scroll {
   max-height: 100px;
   overflow-y: auto;
-  font-size: 12px;
 }
 </style>

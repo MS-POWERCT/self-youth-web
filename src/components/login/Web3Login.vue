@@ -1,6 +1,6 @@
 <template>
   <div class="web3">
-    <div class="web3-copy">
+    <div class="web3-copy text-12 text-gray600 pb-2">
       使用 Web3 钱包进行身份验证，无需邮箱或密码。
     </div>
 
@@ -11,7 +11,7 @@
       placeholder="点击下方按钮连接钱包"
     />
 
-    <div v-if="walletAddress" class="wallet-info">
+    <div v-if="walletAddress" class="wallet-info flex items-center gap-10 p-6">
       <van-tag type="success" size="medium">
         {{ walletName }}
       </van-tag>
@@ -22,7 +22,7 @@
       block
       round
       type="primary"
-      class="primary-btn"
+      class="primary-btn mt-6"
       @click="handleConnect"
       :loading="connecting"
     >
@@ -34,7 +34,7 @@
       block
       round
       type="primary"
-      class="primary-btn"
+      class="primary-btn mt-6"
       @click="handleLogin"
       :loading="logging"
     >
@@ -52,7 +52,7 @@
       断开连接
     </van-button>
 
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-message text-12 text-danger-error p-8 bg-danger-error-light text-center">
       {{ error }}
     </div>
   </div>
@@ -124,7 +124,7 @@ async function handleLogin() {
     }
 
     await userStore.web3Sign()
-    const nonce = userStore.web3_nonce
+    const nonce = userStore.getWeb3Nonce()
 
     const message = `Self Youth Login\n\nAddress: ${fullAddress}\nNonce: ${nonce}`
 
@@ -168,45 +168,25 @@ function formatAddress(address) {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-height: 30vh;
 }
 
 .web3-copy {
-  font-size: 13px;
   line-height: 1.65;
-  color: rgba(11, 18, 32, 0.72);
-  padding: 6px 6px 2px;
 }
 
 .primary-btn {
   margin-top: 6px;
 }
 
-.wallet-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 6px;
-}
-
-.error-message {
-  font-size: 13px;
-  color: var(--danger-error);
-  padding: 8px 6px;
-  background: rgba(238, 10, 36, 0.08);
-  border-radius: 8px;
-  text-align: center;
-}
-
 :deep(.van-field) {
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid rgba(11, 18, 32, 0.08);
-  background: rgba(255, 255, 255, 0.75);
 }
 
 :deep(.van-field__label) {
-  width: 64px;
-  color: rgba(11, 18, 32, 0.62);
-  font-weight: 700;
+  width: 44px;
+  font-weight: var(--number-700);
 }
 </style>

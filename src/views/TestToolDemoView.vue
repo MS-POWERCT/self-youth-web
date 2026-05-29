@@ -9,9 +9,9 @@
 
     <!-- 日期时间选择器测试 -->
     <div class="demo-section bg-white radius-8 p-16 mb-16">
-      <div class="demo-title text-14 text-gray500 mb-12">实际使用示例 - 习惯记录</div>
+      <div class="demo-title text-16 text-gray500 mb-12">实际使用示例 - 习惯记录</div>
       <div class="demo-content flex items-center justify-between flex-wrap gap-12">
-        <div class="date-display text-14 text-gray600">
+        <div class="date-display text-16 text-gray600">
           <span>选择的日期时间：</span>
           <span class="selected-value text-info-primary font-bold">{{ selectedDateTime }}</span>
         </div>
@@ -21,14 +21,14 @@
 
     <!-- 分钟时长选择器测试 - 内联形式 -->
     <div class="demo-section bg-white radius-8 p-16 mb-16">
-      <div class="demo-title text-14 text-gray500 mb-12">分钟时长选择器 - 调研测试（内联形式）</div>
+      <div class="demo-title text-16 text-gray500 mb-12">分钟时长选择器 - 调研测试（内联形式）</div>
       <div class="time-picker-wrapper mb-16">
         <WheelTimePicker
           v-model="selectedDuration"
           @change="handleTimeChange"
         />
       </div>
-      <div class="result-display text-14 text-gray600 text-center">
+      <div class="result-display text-16 text-gray600 text-center">
         <span>当前选择：</span>
         <span class="selected-value text-info-primary font-bold">{{ selectedDuration }} 分钟</span>
       </div>
@@ -43,7 +43,7 @@
 
     <!-- 进度条组件测试 -->
     <div class="demo-section bg-white radius-8 p-16">
-      <div class="demo-title text-14 text-gray500 mb-12">进度条组件测试</div>
+      <div class="demo-title text-16 text-gray500 mb-12">进度条组件测试</div>
       <ProgressBar
         :current="18"
         :total="50"

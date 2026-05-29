@@ -15,7 +15,7 @@
         @click="handleCategoryClick(category.id)"
       >
         <IconifyIcon :icon="category.icon" width="32" class="mb-2"/>
-        <div class="category-name text-white text-18 font-bold">{{ category.name }}</div>
+        <div class="category-name text-white text-16 font-bold">{{ category.name }}</div>
       </div>
     </div>
 
@@ -126,8 +126,8 @@ onMounted(() => {
 .mark-view {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 20% 20%, rgba(255,107,107,0.5) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(121, 236, 228, 0.5) 0%, transparent 50%);
+    radial-gradient(circle at 20% 20%, rgba(237, 131, 131, 0.5) 0%, transparent 75%),
+    radial-gradient(circle at 80% 20%, rgba(121, 236, 228, 0.5) 0%, transparent 75%);
   background-blend-mode: screen;
 }
 

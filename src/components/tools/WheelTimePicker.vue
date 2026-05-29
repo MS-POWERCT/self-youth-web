@@ -253,14 +253,10 @@ onUnmounted(() => {
   flex-shrink: 0;
 
   .picker-title {
-    font-size: 16px;
     font-weight: 600;
-    color: var(--gray700);
   }
 
   .keyboard-input {
-    font-size: 14px;
-    color: var(--info-primary);
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
@@ -322,16 +318,12 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  color: var(--gray500);
   transition: all 0.2s ease;
   width: 100%;
   text-align: center;
 }
 
 .wheel-item.active {
-  color: var(--info-primary);
-  font-size: 22px;
   font-weight: 600;
 }
 
@@ -342,8 +334,6 @@ onUnmounted(() => {
   flex-shrink: 0;
 
   .unit {
-    font-size: 16px;
-    color: var(--gray600);
     font-weight: 500;
   }
 }
@@ -400,16 +390,12 @@ onUnmounted(() => {
   }
 
   .display-value {
-    font-size: 36px;
     font-weight: 700;
-    color: var(--info-primary);
     min-width: 80px;
     text-align: center;
   }
 
   .display-unit {
-    font-size: 18px;
-    color: var(--gray600);
     font-weight: 500;
   }
 }

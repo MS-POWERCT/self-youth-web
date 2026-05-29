@@ -29,30 +29,3 @@
     </van-cell-group> -->
   </div>
 </template>
-
-<script setup>
-// import { Icon } from '@iconify/vue'
-// 如果需要处理点击事件，可以添加相应的方法
-// const handleCellClick = (path) => {
-//   router.push(path)
-// }
-</script>
-
-<style scoped>
-.find-container {
-  min-height: 100vh;
-}
-
-.transparent-nav-bar {
-  background-color: transparent !important;
-  border-bottom: none !important;
-}
-
-:deep(.van-cell__title) {
-  font-size: 16px;
-}
-
-:deep(.van-cell) {
-  align-items: center;
-}
-</style>

@@ -2,8 +2,8 @@
   <van-popup v-model:show="visible" position="bottom" round :style="{ height: '18rem' }" @closed="onPopupClosed">
     <div class="picker-header">
       <span class="picker-cancel" @click="handleCancel">取消</span>
-      <span class="picker-title">选择日期时间</span>
-      <span class="picker-confirm" @click="handleConfirm">确定</span>
+      <span class="font-bold">选择日期时间</span>
+      <span class="text-primary font-bold" @click="handleConfirm">确定</span>
     </div>
     <div class="wheel-container">
       <!-- 日期滚轮 -->
@@ -27,11 +27,6 @@
         </div>
       </div>
 
-      <!-- 分隔符 -->
-      <div class="wheel-separator">
-        <span>:</span>
-      </div>
-
       <!-- 小时滚轮 -->
       <div class="wheel-wrapper">
         <div
@@ -53,11 +48,6 @@
         </div>
       </div>
 
-      <!-- 分隔符 -->
-      <div class="wheel-separator">
-        <span>:</span>
-      </div>
-
       <!-- 分钟滚轮 -->
       <div class="wheel-wrapper">
         <div
@@ -71,7 +61,7 @@
           <div
             v-for="(item, index) in minuteOptions"
             :key="index"
-            class="wheel-item"
+            class="wheel-item text-gray500"
             :class="{ active: index === selectedMinuteIndex }"
           >
             {{ item }}
@@ -390,38 +380,22 @@ onUnmounted(() => {
   justify-content: space-between;
   padding: 16px;
   border-bottom: 1px solid #eee;
-  background: #fff;
+  background: var(--white);
 
   .picker-cancel,
   .picker-confirm {
-    font-size: 16px;
     width: 60px;
     text-align: center;
   }
 
-  .picker-cancel {
-    color: #999;
-  }
-
-  .picker-confirm {
-    color: #3b82f6;
-    font-weight: 500;
-  }
-
-  .picker-title {
-    font-size: 16px;
-    font-weight: 500;
-    color: #333;
-  }
 }
 
 .wheel-container {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   height: calc(100% - 60px);
-  padding: 20px 0;
-  background: #f8f8f8;
+  background: var(--gray100);
   position: relative;
 }
 
@@ -443,32 +417,14 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  color: #999;
   transition: all 0.2s ease;
 }
 
 .wheel-item.active {
-  color: #333;
-  font-size: 16px;
-  font-weight: 500;
+  font-weight: var(--number-700);
+  transform: scale(1.2);
 }
 
-/* 日期滚轮项 - 字体更小 */
-.wheel-item.date-item {
-  font-size: 14px;
-}
-
-.wheel-item.date-item.active {
-  font-size: 16px;
-}
-
-.wheel-separator {
-  font-size: 22px;
-  font-weight: 500;
-  color: #333;
-  padding: 0 8px;
-}
 
 .picker-mask {
   position: absolute;
@@ -476,7 +432,6 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   height: calc(100% - 60px);
-  background: linear-gradient(to bottom, rgba(248, 248, 248, 0.95), transparent 20%, transparent 80%, rgba(248, 248, 248, 0.95));
   pointer-events: none;
   z-index: 10;
 }

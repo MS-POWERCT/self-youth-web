@@ -1,5 +1,5 @@
 <template>
-  <div class="check-habits">
+  <div>
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
       <!-- 习惯列表 -->
       <div class="habits-list">
@@ -118,14 +118,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.check-habits {
-  background: #ffffff;
-  position: relative;
-}
 
 /* 页面头部 */
 .page-header {
-  background: rgba(255, 255, 255, 0.9);
   margin: 12px;
   border-radius: 16px;
   padding: 20px;
@@ -134,15 +129,11 @@ onMounted(() => {
 
 .header-title h2 {
   margin: 0 0 8px 0;
-  font-size: 20px;
   font-weight: 600;
-  color: var(--gray700);
 }
 
 .header-date {
   margin: 0;
-  font-size: 14px;
-  color: var(--gray600);
 }
 
 /* 空状态 */
@@ -161,13 +152,10 @@ onMounted(() => {
 
 .empty-content h3 {
   margin: 16px 0 8px 0;
-  font-size: 16px;
-  color: var(--gray700);
 }
 
 .empty-content p {
   margin: 0 0 20px 0;
-  color: var(--gray600);
 }
 
 /* 习惯列表 */
@@ -182,7 +170,6 @@ onMounted(() => {
   justify-content: space-between;
   padding: 16px;
   margin-bottom: 8px;
-  background: var(--white);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   border: 1px solid var(--border-light);
@@ -195,8 +182,6 @@ onMounted(() => {
 }
 
 .habit-item.checked {
-  background: #f8fffe;
-  border-color: var(--border-light-blue);
   box-shadow: 0 2px 12px rgba(7, 193, 96, 0.08);
 }
 
@@ -221,17 +206,13 @@ onMounted(() => {
 
 .habit-name {
   margin: 0 0 4px 0;
-  font-size: 16px;
   font-weight: 500;
-  color: var(--gray700);
 }
 
 .habit-streak {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 12px;
-  color: var(--danger-pink);
   font-weight: 500;
 }
 
@@ -248,14 +229,6 @@ onMounted(() => {
   .habit-item {
     padding: 12px;
     margin-bottom: 6px;
-  }
-
-  .habit-name {
-    font-size: 15px;
-  }
-
-  .habit-streak {
-    font-size: 11px;
   }
 }
 

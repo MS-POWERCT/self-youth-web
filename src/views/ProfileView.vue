@@ -1,6 +1,9 @@
 <template>
-  <div class="profile-container bg-gray200">
+  <div class="bg-gray300">
 
+    <br/>
+    <br/>
+    <br/>
     <!-- <van-nav-bar title="个人中心" left-arrow @click-left="goBack" /> -->
     <div v-if="userStore.token && userStore.user" class="profile-content p-20 flex flex-col items-center">
       <van-image
@@ -11,10 +14,10 @@
       />
 
 
-      <!-- <h2 class="username">{{ userStore.user.name || '用户名' }}</h2> -->
+      <h2 class="username">{{ userStore.user.name || '用户名' }}</h2>
       <van-cell-group inset>
         <!-- <van-cell title="邮箱" :value="userStore.user.email || '未设置'" /> -->
-        <van-cell
+        <!-- <van-cell
           title="习惯管理"
           is-link
           @click="$router.push('/habits')"
@@ -22,7 +25,7 @@
           <template #right-icon>
             <van-icon name="arrow" />
           </template>
-        </van-cell>
+        </van-cell> -->
 
 
         <!-- 测试组件 -->
@@ -31,9 +34,6 @@
           is-link
           @click="$router.push('/demo/test-tool')"
         >
-          <template #right-icon>
-            <van-icon name="arrow" />
-          </template>
         </van-cell>
       </van-cell-group>
 
@@ -82,15 +82,3 @@ const handleLogout = () => {
   router.push('/login')
 }
 </script>
-
-<style scoped>
-/* 保留注释掉的样式，因为模板中对应的元素也被注释了 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-</style>

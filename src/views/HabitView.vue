@@ -4,6 +4,12 @@
       <br/>
         <IconifyIcon icon="fluent-color:circle-multiple-hint-checkmark-48" width="16" class="mr-2"/>
         习惯管理
+        <van-icon
+          name="edit"
+          size="18"
+          @click="$router.push('/habits/edit?tab=' + (activeTab === 'check' ? '1' : '2'))"
+          style="cursor: pointer;"
+        />
     </div>
       <!-- left-arrow
       @click-left="$router.go(-1)" -->
@@ -28,7 +34,7 @@
     </div>
 
     <!-- 统计入口 -->
-    <div class="stats-button" @click="$router.push('/habits/stats')">
+    <div class="stats-button text-white" @click="$router.push('/habits/stats')">
       <van-icon name="chart-trending-o" size="24" />
     </div>
 
@@ -76,7 +82,6 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
   cursor: pointer;
   transition: all 0.3s ease;

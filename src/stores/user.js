@@ -23,6 +23,10 @@ export const useUserStore = defineStore('user', {
     setWeb3Nonce(web3Nonce) {
       // 💡 建议: nonce 可能需要区分是原始响应还是 data.nonce，建议统一存储结构
       this.web3_nonce = web3Nonce
+      localStorage.setItem('web3_nonce', web3Nonce)
+    },
+    getWeb3Nonce() {
+      return localStorage.getItem('web3_nonce') || null
     },
     async login(credentials) {
       try {

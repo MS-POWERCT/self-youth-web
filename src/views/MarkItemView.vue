@@ -1,21 +1,21 @@
 <template>
-  <div class="mark-detail-view">
+  <div class="mark-detail-view bg-gray300">
     <van-nav-bar
       :title="moduleName"
       left-arrow
       @click-left="$router.go(-1)"
     />
     <div class="bg-white radius-bottom-12 p-8">
-      <div class="text-30 font-bold">{{ moduleName }}</div>
-      <div class="text-14">{{ moduleTitle }}</div>
+      <div class="text28 font-bold">{{ moduleName }}</div>
+      <div class="text-16">{{ moduleTitle }}</div>
       <ProgressBar
         :current="itemListCurrent"
         :total="itemListTotal"
         label="已看进度"
       />
     </div>
-    <div class="item-list">
-      <div class="filter-tabs">
+    <div class="p-16">
+      <div class="filter-tabs text-14">
         <div
           class="filter-tab"
           :class="{ active: filterStatus === 'all' }"
@@ -46,7 +46,7 @@
         </div>
       </div>
 
-      <div v-for="(item, index) in filteredList" :key="item.id" class="item-card flex items-center justify-between">
+      <div v-for="(item, index) in filteredList" :key="item.id" class="text-gray700 bg-white radius-12 mb-8 p-8 text-16 flex items-center justify-between">
         <div class="flex items-center">
           <van-image
             radius="8"
@@ -55,7 +55,7 @@
             loading-icon="photo-o"
             :src="item.img_url"
           />
-          <div class="item-name ml-8" :class="{ 'small-font': item.title.length > 8 }">
+          <div class="item-name text-16 ml-8" :class="{ 'small-font': item.title.length > 8 }">
             <div>
               {{ (index + 1) + '.' + item.title }}
               <svg class="icon" aria-hidden="true" @click="handleCopy(item.title)">
@@ -63,25 +63,25 @@
               </svg>
             </div>
             <!-- 根据不同类型显示不同 -->
-            <div class="item-desc">
+            <div class="item-desc mt-16 text-12">
               <!-- 评分 -->
-              <div v-if="item.star > 0">{{ item.star_ }}</div>
+              <div v-if="item.star > 0" class="font-bold">{{ item.star_ }}</div>
               <div v-if="item.desc" @click="itemDescClick(item.desc)">{{ item.desc_ }}</div>
             </div>
           </div>
         </div>
 
         <div v-if="item.mark_type == 0" class="mr-2">
-          <div class="item-btn bg-accent" @click="markItem(item, 1)">{{ moduleTypeList[0] }}</div>
-          <div class="item-btn bg-primary" @click="markItem(item, 2)">{{ moduleTypeList[1] }}</div>
+          <div class="item-btn text-12 text-white bg-yellow-gold" @click="markItem(item, 1)">{{ moduleTypeList[0] }}</div>
+          <div class="item-btn text-12 text-white bg-primary" @click="markItem(item, 2)">{{ moduleTypeList[1] }}</div>
         </div>
-        <div v-else class="mr-2">
+        <div v-else class="mr-2 text-14">
           <!-- 可以删除 使用一个不太明显的x图标 -->
-          <span v-if="item.mark_type === 1" class="mark-status text-accent">
+          <span v-if="item.mark_type === 1" class="text-bold text-yellow-gold">
             {{ moduleTypeList[0] }}
-            <van-icon name="close" class="text-accent" @click="markItem(item, 0)" size="16"/>
+            <van-icon name="close" class="text-yellow-gold" @click="markItem(item, 0)" size="16"/>
           </span>
-          <span v-else class="mark-status text-primary">
+          <span v-else class="text-bold text-primary">
             {{ moduleTypeList[1] }}
             <van-icon name="close" class="text-primary" @click="markItem(item, 0)" size="16"/>
           </span>
@@ -90,7 +90,8 @@
       </div>
 
 
-      <van-back-top right="42%" bottom="10vh" class="custom-back-top">
+
+      <van-back-top right="42%" bottom="10vh">
         <IconifyIcon icon="glyphs:arrow-bold" width="24" />
       </van-back-top>
     </div>
@@ -215,7 +216,7 @@ onMounted(() => {
   moduleTitle.value = route.query.title || '详情'
 
   // 这里进行加载用户操作的名称，比如moduleid=1和2 ，都是想看。已看，未看，如果是3 就是想去，已去，未去，4 完成，未完成，想完成
-  moduleTypeList.value = moduleTypeConfig.value[markStore.activeCategoryId] || []
+  moduleTypeList.value = moduleTypeConfig.value[markStore.getActiveCategoryId()] || []
   getItemList()
 })
 </script>
@@ -223,11 +224,6 @@ onMounted(() => {
 <style lang="scss" scoped>
 .mark-detail-view {
   min-height: 100vh;
-  background: #f5f7fa;
-}
-
-.item-list {
-  padding: 16px;
 }
 
 .filter-tabs {
@@ -242,8 +238,6 @@ onMounted(() => {
   padding: 6px 12px;
   border-radius: 8px;
   background: var(--white);
-  color: var(--gray600);
-  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s;
 
@@ -253,60 +247,25 @@ onMounted(() => {
   }
 }
 
-.item-card {
-  background: var(--white);
-  border-radius: 12px;
-  padding: 8px;
-  margin-bottom: 12px;
-  font-size: 14px;
-  color: var(--gray700);
-}
-
-.item-name {
-  font-size: 14px;
-  color: var(--gray700);
-
-  &.small-font {
-    font-size: 12px;
-  }
-}
 
 .item-desc{
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
-  // 第一个div 处理
-  div:first-child{
-    color: var(--secondary);
-    font-weight: 500;
-  }
-  // 第二个div 处理
-  div:nth-child(2){
-    color: var(--gray500);
-  }
+
 }
 
 .item-btn {
   border-radius: 4px;
-  font-size: 12px;
   font-weight: 600;
   padding: 2px 6px;
   margin-top: 6px;
-  color: var(--white);
 }
 
-.mark-status {
-  font-weight: 800;
-  font-size: 12px;
-}
 
 .im{
   width: 80px;
   border-radius: 12px;
 }
 
-.custom-back-top{
-  background: #f0f1f3;
-}
 </style>

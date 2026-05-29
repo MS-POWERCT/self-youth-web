@@ -4,7 +4,7 @@
       <span class="progress-label">{{ label }}</span>
       <span class="progress-percent">{{ percent }}%</span>
     </div>
-    <div class="progress-track">
+    <div class="progress-track bg-gray300">
       <div
         class="progress-fill"
         :style="{ width: `${percent}%` }"
@@ -55,19 +55,15 @@ const percent = computed(() => {
 }
 
 .progress-label {
-  font-size: 12px;
   font-weight:500;
 }
 
 .progress-percent {
-  font-size: 26px;
   font-weight:900;
-  color: var(--gray700);
 }
 
 .progress-track {
   height: 8px;
-  background: var(--gray100);
   border-radius: 6px;
   overflow: hidden;
   position: relative;

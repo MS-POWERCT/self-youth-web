@@ -1,5 +1,5 @@
 <template>
-  <div class="habit-edit-page bg-gray50" :class="$attrs.class">
+  <div class="habit-edit-page bg-gray100" :class="$attrs.class">
     <van-nav-bar
       :title="activeTab == 1 ? '打卡习惯' : '数值习惯'"
       left-arrow
@@ -18,7 +18,7 @@
            <svg class="icon" aria-hidden="true">
                 <use :xlink:href="'#' + habit.icon" />
               </svg>
-          <span class="text-14 text-gray700">{{ habit.name }}</span>
+          <span class="text-16 text-gray700">{{ habit.name }}</span>
           <van-tag v-if="habit.fixed" type="warning" size="small">系统默认</van-tag>
         </div>
         <div class="habit-actions flex gap-2">
@@ -285,7 +285,6 @@ onMounted(() => {
 
 <style scoped>
 .habit-edit-page {
-  background: #f7f8fa;
   min-height: 100vh;
 }
 .habits-list {
@@ -296,7 +295,6 @@ onMounted(() => {
   text-align: center;
   padding: 8px;
   margin-bottom: 12px;
-  background: white;
   border-radius: 8px;
   border: 1px solid #ebedf0;
   transition: all 0.3s ease;
@@ -308,24 +306,16 @@ onMounted(() => {
   justify-content: space-between;
   padding: 16px;
   margin-bottom: 12px;
-  background: white;
   border-radius: 8px;
   border: 1px solid #ebedf0;
   transition: all 0.3s ease;
 }
 
 .habit-item.hidden {
-  background: #f5f5f5;
+  background: var(--gray300);
   opacity: 0.6;
 }
 
-.habit-item.hidden .habit-info {
-  color: #c8c9cc;
-}
-
-.habit-item.hidden .van-icon {
-  color: #c8c9cc !important;
-}
 
 .habit-item:last-child {
   margin-bottom: 0;
@@ -338,11 +328,6 @@ onMounted(() => {
   flex: 1;
 }
 
-.habit-info span {
-  font-size: 14px;
-  color: #323233;
-}
-
 .habit-actions {
   display: flex;
   gap: 8px;
@@ -350,7 +335,6 @@ onMounted(() => {
 
 .habit-actions .van-button {
   min-width: 60px;
-  font-size: 12px;
 }
 
 /* 添加弹出窗样式 */
@@ -367,9 +351,7 @@ onMounted(() => {
 
 .popup-header h3 {
   margin: 0;
-  font-size: 16px;
   font-weight: 600;
-  color: #323233;
 }
 
 .popup-content {
@@ -386,11 +368,9 @@ onMounted(() => {
 }
 
 .picker-title {
-  font-size: 16px;
   font-weight: 600;
   text-align: center;
   margin-bottom: 16px;
-  color: #323233;
 }
 
 .icon-grid {
@@ -414,13 +394,12 @@ onMounted(() => {
 }
 
 .icon-item:hover {
-  border-color: #1989fa;
-  background: #f0f9ff;
+  background: var(--primary100);
 }
 
 .icon-item.active {
   border-color: #1989fa;
-  background: #e6f7ff;
+  background: var(--primary100);
 }
 
 .icon-item svg {
@@ -430,8 +409,6 @@ onMounted(() => {
 }
 
 .icon-item span {
-  font-size: 10px;
-  color: #646566;
   text-align: center;
 }
 

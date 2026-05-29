@@ -2,7 +2,7 @@
   <div class="moments-container bg-gray50">
     <div class="background-image"></div>
 
-    <div class="nav-bar flex justify-between items-center px-16">
+    <div class="nav-bar text-24 flex justify-between items-center px-16">
       <Icon icon="carbon:chevron-left" @click="goBack" width="24" class="nav-icon" height="24" />
       <Icon icon="ion:camera" @click="publishMoment" width="24" class="nav-icon" height="24" />
     </div>
@@ -272,8 +272,6 @@ const submitComment = async () => {
   height: 44px;
   z-index: 10;
   transition: background-color 0.3s;
-  font-size: 24px;
-  color: #fff;
 }
 
 .user-info {

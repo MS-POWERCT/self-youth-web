@@ -10,6 +10,14 @@ export const useMarkStore = defineStore('mark', {
     loading: false
   }),
   actions: {
+    // 保存activeCategoryId 和获取
+    setActiveCategoryId(categoryId) {
+      this.activeCategoryId = categoryId
+      localStorage.setItem('activeCategoryId', categoryId)
+    },
+    getActiveCategoryId() {
+      return localStorage.getItem('activeCategoryId') || 0
+    },
     async fetchCategoryList() {
       try {
         this.loading = true
@@ -29,7 +37,7 @@ export const useMarkStore = defineStore('mark', {
         this.loading = true
         const response = await markApi.getModuleList(categoryId)
         this.moduleList = response || []
-        this.activeCategoryId = categoryId
+        this.setActiveCategoryId(categoryId)
         return response
       } catch (error) {
         console.error('获取模块列表失败', error)
@@ -87,7 +95,7 @@ export const useMarkStore = defineStore('mark', {
       this.categoryList = []
       this.moduleList = []
       this.itemList = []
-      this.activeCategoryId = null
+      this.setActiveCategoryId(null)
     }
   }
 })

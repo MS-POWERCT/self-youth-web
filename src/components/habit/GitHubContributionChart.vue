@@ -226,8 +226,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
 .github-contribution-chart {
-  background: white;
   border-radius: 12px;
   padding: 20px;
   margin: 16px 12px;
@@ -243,17 +243,13 @@ onMounted(() => {
 
 .chart-title {
   margin: 0;
-  font-size: 16px;
   font-weight: 600;
-  color: #1a1a1a;
 }
 
 .chart-legend {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
-  color: #666;
 }
 
 .legend-levels {
@@ -267,11 +263,6 @@ onMounted(() => {
   border-radius: 2px;
 }
 
-.level-0 { background: #ebedf0; }
-.level-1 { background: #9be9a8; }
-.level-2 { background: #40c463; }
-.level-3 { background: #30a14e; }
-.level-4 { background: #216e39; }
 
 .chart-container {
   position: relative;
@@ -286,8 +277,6 @@ onMounted(() => {
 
 .month-label {
   position: absolute;
-  font-size: 12px;
-  color: #666;
   white-space: nowrap;
 }
 
@@ -305,8 +294,6 @@ onMounted(() => {
 
 .weekday-label {
   height: 12px;
-  font-size: 10px;
-  color: #666;
   line-height: 12px;
   text-align: right;
   width: 20px;
@@ -341,25 +328,19 @@ onMounted(() => {
   background: transparent;
 }
 
-.day-cell.level-0 { background: #ebedf0; }
-.day-cell.level-1 { background: #9be9a8; }
-.day-cell.level-2 { background: #40c463; }
-.day-cell.level-3 { background: #30a14e; }
-.day-cell.level-4 { background: #216e39; }
 
-.day-count {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #f66;
-  color: white;
-  font-size: 8px;
-  padding: 1px 3px;
-  border-radius: 8px;
-  font-weight: bold;
-  min-width: 12px;
-  text-align: center;
-}
+.level-0 { background: var(--github-contribution-color); }
+.level-1 { background: var(--github-contribution-color-1); }
+.level-2 { background: var(--github-contribution-color-2); }
+.level-3 { background: var(--github-contribution-color-3); }
+.level-4 { background: var(--github-contribution-color-4); }
+
+.day-cell.level-0 { background: var(--github-contribution-color); }
+.day-cell.level-1 { background: var(--github-contribution-color-1); }
+.day-cell.level-2 { background: var(--github-contribution-color-2); }
+.day-cell.level-3 { background: var(--github-contribution-color-3); }
+.day-cell.level-4 { background: var(--github-contribution-color-4); }
+
 
 .chart-summary {
   margin-top: 16px;
@@ -368,13 +349,5 @@ onMounted(() => {
   text-align: center;
 }
 
-.summary-text {
-  font-size: 14px;
-  color: #666;
-}
 
-.summary-text strong {
-  color: #216e39;
-  font-weight: 600;
-}
 </style>

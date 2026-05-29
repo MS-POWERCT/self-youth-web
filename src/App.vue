@@ -57,9 +57,6 @@ body {
   padding: 0;
 }
 
-.content {
-  padding-bottom: 50px; /* 为底部导航留出空间 */
-}
 .van-tabbar {
   position: fixed;
   bottom: 0;

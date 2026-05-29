@@ -79,6 +79,7 @@ const handleLogin = async () => {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-height: 30vh;
 }
 
 .primary-btn {
@@ -89,12 +90,10 @@ const handleLogin = async () => {
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid rgba(11, 18, 32, 0.08);
-  background: rgba(255, 255, 255, 0.75);
 }
 
 :deep(.van-field__label) {
-  width: 64px;
-  color: rgba(11, 18, 32, 0.62);
-  font-weight: 700;
+  width: 44px;
+  font-weight: var(--number-700);
 }
 </style>
