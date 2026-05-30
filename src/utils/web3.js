@@ -134,7 +134,6 @@ export function signMessage(message) {
         reject(new Error('请先连接钱包'))
         return
       }
-
       const signature = await window.ethereum.request({
         method: 'personal_sign',
         params: [message, accounts[0]]

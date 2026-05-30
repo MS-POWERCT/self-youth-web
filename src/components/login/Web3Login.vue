@@ -122,7 +122,7 @@ async function handleLogin() {
     await userStore.web3Sign()
     const nonce = userStore.web3_nonce
 
-    const message = `Self Youth Login\n\nAddress: ${fullAddress}\nNonce: ${nonce}`
+    const message = userStore.web3_message
 
     const signature = await signMessage(message)
 

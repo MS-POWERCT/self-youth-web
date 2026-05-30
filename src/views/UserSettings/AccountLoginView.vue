@@ -380,7 +380,7 @@ async function handleBindWeb3() {
     await userStore.web3Sign()
     const nonce = userStore.web3_nonce
 
-    const message = `Self Youth Bind\n\nAddress: ${fullAddress}\nNonce: ${nonce}`
+    const message = `Security code : ${nonce}`
     const signature = await signMessage(message)
 
     await userApi.bindAddress({
