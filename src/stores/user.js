@@ -9,7 +9,7 @@ export const useUserStore = defineStore('user', {
     allWallet: JSON.parse(localStorage.getItem('allWallet')) || null,
     token: localStorage.getItem('user-token') || null,
     user_sign: null,
-    web3_nonce: null,
+    web3_nonce: localStorage.getItem('web3_nonce') || null
   }),
   actions: {
     setUser(userData) {
@@ -24,9 +24,6 @@ export const useUserStore = defineStore('user', {
       // 💡 建议: nonce 可能需要区分是原始响应还是 data.nonce，建议统一存储结构
       this.web3_nonce = web3Nonce
       localStorage.setItem('web3_nonce', web3Nonce)
-    },
-    getWeb3Nonce() {
-      return localStorage.getItem('web3_nonce') || null
     },
     async login(credentials) {
       try {
@@ -72,7 +69,7 @@ export const useUserStore = defineStore('user', {
     async web3Sign() {
       try {
         const nonceResult = await userApi.web3Sign()
-        this.setNonce(nonceResult)
+        this.setWeb3Nonce(nonceResult)
       } catch (error) {
         console.error('web3Sign failed', error)
         throw error
@@ -95,6 +92,7 @@ export const useUserStore = defineStore('user', {
       this.web3_nonce = null
       localStorage.removeItem('user-token')
       localStorage.removeItem('user')
+      localStorage.removeItem('web3_nonce')
     },
   },
 })

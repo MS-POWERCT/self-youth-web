@@ -4,7 +4,12 @@
     <van-cell-group>
       <van-cell title="情侣圈" is-link to="/find/moments">
         <template #icon>
-          <IconifyIcon icon="fluent-color:people-chat-24" class="cell-icon mr-10 text-pink" width="24" height="24" />
+          <IconifyIcon
+            icon="fluent-color:people-chat-24"
+            class="cell-icon mr-10 text-pink"
+            width="24"
+            height="24"
+          />
         </template>
       </van-cell>
     </van-cell-group>

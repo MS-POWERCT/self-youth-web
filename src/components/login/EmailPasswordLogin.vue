@@ -79,7 +79,7 @@ const handleLogin = async () => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 30vh;
+  min-height: 32vh;
 }
 
 .primary-btn {

@@ -11,7 +11,7 @@
           @click="toggleCheck(habit)"
         >
           <div class="habit-left">
-            <div class="habit-icon">
+            <div class="mr-12">
               <van-icon
                 :name="isCheckedToday(habit.id) ? 'success' : 'circle'"
                 :color="isCheckedToday(habit.id) ? '#07c160' : '#c8c9cc'"
@@ -22,7 +22,7 @@
               <svg class="icon" aria-hidden="true">
                 <use :xlink:href="'#' + habit.icon" />
               </svg>
-              <h4 class="habit-name">{{ habit.name }}</h4>
+              <h4 class="habit-name font-bold">{{ habit.name }}</h4>
               <div class="habit-streak" v-if="habit.streak > 0">
                 <van-icon name="fire" color="#ff6b6b" size="12" />
                 <span>{{ habit.streak }}天连续</span>
@@ -30,7 +30,7 @@
             </div>
           </div>
 
-          <div class="habit-right">
+          <div class="ml-12">
             <van-button
               size="small"
               round
@@ -121,20 +121,12 @@ onMounted(() => {
 
 /* 页面头部 */
 .page-header {
-  margin: 12px;
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 
-.header-title h2 {
-  margin: 0 0 8px 0;
-  font-weight: 600;
-}
 
-.header-date {
-  margin: 0;
-}
 
 /* 空状态 */
 .empty-state {
@@ -148,14 +140,6 @@ onMounted(() => {
 .empty-content {
   text-align: center;
   padding: 30px 20px;
-}
-
-.empty-content h3 {
-  margin: 16px 0 8px 0;
-}
-
-.empty-content p {
-  margin: 0 0 20px 0;
 }
 
 /* 习惯列表 */
@@ -196,17 +180,8 @@ onMounted(() => {
   flex: 1;
 }
 
-.habit-icon {
-  margin-right: 12px;
-}
-
 .habit-info {
   flex: 1;
-}
-
-.habit-name {
-  margin: 0 0 4px 0;
-  font-weight: 500;
 }
 
 .habit-streak {
@@ -216,9 +191,6 @@ onMounted(() => {
   font-weight: 500;
 }
 
-.habit-right {
-  margin-left: 12px;
-}
 
 /* 响应式设计 */
 @media (max-width: 480px) {

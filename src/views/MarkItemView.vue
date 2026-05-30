@@ -6,8 +6,9 @@
       @click-left="$router.go(-1)"
     />
     <div class="bg-white radius-bottom-12 p-8">
-      <div class="text28 font-bold">{{ moduleName }}</div>
-      <div class="text-16">{{ moduleTitle }}</div>
+      <br/>
+      <!-- <div class="text28 font-bold">{{ moduleName }}</div> -->
+      <div class="text-16 ml-8">{{ moduleTitle }}</div>
       <ProgressBar
         :current="itemListCurrent"
         :total="itemListTotal"
@@ -216,7 +217,7 @@ onMounted(() => {
   moduleTitle.value = route.query.title || '详情'
 
   // 这里进行加载用户操作的名称，比如moduleid=1和2 ，都是想看。已看，未看，如果是3 就是想去，已去，未去，4 完成，未完成，想完成
-  moduleTypeList.value = moduleTypeConfig.value[markStore.getActiveCategoryId()] || []
+  moduleTypeList.value = moduleTypeConfig.value[markStore.activeCategoryId] || []
   getItemList()
 })
 </script>

@@ -51,6 +51,7 @@ import {
 // 1. 引入 Capacitor 核心和平台判断
 import { Capacitor } from '@capacitor/core'
 
+
 async function initApp() {
   const app = createApp(App)
   const pinia = createPinia()

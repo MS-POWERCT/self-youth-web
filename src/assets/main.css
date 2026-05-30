@@ -106,10 +106,12 @@
   --number-900: 900;
 
   /* 圆角 */
-  --radius-4: 0.28rem;
-  --radius-8: 0.57rem;
-  --radius-12: 0.85rem;
-  --radius-16: 1.14rem;
+  --radius-4: 4px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-20: 20px;
+  --radius-24: 24px;
   --radius-9999: 9999px;
 }
 
@@ -261,6 +263,12 @@
 .radius-16 {
   border-radius: var(--radius-16);
 }
+.radius-20 {
+  border-radius: var(--radius-20);
+}
+.radius-24 {
+  border-radius: var(--radius-24);
+}
 
 .radius-9999 {
   border-radius: var(--radius-9999);
@@ -387,6 +395,22 @@
 
 .mr-8 {
   margin-right: var(--px-8);
+}
+
+.mr-12 {
+  margin-right: var(--px-12);
+}
+
+.mr-16 {
+  margin-right: var(--px-16);
+}
+
+.mr-20 {
+  margin-right: var(--px-20);
+}
+
+.mr-24 {
+  margin-right: var(--px-24);
 }
 .mx-auto {
   margin-left: auto;

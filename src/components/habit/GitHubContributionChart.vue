@@ -1,7 +1,7 @@
 <template>
   <div class="github-contribution-chart">
     <div class="chart-header">
-      <h4 class="chart-title">{{ title }}</h4>
+      <h4 class="chart-title font-bold">{{ title }}</h4>
       <div class="chart-legend">
         <span class="legend-text">少</span>
         <div class="legend-levels">
@@ -230,7 +230,6 @@ onMounted(() => {
 .github-contribution-chart {
   border-radius: 12px;
   padding: 20px;
-  margin: 16px 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
@@ -239,11 +238,6 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
-}
-
-.chart-title {
-  margin: 0;
-  font-weight: 600;
 }
 
 .chart-legend {

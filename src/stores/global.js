@@ -4,7 +4,7 @@ import { globalApi } from '../api/global'
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({
-    initData: null,
+    initData: JSON.parse(localStorage.getItem('initData')) || null,
     isLoading: false,
   }),
   actions: {
@@ -13,6 +13,8 @@ export const useGlobalStore = defineStore('global', {
       try {
         const response = await globalApi.getInitData()
         this.initData = response
+        // 永久存储初始化数据
+        localStorage.setItem('initData', JSON.stringify(response))
       } catch (error) {
         console.error('Failed to fetch init data:', error)
       } finally {

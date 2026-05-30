@@ -41,17 +41,34 @@ export const userApi = {
       data,
     })
   },
-
   getUserInfo() {
     return request({
       url: '/api/my/getMyInfo',
       method: 'post',
     })
   },
-  getTest() {
+  // 设置/修改密码
+  setPassword(data) {
     return request({
-      url: '/getTest',
-      method: 'get',
+      url: '/api/my/changePassword',
+      method: 'post',
+      data,
     })
   },
+  // 绑定邮箱
+  bindEmail(data) {
+    return request({
+      url: '/api/my/bindEmail',
+      method: 'post',
+      data,
+    })
+  },
+  // 绑定地址
+  bindAddress(data) {
+    return request({
+      url: '/api/my/bindAddress',
+      method: 'post',
+      data,
+    })
+  }
 }

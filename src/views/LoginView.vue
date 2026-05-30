@@ -11,7 +11,7 @@
         <div class="brand-subtitle text-gray300">更轻快的登录体验 · 三种方式可选</div>
       </section>
 
-      <section class="card bg-gray300"  aria-label="登录表单">
+      <section class="card bg-gray300" aria-label="登录表单">
         <header class="card-header">
           <div class="card-kicker text-12">欢迎回来</div>
           <div class="card-title text-24 font-bold">登录账号</div>
@@ -45,21 +45,19 @@
           </button>
         </div>
 
-        <EmailCodeLogin
-          v-if="loginMode === 'email_code'"
-          @login-success="handleLoginSuccess"
-        />
+        <EmailCodeLogin v-if="loginMode === 'email_code'" @login-success="handleLoginSuccess" />
         <EmailPasswordLogin
           v-else-if="loginMode === 'email_password'"
           @login-success="handleLoginSuccess"
         />
-        <Web3Login
-          v-else
-          @login-success="handleLoginSuccess"
-        />
+        <Web3Login v-else @login-success="handleLoginSuccess" />
 
         <div class="visitor-login text-center">
-          <button type="button" class="visitor-btn inline-flex items-center gap-2 radius-9999 text-16 font-bold" @click="handleVisitorLogin">
+          <button
+            type="button"
+            class="visitor-btn inline-flex items-center gap-2 radius-9999 text-16 font-bold"
+            @click="handleVisitorLogin"
+          >
             <span class="visitor-icon text-16">👤</span>
             <span>游客登录</span>
           </button>
@@ -81,7 +79,6 @@ import { checkWeb3Support } from '../utils/web3'
 import { showToast } from 'vant'
 import { useUserStore } from '../stores/user'
 
-
 const LOGIN_MODE_STORAGE_KEY = 'self_youth_login_mode_v1'
 const loginMode = ref('email_code')
 const web3Support = checkWeb3Support()
@@ -89,7 +86,6 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const emit = defineEmits(['login-success'])
-
 
 const isValidLoginMode = (mode) =>
   mode === 'email_code' || mode === 'email_password' || mode === 'web3'
@@ -125,7 +121,7 @@ const handleVisitorLogin = async () => {
   const uuid = await getVisitorId()
   try {
     await userStore.loginVisitor({
-      uuid: uuid
+      uuid: uuid,
     })
     showToast('登录成功')
   } catch (error) {
@@ -139,7 +135,6 @@ const handleVisitorLogin = async () => {
 onMounted(() => {
   loginMode.value = readSavedLoginMode()
 })
-
 </script>
 
 <style scoped>
@@ -170,7 +165,6 @@ onMounted(() => {
   padding: 28px 18px;
   align-items: center;
   max-width: 1040px;
-  margin: 0 auto;
 }
 
 @media (max-width: 900px) {
@@ -181,9 +175,6 @@ onMounted(() => {
   .brand {
     padding: 10px 6px 0;
     text-align: center;
-  }
-  .brand-subtitle {
-    margin: 0 auto;
   }
 }
 
@@ -244,7 +235,6 @@ onMounted(() => {
   font-weight: 800;
   letter-spacing: -0.01em;
 }
-
 
 .mode-row {
   display: flex;
@@ -313,6 +303,4 @@ onMounted(() => {
   border-radius: 8px;
   margin-top: 12px;
 }
-
-
 </style>

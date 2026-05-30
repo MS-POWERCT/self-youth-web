@@ -15,14 +15,12 @@
       clearable
     >
       <template #button>
-        <van-button
-          size="small"
-          type="primary"
+        <span
           :disabled="isGettingCode"
           @click.stop.prevent="sendCode"
         >
           {{ codeButtonText }}
-        </van-button>
+      </span>
       </template>
     </van-field>
 
@@ -143,7 +141,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 30vh;
+  min-height: 32vh;
 }
 
 .primary-btn {

@@ -11,8 +11,8 @@
       <div class="debug-info p-10 bg-gray100 m-10 radius-4">
         <p>统计数据数量: {{ Object.keys(statsData).length }}</p>
         <p>总打卡次数: {{ totalChecks }}</p>
-        <button @click="loadStatsData" style="padding: 5px 10px; margin: 5px;">重新加载数据</button>
-        <div class="debug-scroll text-12">
+        <button @click="loadStatsData" class="p-4">重新加载数据</button>
+        <div class="debug-scroll">
           <p v-for="(count, date) in statsData" :key="date">
             {{ date }}: {{ count }}次
           </p>
@@ -88,9 +88,6 @@ onMounted(() => {
   padding: 12px 0;
 }
 
-.debug-info p {
-  margin: 5px 0;
-}
 
 .debug-scroll {
   max-height: 100px;

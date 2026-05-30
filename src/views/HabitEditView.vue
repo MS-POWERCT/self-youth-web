@@ -349,10 +349,7 @@ onMounted(() => {
   margin-bottom: 16px;
 }
 
-.popup-header h3 {
-  margin: 0;
-  font-weight: 600;
-}
+
 
 .popup-content {
   margin-bottom: 16px;

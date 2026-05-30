@@ -22,4 +22,10 @@ export const globalApi = {
       data,
     })
   },
+  getTest() {
+    return request({
+      url: '/getTest',
+      method: 'get',
+    })
+  },
 }

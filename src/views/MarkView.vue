@@ -9,7 +9,7 @@
       <div
         v-for="category in categoryList"
         :key="category.id"
-        class="category-card flex flex-col items-center justify-center mt-8 radius-24"
+        class="category-card flex flex-col items-center justify-center mt-16 radius-20"
         :class="{ active: activeCategory === category.id }"
         :style="{ background: getCategoryGradient(category.id) }"
         @click="handleCategoryClick(category.id)"
@@ -46,7 +46,7 @@
             </div>
           </div>
         </div>
-        <IconifyIcon icon="mingcute:arrow-right-fill" class="mr-2" width="24" height="24" />
+        <!-- <IconifyIcon icon="mingcute:arrow-right-fill" class="mr-2" width="24" height="24" /> -->
       </div>
     </div>
   </div>

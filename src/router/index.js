@@ -1,10 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import LoginView from '../views/LoginView.vue'
-import ProfileView from '../views/ProfileView.vue'
-import HabitView from '../views/HabitView.vue'
-import HabitEditView from '../views/HabitEditView.vue'
-import TestToolDemoView from '../views/TestToolDemoView.vue'
-import FindView from '../views/FindView.vue'
+
+import UserSettingsRoutes from '@/views/UserSettings/routes.js'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -12,21 +8,20 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: ProfileView,
+      component: () => import('../views/ProfileView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginView,
+      component: () => import('../views/LoginView.vue'),
     },
     {
       path: '/profile',
       name: 'profile',
-      component: ProfileView,
+      component: () => import('../views/ProfileView.vue'),
       meta: { requiresAuth: true }, // 添加路由元信息，表示需要身份验证
     },
-
     {
       path: '/find/moments',
       name: 'Find Moments',
@@ -42,13 +37,13 @@ const router = createRouter({
     {
       path: '/habits',
       name: 'habits',
-      component: HabitView,
+      component: () => import('../views/HabitView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/find',
       name: 'find',
-      component: FindView,
+      component: () => import('../views/FindView.vue'),
       meta: { requiresAuth: true },
     },
     {
@@ -60,13 +55,13 @@ const router = createRouter({
     {
       path: '/habits/edit',
       name: 'habit-edit',
-      component: HabitEditView,
+      component: () => import('../views/HabitEditView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/demo/test-tool',
       name: 'test-tool-demo',
-      component: TestToolDemoView,
+      component: () => import('../views/TestToolDemoView.vue'),
       meta: { requiresAuth: true },
     },
     {
@@ -81,6 +76,9 @@ const router = createRouter({
       component: () => import('../views/MarkItemView.vue'),
       meta: { requiresAuth: true },
     },
+
+    // 用户设置路由
+    ...UserSettingsRoutes,
   ],
 })
 

@@ -28,7 +28,7 @@
           <!-- 格式n月n日record.record_date -->
 
             <div class="record-date">{{ formatDate(record.record_date) }}</div>
-              <div class="record-info" v-for="(v, i) in record.list" :key="v.id" @click="showRecordForm(v, 'edit')">
+              <div class="record-info m-8" v-for="(v, i) in record.list" :key="v.id" @click="showRecordForm(v, 'edit')">
                 <!-- <div class="record-habit">{{ getHabitName(record.habit_id) }}</div> -->
 
                 <div class="record-time">{{formatTime(v.record_start_time)}}</div>
@@ -302,14 +302,6 @@ onMounted(() => {
   border-bottom: 1px solid #ebedf0;
 }
 
-.page-header h2 {
-  margin: 0 0 4px 0;
-  font-weight: 600;
-}
-
-.header-date {
-  margin: 0;
-}
 
 /* 记录列表容器 */
 .records-container {
@@ -326,9 +318,7 @@ onMounted(() => {
   padding: 60px 20px;
 }
 
-.empty-state p {
-  margin: 12px 0 0 0;
-}
+
 
 /* 习惯列表 */
 .habit-list {
@@ -401,7 +391,6 @@ onMounted(() => {
   gap: 12px;
   border: 1px solid var(--border-light);
   border-radius: 8px;
-  margin: 8px;
 }
 
 .record-habit {

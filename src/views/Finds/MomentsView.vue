@@ -307,8 +307,6 @@ const submitComment = async () => {
 .moment-active > div {
   display: flex;
   justify-content: space-between;
-  margin: 0.2rem 1.2rem;
-  height: 1.6rem;
 }
 
 .text-ellipsis .van-text-ellipsis__expand {

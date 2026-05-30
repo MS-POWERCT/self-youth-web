@@ -33,8 +33,13 @@
           title="测试组件"
           is-link
           @click="$router.push('/demo/test-tool')"
-        >
-        </van-cell>
+        />
+        <!-- 登录管理 -->
+        <van-cell
+          title="登录管理"
+          is-link
+          @click="$router.push('/userSettings/account-login')"
+        />
       </van-cell-group>
 
       <!-- 如果userNextLover 有内容 -->

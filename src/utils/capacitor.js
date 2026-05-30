@@ -34,7 +34,7 @@ export const CapacitorService = {
   async showExitConfirm() {
     // 使用 Vant 的 ActionSheet 组件
     const { ActionSheet } = await import('vant')
-    
+
     ActionSheet.show({
       title: '确定要退出应用吗？',
       actions: [

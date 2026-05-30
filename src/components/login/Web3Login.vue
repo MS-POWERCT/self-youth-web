@@ -41,18 +41,14 @@
       {{ logging ? '登录中...' : '钱包登录' }}
     </van-button>
 
-    <van-button
-      block
-      round
-      plain
-      type="primary"
-      @click="handleDisconnect"
-      v-if="walletAddress"
-    >
+    <van-button block round plain type="primary" @click="handleDisconnect" v-if="walletAddress">
       断开连接
     </van-button>
 
-    <div v-if="error" class="error-message text-12 text-danger-error p-8 bg-danger-error-light text-center">
+    <div
+      v-if="error"
+      class="error-message text-12 text-danger-error p-8 bg-danger-error-light text-center"
+    >
       {{ error }}
     </div>
   </div>
@@ -61,7 +57,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { showToast } from 'vant'
-import { connectWallet, getCurrentAccount, signMessage } from '@/utils/web3'
+import { connectWallet, getCurrentAccount, signMessage, formatAddress } from '@/utils/web3'
 import { useUserStore } from '@/stores/user'
 
 const emit = defineEmits(['login-success'])
@@ -81,7 +77,7 @@ async function checkExistingConnection() {
   try {
     const account = await getCurrentAccount()
     if (account) {
-      walletAddress.value = formatAddress(account)
+      walletAddress.value =  formatAddress(account)
       walletName.value = '已连接'
     }
   } catch (err) {
@@ -124,7 +120,7 @@ async function handleLogin() {
     }
 
     await userStore.web3Sign()
-    const nonce = userStore.getWeb3Nonce()
+    const nonce = userStore.web3_nonce
 
     const message = `Self Youth Login\n\nAddress: ${fullAddress}\nNonce: ${nonce}`
 
@@ -134,11 +130,10 @@ async function handleLogin() {
     await userStore.web3Login({
       address: fullAddress,
       signature,
-      nonce
+      nonce,
     })
     showToast({ message: '登录成功', position: 'bottom' })
     emit('login-success')
-
   } catch (err) {
     error.value = err.message || '登录失败'
     if (err.message?.includes('用户拒绝')) {
@@ -156,19 +151,15 @@ function handleDisconnect() {
   showToast({ message: '已断开连接', position: 'bottom' })
 }
 
-function formatAddress(address) {
-  if (!address) return ''
-  return `${address.slice(0, 6)}...${address.slice(-4)}`
-}
+
 </script>
 
 <style scoped>
 .web3 {
-  padding: 6px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-height: 30vh;
+  min-height: 32vh;
 }
 
 .web3-copy {
@@ -186,7 +177,7 @@ function formatAddress(address) {
 }
 
 :deep(.van-field__label) {
-  width: 44px;
+  width: 64px;
   font-weight: var(--number-700);
 }
 </style>

@@ -6,7 +6,7 @@ export const useMarkStore = defineStore('mark', {
     categoryList: [],
     moduleList: [],
     itemList: [],
-    activeCategoryId: 0,
+    activeCategoryId: localStorage.getItem('activeCategoryId') || 0,
     loading: false
   }),
   actions: {
@@ -14,9 +14,6 @@ export const useMarkStore = defineStore('mark', {
     setActiveCategoryId(categoryId) {
       this.activeCategoryId = categoryId
       localStorage.setItem('activeCategoryId', categoryId)
-    },
-    getActiveCategoryId() {
-      return localStorage.getItem('activeCategoryId') || 0
     },
     async fetchCategoryList() {
       try {
