@@ -26,7 +26,6 @@
           </div>
         </div>
       </div>
-
       <!-- 小时滚轮 -->
       <div class="wheel-wrapper">
         <div
@@ -47,7 +46,7 @@
           </div>
         </div>
       </div>
-
+      <b class="font-bold">:</b>
       <!-- 分钟滚轮 -->
       <div class="wheel-wrapper">
         <div
@@ -61,7 +60,7 @@
           <div
             v-for="(item, index) in minuteOptions"
             :key="index"
-            class="wheel-item text-gray500"
+            class="wheel-item"
             :class="{ active: index === selectedMinuteIndex }"
           >
             {{ item }}
@@ -78,7 +77,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
-import { showToast } from 'vant'
+// import { showToast } from 'vant'
 
 const props = defineProps({
   show: {
@@ -313,22 +312,23 @@ const onPopupClosed = () => {
 // 确定
 const handleConfirm = () => {
   const result = {
-    year: selectedYear.value,
-    month: selectedMonth.value,
-    day: selectedDay.value,
-    hour: selectedHour.value,
-    minute: selectedMinute.value,
-    date: new Date(selectedYear.value, selectedMonth.value - 1, selectedDay.value, selectedHour.value, selectedMinute.value)
+    // year: selectedYear.value,
+    // month: selectedMonth.value.length === 1 ? '0' + selectedMonth.value : selectedMonth.value,
+    // day: selectedDay.value.length === 1 ? '0' + selectedDay.value : selectedDay.value,
+    // hour: selectedHour.value.length === 1 ? '0' + selectedHour.value : selectedHour.value,
+    // minute: selectedMinute.value.length === 1 ? '0' + selectedMinute.value : selectedMinute.value,
+    // second: parseInt(new Date().getSeconds().toString().padStart(2, '0')),
+    date: new Date(selectedYear.value, selectedMonth.value - 1, selectedDay.value,
+    selectedHour.value, selectedMinute.value, parseInt(new Date().getSeconds().toString().padStart(2, '0')))
   }
   visible.value = false
   emit('update:show', false)
   emit('confirm', result)
-  showToast(`已选择 ${selectedMonth.value}月${selectedDay.value}日 ${selectedHour.value.toString().padStart(2, '0')}:${selectedMinute.value.toString().padStart(2, '0')}`)
+  // showToast(`已选择 ${selectedMonth.value}月${selectedDay.value}日 ${selectedHour.value.toString().padStart(2, '0')}:${selectedMinute.value.toString().padStart(2, '0')}`)
 }
 
 // 初始化
 onMounted(() => {
-
 
   dateOptions.value = generateDateOptions()
   hourOptions.value = generateHourOptions()

@@ -7,7 +7,6 @@
         {{ inputMode ? '滚轮选择' : '键盘输入' }}
       </span>
     </div>
-
     <!-- 主体内容容器 -->
     <div class="picker-body">
       <!-- 滚轮模式 -->
@@ -102,7 +101,6 @@ const step = ref(5)
 
 const generateMinuteOptions = (value) => {
   const options = []
-  console.log('value', value)
 
   // 检查传入的值是否是5的倍数，如果不是则使用步长1
   if (value % 5 !== 0) {
@@ -165,7 +163,6 @@ const handleTouchMove = (event, type) => {
   const minOffset = getOffsetFromIndex(maxIndex)
   const maxOffset = getOffsetFromIndex(0)
   newOffset = Math.max(minOffset, Math.min(maxOffset, newOffset))
-
   minuteOffset.value = newOffset
 }
 
@@ -174,6 +171,7 @@ const handleTouchEnd = (type) => {
   isDragging.value[type] = false
 
   const currentOffset = minuteOffset.value
+
   let index = getIndexFromOffset(currentOffset)
 
   const maxIndex = getMaxIndex()
@@ -221,6 +219,9 @@ onMounted(() => {
   selectedMinute.value = parseInt(minuteOptions.value[selectedMinuteIndex.value])
   minuteOffset.value = getOffsetFromIndex(selectedMinuteIndex.value)
 
+  // 确保初始值被正确 emit
+  updateValue(selectedMinute.value)
+
   document.addEventListener('mousemove', handleMouseMoveGlobal)
   document.addEventListener('mouseup', handleMouseUpGlobal)
 })
@@ -237,7 +238,8 @@ onUnmounted(() => {
   border-radius: 16px;
   padding: 16px;
   position: relative;
-  width: 300px;
+  min-width: 340px;
+  max-width: 340px;
   height: 320px;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
   display: flex;
@@ -323,7 +325,9 @@ onUnmounted(() => {
 }
 
 .wheel-item.active {
-  font-weight: 600;
+  font-weight: 900;
+  // 上移框
+  transform: scale(1.2);
 }
 
 .unit-wrapper {
@@ -351,8 +355,8 @@ onUnmounted(() => {
 
 .picker-highlight {
   position: absolute;
-  top: 7.7rem;
-  left: 10.2rem;
+  top: 123px;
+  left: 184px;
   transform: translate(-50%, -50%);
   width: 80px;
   height: 44px;
@@ -361,7 +365,7 @@ onUnmounted(() => {
   background: rgba(59, 130, 246, 0.08);
   pointer-events: none;
   z-index: 10;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .keyboard-container {
@@ -385,7 +389,7 @@ onUnmounted(() => {
   transition: all 0.2s;
 
   &:active {
-    background: rgba(59, 130, 246, 0.05);
+    background: rgba(45, 104, 200, 0.05);
   }
 
   .display-value {

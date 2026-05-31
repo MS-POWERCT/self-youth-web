@@ -15,8 +15,8 @@
         label="已看进度"
       />
     </div>
-    <div class="p-16">
-      <div class="filter-tabs text-14">
+    <div class="p-8">
+      <div class="filter-tabs text-12">
         <div
           class="filter-tab"
           :class="{ active: filterStatus === 'all' }"
@@ -76,7 +76,7 @@
           <div class="item-btn text-12 text-white bg-yellow-gold" @click="markItem(item, 1)">{{ moduleTypeList[0] }}</div>
           <div class="item-btn text-12 text-white bg-primary" @click="markItem(item, 2)">{{ moduleTypeList[1] }}</div>
         </div>
-        <div v-else class="mr-2 text-14">
+        <div v-else class="mr-2 text-12">
           <!-- 可以删除 使用一个不太明显的x图标 -->
           <span v-if="item.mark_type === 1" class="text-bold text-yellow-gold">
             {{ moduleTypeList[0] }}
@@ -230,7 +230,7 @@ onMounted(() => {
 .filter-tabs {
   display: flex;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   overflow-x: auto;
 }
 

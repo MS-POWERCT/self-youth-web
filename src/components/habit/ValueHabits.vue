@@ -134,7 +134,7 @@ import { useHabitStore } from '../../stores/habit'
 import { getCurrentTime, formatDate, formatTime, getRelativeTime } from '@/utils/common'
 
 import WheelDateTimePicker from '../../components/tools/WheelDateTimePicker.vue'
-import WheelTimePicker from '../../components/tools/WheelTimePicker.vue'
+import WheelTimePicker from '../tools/WheelValuePicker.vue'
 
 const habitStore = useHabitStore()
 const loading = ref(false)
@@ -160,9 +160,11 @@ const valueRecords = computed(() => habitStore.valueRecords)
 
 
 const handlePickerConfirm = (result) => {
-  const { year, month, day, hour, minute } = result
-  formValue.value.record_start_time = `${year}年${month}月${day}日 ${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+  const { date } = result
+  formValue.value.record_start_time = getCurrentTime('datetime_cn', date)
 }
+
+
 
 // 加载习惯列表
 const loadHabits = async () => {
@@ -250,7 +252,11 @@ const saveRecord = async () => {
     saving.value = true
     // 这里您可以添加具体的保存逻辑
 
-    const record_start_time = formValue.value.record_start_time.replace('年', '-').replace('月', '-').replace('日', '')
+    let record_start_time = formValue.value.record_start_time.replace('年', '-').replace('月', '-').replace('日', '')
+    // // 分别替换月份和日期
+    // record_start_time = record_start_time.replace(/-(\d+)-(\d+)$/, (match, month, day) => {
+    //   return `-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    // });
 
     if(showFormPopupType.value == 'add'){
       habitStore.createValueRecord(

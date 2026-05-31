@@ -12,7 +12,7 @@ export const copyToClipboard = async (text, successMsg = '复制成功') => {
   }
 }
 
-const fallbackCopy = (text, successMsg) => {
+const fallbackCopy = (text) => {
   const textarea = document.createElement('textarea')
   textarea.value = text
   textarea.style.position = 'fixed'

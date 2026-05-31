@@ -56,7 +56,7 @@
 import { ref } from 'vue'
 import { Button as VanButton } from 'vant'
 import WheelDateTimePicker from '../components/tools/WheelDateTimePicker.vue'
-import WheelTimePicker from '../components/tools/WheelTimePicker.vue'
+import WheelTimePicker from '../components/tools/WheelValuePicker.vue'
 import ProgressBar from '../components/tools/ProgressBar.vue'
 
 const showPicker = ref(false)
