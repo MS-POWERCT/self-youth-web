@@ -5,10 +5,7 @@
       <span class="progress-percent">{{ percent }}%</span>
     </div>
     <div class="progress-track bg-gray300">
-      <div
-        class="progress-fill"
-        :style="{ width: `${percent}%` }"
-      ></div>
+      <div class="progress-fill" :style="{ width: `${percent}%` }"></div>
     </div>
   </div>
 </template>
@@ -27,7 +24,7 @@ const props = defineProps({
   },
   label: {
     type: String,
-    default: '当前进度'
+    default: '进度条'
   }
 })
 
@@ -55,11 +52,11 @@ const percent = computed(() => {
 }
 
 .progress-label {
-  font-weight:500;
+  font-weight: 500;
 }
 
 .progress-percent {
-  font-weight:900;
+  font-weight: 900;
 }
 
 .progress-track {

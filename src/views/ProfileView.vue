@@ -1,89 +1,99 @@
 <template>
-  <div class="bg-gray300">
+  <div class="profile-container">
 
-    <br/>
-    <br/>
-    <br/>
+    <br />
+    <br />
     <!-- <van-nav-bar title="个人中心" left-arrow @click-left="goBack" /> -->
-    <div v-if="userStore.token && userStore.user" class="profile-content p-20 flex flex-col items-center">
-      <van-image
-        round
-        width="100"
-        height="100"
-        :src="userStore.user.avatar || 'https://img.yzcdn.cn/vant/cat.jpeg'"
-      />
+    <!-- 水平垂直居中 -->
+    <div v-if="userStore.token && userStore.user">
+      <van-row class="flex items-center">
+        <van-col span="8" class="flex justify-center">
+          <van-image round width="100" height="100"
+            :src="userStore.user.avatar || 'https://img.yzcdn.cn/vant/cat.jpeg'" />
+        </van-col>
+        <van-col span="12">
+          <span class="font-bold text-24">{{ userStore.user.name || '用户名' }}</span>
+        </van-col>
+        <van-col span="4">
+          <div @click="$router.push('/userSettings/statistics')">
+            <IconifyIcon icon="fluent-color:settings-24" width="32" />
+          </div>
+        </van-col>
+      </van-row>
+      <div class="statistics">
+        <div>
+          <div>{{ userStore.user.continuous_days_check || 0 }} 天</div>
+          <div class="text-gray500">连续打卡</div>
+        </div>
+        <div>
+          <div>{{ userStore.user.continuous_days_value || 0 }} 天</div>
+          <div class="text-gray500">连续记录</div>
+        </div>
+        <div>
+          <div>{{ userStore.user.mark_user_count }}</div>
+          <div class="text-gray500">累计标记</div>
+        </div>
+      </div>
+      <!-- <van-cell-group inset> -->
 
-
-      <h2 class="username">{{ userStore.user.name || '用户名' }}</h2>
-      <van-cell-group inset>
-        <!-- <van-cell title="邮箱" :value="userStore.user.email || '未设置'" /> -->
-        <!-- <van-cell
-          title="习惯管理"
-          is-link
-          @click="$router.push('/habits')"
-        >
-          <template #right-icon>
-            <van-icon name="arrow" />
-          </template>
-        </van-cell> -->
-
-
-        <!-- 测试组件 -->
-         <van-cell
-          title="测试组件"
-          is-link
-          @click="$router.push('/demo/test-tool')"
-        />
-        <!-- 登录管理 -->
-        <van-cell
-          title="登录管理"
-          is-link
-          @click="$router.push('/userSettings/account-login')"
-        />
-      </van-cell-group>
+      <!-- 测试组件 -->
+      <!-- <van-cell title="测试组件" is-link @click="$router.push('/demo/test-tool')" /> -->
+      <!-- 登录管理 -->
+      <!-- <van-cell title="登录管理" is-link @click="$router.push('/userSettings/account-login')" /> -->
+      <!-- </van-cell-group> -->
 
       <!-- 如果userNextLover 有内容 -->
     </div>
-    <!-- <van-button
-          size="small"
-          type="primary"
-          @click="handlePrintDeviceInfo"
-          :loading="printingDeviceInfo"
-        >
-          获取设备信息
-        </van-button> -->
-    <van-button type="danger" block @click="handleLogout" class="logout-btn mt-10"> 退出登录 </van-button>
+    <!-- <van-button type="danger" block @click="handleLogout" class="logout-btn mt-10"> 退出登录 </van-button> -->
   </div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue'
 import { useUserStore } from '../stores/user'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 
-// const printingDeviceInfo = ref(false)
+
 const userStore = useUserStore()
-const router = useRouter()
-// 处理打印设备信息
-// const handlePrintDeviceInfo = async () => {
-//   try {
-//     printingDeviceInfo.value = true
-//     await printDeviceInfo()
-//     // showToast('设备信息已打印到控制台')
-//   } catch (error) {
-//     console.error('获取设备信息失败:', error)
-//     // showToast('获取设备信息失败')
-//   } finally {
-//     printingDeviceInfo.value = false
-//   }
-// }
+// const router = useRouter()
+
 
 onMounted(async () => {
   await userStore.getUserInfo()
 })
 
-const handleLogout = () => {
-  userStore.logout()
-  router.push('/login')
-}
+// const handleLogout = () => {
+//   userStore.logout()
+//   router.push('/login')
+// }
 </script>
+<style scoped>
+.profile-container {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(237, 131, 131, 0.5) 0%, transparent 75%),
+    radial-gradient(circle at 80% 20%, rgba(121, 236, 228, 0.5) 0%, transparent 75%);
+  background-blend-mode: screen;
+  /* background-color: var(--van-); */
+}
+
+.statistics {
+  background-color: #fff;
+  margin: 30px 20px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-around;
+  padding: 20px;
+
+  >div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    >div:nth-child(1) {
+      font-size: 24px;
+      font-weight: bold;
+    }
+  }
+}
+</style>

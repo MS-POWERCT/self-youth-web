@@ -1,7 +1,7 @@
 import { Capacitor } from '@capacitor/core'
 
 export const deviceType = getDeviceType()
-
+// 获取设备类型
 export function getDeviceType() {
   const platform = Capacitor.getPlatform()
 
@@ -31,7 +31,8 @@ export function getDeviceType() {
   return 'web'
 }
 
-export function getVisitorId() {
+// 获取访客ID
+export async function getVisitorId() {
   let vid = localStorage.getItem('visitor_id')
   if (vid) {
     return vid
@@ -41,7 +42,7 @@ export function getVisitorId() {
   const type = getDeviceType()
 
   if (Capacitor.isNativePlatform()) {
-    deviceId = getNativeDeviceId()
+    deviceId = await getNativeDeviceId()
   } else {
     deviceId = createUUID()
   }
@@ -52,16 +53,31 @@ export function getVisitorId() {
   return vid
 }
 
+// 获取本地设备ID
 async function getNativeDeviceId() {
   try {
     const { Device } = await import('@capacitor/device')
     const info = await Device.getId()
-    return info.uuid
-  } catch {
+
+    // Capacitor Device 返回的是 { identifier: string }，不是 uuid
+    if (info && info.identifier) {
+      return info.identifier
+    }
+
+    // 如果没有 identifier，尝试获取其他设备信息
+    const deviceInfo = await Device.getInfo()
+
+    // 组合生成一个唯一标识
+    if (deviceInfo) {
+      return `${deviceInfo.platform}-${deviceInfo.model}-${Date.now()}`
+    }
+
+    return createUUID()
+  } catch (error) {
     return createUUID()
   }
 }
-
+// 创建UUID
 function createUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     const r = Math.random() * 16 | 0;
@@ -70,16 +86,182 @@ function createUUID() {
   });
 }
 
+// 检查是否为访客设备
 export function isVisitor() {
   const token = localStorage.getItem('user-token')
   const visitorId = localStorage.getItem('visitor_id')
   return !token && visitorId
 }
 
-export function clearVisitor() {
-  localStorage.removeItem('visitor_id')
+// 获取浏览器名称
+function getBrowserName() {
+  const userAgent = navigator.userAgent
+  if (userAgent.indexOf('Firefox') > -1) return 'Firefox'
+  if (userAgent.indexOf('Chrome') > -1) return 'Chrome'
+  if (userAgent.indexOf('Safari') > -1) return 'Safari'
+  if (userAgent.indexOf('Edge') > -1) return 'Edge'
+  if (userAgent.indexOf('Opera') > -1) return 'Opera'
+  return 'Unknown'
 }
 
+// 获取浏览器版本
+function getBrowserVersion() {
+  const userAgent = navigator.userAgent
+  const browserName = getBrowserName()
+  let version = 'Unknown'
+
+  try {
+    if (browserName === 'Chrome') {
+      const match = userAgent.match(/Chrome\/(\d+)/)
+      if (match) version = match[1]
+    } else if (browserName === 'Firefox') {
+      const match = userAgent.match(/Firefox\/(\d+)/)
+      if (match) version = match[1]
+    } else if (browserName === 'Safari') {
+      const match = userAgent.match(/Version\/(\d+).*Safari/)
+      if (match) version = match[1]
+    } else if (browserName === 'Edge') {
+      const match = userAgent.match(/Edge\/(\d+)/)
+      if (match) version = match[1]
+    }
+  } catch (error) {
+    version = 'Error'
+  }
+
+  return version
+}
+
+// 检查是否为移动端设备
+function isMobileDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+}
+
+// 检查是否为平板设备
+function isTabletDevice() {
+  const userAgent = navigator.userAgent
+  return /iPad|Android(?!.*Mobile)/i.test(userAgent) || (isMobileDevice() && window.innerWidth >= 768)
+}
+
+// 检查是否为桌面设备
+function isDesktopDevice() {
+  return !isMobileDevice() && !isTabletDevice()
+}
+
+// 获取本地存储使用量
+function getLocalStorageUsed() {
+  try {
+    let used = 0
+    for (let key in localStorage) {
+      if (Object.prototype.hasOwnProperty.call(localStorage, key)) {
+        used += localStorage[key].length + key.length
+      }
+    }
+    return used
+  } catch (error) {
+    return 'Error'
+  }
+}
+
+// 检查本地存储是否可用
+function getLocalStorageAvailable() {
+  try {
+    const test = 'test'
+    localStorage.setItem(test, test)
+    localStorage.removeItem(test)
+    return 'Available'
+  } catch (error) {
+    return 'Unavailable'
+  }
+}
+
+// 获取会话存储使用量
+function getSessionStorageUsed() {
+  try {
+    let used = 0
+    for (let key in sessionStorage) {
+      if (Object.prototype.hasOwnProperty.call(sessionStorage, key)) {
+        used += sessionStorage[key].length + key.length
+      }
+    }
+    return used
+  } catch (error) {
+    return 'Error'
+  }
+}
+
+// 检查会话存储是否可用
+function getSessionStorageAvailable() {
+  try {
+    const test = 'test'
+    sessionStorage.setItem(test, test)
+    sessionStorage.removeItem(test)
+    return 'Available'
+  } catch (error) {
+    return 'Unavailable'
+  }
+}
+
+// 获取当前位置
+function getCurrentPosition() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('Geolocation not supported'))
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          altitude: position.coords.altitude,
+          altitudeAccuracy: position.coords.altitudeAccuracy,
+          heading: position.coords.heading,
+          speed: position.coords.speed,
+          timestamp: position.timestamp
+        })
+      },
+      (error) => {
+        reject(error)
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      }
+    )
+  })
+}
+
+// 生成设备指纹
+function generateFingerprint(deviceInfo) {
+  const fingerprintData = {
+    userAgent: deviceInfo.system.userAgent,
+    platform: deviceInfo.system.platform,
+    language: deviceInfo.system.language,
+    screen: `${deviceInfo.screen.width}x${deviceInfo.screen.height}`,
+    colorDepth: deviceInfo.screen.colorDepth,
+    timezone: deviceInfo.time.timezone,
+    hardwareConcurrency: deviceInfo.system.hardwareConcurrency,
+    devicePixelRatio: deviceInfo.screen.devicePixelRatio,
+    maxTouchPoints: deviceInfo.system.maxTouchPoints,
+    cookieEnabled: deviceInfo.system.cookieEnabled,
+    vendor: deviceInfo.system.vendor
+  }
+
+  const str = JSON.stringify(fingerprintData)
+  let hash = 2166136261
+
+  for (let i = 0; i < str.length; i++) {
+    hash ^= str.charCodeAt(i)
+    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24)
+    hash = hash & 0xffffffff
+  }
+
+  return (hash >>> 0).toString(16)
+}
+// 获取设备信息
 export const getDeviceInfo = async () => {
   const deviceInfo = {
     system: {
@@ -174,165 +356,7 @@ export const getDeviceInfo = async () => {
 
   return deviceInfo
 }
-
-function getBrowserName() {
-  const userAgent = navigator.userAgent
-  if (userAgent.indexOf('Firefox') > -1) return 'Firefox'
-  if (userAgent.indexOf('Chrome') > -1) return 'Chrome'
-  if (userAgent.indexOf('Safari') > -1) return 'Safari'
-  if (userAgent.indexOf('Edge') > -1) return 'Edge'
-  if (userAgent.indexOf('Opera') > -1) return 'Opera'
-  return 'Unknown'
-}
-
-function getBrowserVersion() {
-  const userAgent = navigator.userAgent
-  const browserName = getBrowserName()
-  let version = 'Unknown'
-
-  try {
-    if (browserName === 'Chrome') {
-      const match = userAgent.match(/Chrome\/(\d+)/)
-      if (match) version = match[1]
-    } else if (browserName === 'Firefox') {
-      const match = userAgent.match(/Firefox\/(\d+)/)
-      if (match) version = match[1]
-    } else if (browserName === 'Safari') {
-      const match = userAgent.match(/Version\/(\d+).*Safari/)
-      if (match) version = match[1]
-    } else if (browserName === 'Edge') {
-      const match = userAgent.match(/Edge\/(\d+)/)
-      if (match) version = match[1]
-    }
-  } catch (error) {
-    version = 'Error'
-  }
-
-  return version
-}
-
-function isMobileDevice() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-}
-
-function isTabletDevice() {
-  const userAgent = navigator.userAgent
-  return /iPad|Android(?!.*Mobile)/i.test(userAgent) || (isMobileDevice() && window.innerWidth >= 768)
-}
-
-function isDesktopDevice() {
-  return !isMobileDevice() && !isTabletDevice()
-}
-
-function getLocalStorageUsed() {
-  try {
-    let used = 0
-    for (let key in localStorage) {
-      if (Object.prototype.hasOwnProperty.call(localStorage, key)) {
-        used += localStorage[key].length + key.length
-      }
-    }
-    return used
-  } catch (error) {
-    return 'Error'
-  }
-}
-
-function getLocalStorageAvailable() {
-  try {
-    const test = 'test'
-    localStorage.setItem(test, test)
-    localStorage.removeItem(test)
-    return 'Available'
-  } catch (error) {
-    return 'Unavailable'
-  }
-}
-
-function getSessionStorageUsed() {
-  try {
-    let used = 0
-    for (let key in sessionStorage) {
-      if (Object.prototype.hasOwnProperty.call(sessionStorage, key)) {
-        used += sessionStorage[key].length + key.length
-      }
-    }
-    return used
-  } catch (error) {
-    return 'Error'
-  }
-}
-
-function getSessionStorageAvailable() {
-  try {
-    const test = 'test'
-    sessionStorage.setItem(test, test)
-    sessionStorage.removeItem(test)
-    return 'Available'
-  } catch (error) {
-    return 'Unavailable'
-  }
-}
-
-function getCurrentPosition() {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
-      reject(new Error('Geolocation not supported'))
-      return
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        resolve({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-          altitude: position.coords.altitude,
-          altitudeAccuracy: position.coords.altitudeAccuracy,
-          heading: position.coords.heading,
-          speed: position.coords.speed,
-          timestamp: position.timestamp
-        })
-      },
-      (error) => {
-        reject(error)
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
-      }
-    )
-  })
-}
-
-function generateFingerprint(deviceInfo) {
-  const fingerprintData = {
-    userAgent: deviceInfo.system.userAgent,
-    platform: deviceInfo.system.platform,
-    language: deviceInfo.system.language,
-    screen: `${deviceInfo.screen.width}x${deviceInfo.screen.height}`,
-    colorDepth: deviceInfo.screen.colorDepth,
-    timezone: deviceInfo.time.timezone,
-    hardwareConcurrency: deviceInfo.system.hardwareConcurrency,
-    devicePixelRatio: deviceInfo.screen.devicePixelRatio,
-    maxTouchPoints: deviceInfo.system.maxTouchPoints,
-    cookieEnabled: deviceInfo.system.cookieEnabled,
-    vendor: deviceInfo.system.vendor
-  }
-
-  const str = JSON.stringify(fingerprintData)
-  let hash = 2166136261
-
-  for (let i = 0; i < str.length; i++) {
-    hash ^= str.charCodeAt(i)
-    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24)
-    hash = hash & 0xffffffff
-  }
-
-  return (hash >>> 0).toString(16)
-}
-
+// 打印设备信息
 export const printDeviceInfo = async () => {
   try {
     console.log('🔍 正在获取设备信息...')
@@ -357,3 +381,4 @@ export const printDeviceInfo = async () => {
     return null
   }
 }
+

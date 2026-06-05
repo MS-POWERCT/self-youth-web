@@ -238,8 +238,8 @@ onUnmounted(() => {
   border-radius: 16px;
   padding: 16px;
   position: relative;
-  min-width: 340px;
-  max-width: 340px;
+ // min-width: 340px;
+  // max-width: 340px;
   height: 320px;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
   display: flex;
@@ -355,9 +355,9 @@ onUnmounted(() => {
 
 .picker-highlight {
   position: absolute;
-  top: 123px;
-  left: 184px;
-  transform: translate(-50%, -50%);
+  top: 50%;
+  right: calc(50% - 70px);
+  transform: translateY(-50%);
   width: 80px;
   height: 44px;
   border-top: 2px solid var(--info-primary);

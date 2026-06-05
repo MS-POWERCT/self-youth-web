@@ -3,20 +3,12 @@
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
       <!-- 习惯列表 -->
       <div class="habits-list">
-        <div
-          v-for="habit in activeHabits"
-          :key="habit.id"
-          class="habit-item"
-          :class="{ 'checked': isCheckedToday(habit.id) }"
-          @click="toggleCheck(habit)"
-        >
+        <div v-for="habit in activeHabits" :key="habit.id" class="habit-item"
+          :class="{ 'checked': isCheckedToday(habit.id) }" @click="toggleCheck(habit)">
           <div class="habit-left">
             <div class="mr-12">
-              <van-icon
-                :name="isCheckedToday(habit.id) ? 'success' : 'circle'"
-                :color="isCheckedToday(habit.id) ? '#07c160' : '#c8c9cc'"
-                size="20"
-              />
+              <van-icon :name="isCheckedToday(habit.id) ? 'success' : 'circle'"
+                :color="isCheckedToday(habit.id) ? '#07c160' : '#c8c9cc'" size="20" />
             </div>
             <div class="habit-info">
               <svg class="icon" aria-hidden="true">
@@ -30,16 +22,14 @@
             </div>
           </div>
 
-          <div class="ml-12">
-            <van-button
-              size="small"
-              round
-              :type="isCheckedToday(habit.id) ? 'default' : 'primary'"
-              :loading="checkingId === habit.id"
-              @click.stop="toggleCheck(habit)"
-            >
-              {{ isCheckedToday(habit.id) ? '已完成' : '打卡' }}
-            </van-button>
+          <div class="mr-16">
+            <div v-if="!isCheckedToday(habit.id)" class="text-primary bg-primary100 radius-16 px-16"
+              @click.stop="toggleCheck(habit)">
+              打卡
+            </div>
+            <div v-else class="px-16">
+              已完成
+            </div>
           </div>
         </div>
       </div>
@@ -118,7 +108,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 /* 页面头部 */
 .page-header {
   border-radius: 16px;
@@ -148,7 +137,7 @@ onMounted(() => {
 }
 
 /* 习惯项 */
-.habit-item{
+.habit-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -210,6 +199,7 @@ onMounted(() => {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -220,8 +210,19 @@ onMounted(() => {
   animation: fadeIn 0.5s ease forwards;
 }
 
-.habit-card:nth-child(1) { animation-delay: 0.1s; }
-.habit-card:nth-child(2) { animation-delay: 0.2s; }
-.habit-card:nth-child(3) { animation-delay: 0.3s; }
-.habit-card:nth-child(4) { animation-delay: 0.4s; }
+.habit-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.habit-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.habit-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.habit-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
 </style>

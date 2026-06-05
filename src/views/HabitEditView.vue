@@ -1,50 +1,28 @@
 <template>
   <div class="habit-edit-page bg-gray100" :class="$attrs.class">
-    <van-nav-bar
-      :title="activeTab == 1 ? '打卡习惯' : '数值习惯'"
-      left-arrow
-      @click-left="$router.go(-1)"
-    />
+    <van-nav-bar :title="activeTab == 1 ? '打卡习惯' : '数值习惯'" left-arrow @click-left="$router.go(-1)" />
     <!-- 习惯列表 -->
     <div class="habits-list p-4">
       <div class="habit-add text-center p-2 mb-12 bg-white radius-8" @click="showPopup()"> + </div>
-      <div
-        v-for="habit in editableHabits"
-        :key="habit.id"
+      <div v-for="habit in editableHabits" :key="habit.id"
         class="habit-item flex items-center justify-between p-4 mb-12 bg-white radius-8"
-        :class="{ hidden: !habit.is_show }"
-      >
+        :class="{ hidden: !habit.is_show }">
         <div class="habit-info flex items-center gap-3 flex-1">
-           <svg class="icon" aria-hidden="true">
-                <use :xlink:href="'#' + habit.icon" />
-              </svg>
-          <span class="text-16 text-gray700">{{ habit.name }}</span>
+          <svg class="icon" aria-hidden="true">
+            <use :xlink:href="'#' + habit.icon" />
+          </svg>
+          <span class="text-16">{{ habit.name }}</span>
           <van-tag v-if="habit.fixed" type="warning" size="small">系统默认</van-tag>
         </div>
         <div class="habit-actions flex gap-2">
-          <van-button
-            size="mini"
-            type="danger"
-            plain
-            @click="showPopup(habit)"
-          >
+          <van-button size="mini" type="danger" plain @click="showPopup(habit)">
             编辑
           </van-button>
-          <van-button
-            size="mini"
-            :type="habit.is_show ? 'default' : 'primary'"
-            plain
-            @click="toggleHabitVisibility(habit)"
-          >
+          <van-button size="mini" :type="habit.is_show ? 'default' : 'primary'" plain
+            @click="toggleHabitVisibility(habit)">
             {{ habit.is_show ? '隐藏' : '显示' }}
           </van-button>
-          <van-button
-            v-if="!habit.fixed"
-            size="mini"
-            type="danger"
-            plain
-            @click="deleteHabit(habit)"
-          >
+          <van-button v-if="!habit.fixed" size="mini" type="danger" plain @click="deleteHabit(habit)">
             删除
           </van-button>
         </div>
@@ -52,75 +30,44 @@
     </div>
 
   </div>
-    <!-- 添加习惯弹出窗 -->
-    <van-popup
-      v-model:show="showAddPopup"
-      position="bottom"
-      :style="{ height: '50%' }"
-      round
-      @click-overlay="closePopup"
-    >
-      <div class="add-popup p-4">
-        <div class="popup-content mb-4">
-          <van-field
-            v-model="addForm.name"
-            label="习惯名称"
-            placeholder="请输入习惯名称"
-            maxlength="20"
-            show-word-limit
-          />
+  <!-- 添加习惯弹出窗 -->
+  <van-popup v-model:show="showAddPopup" position="bottom" :style="{ height: '50%' }" round @click-overlay="closePopup">
+    <div class="add-popup p-4">
+      <div class="popup-content mb-4">
+        <van-field v-model="addForm.name" label="习惯名称" placeholder="请输入习惯名称" maxlength="20" show-word-limit />
 
-          <van-field
-            v-model="addForm.icon"
-            label="图标"
-            placeholder="选择图标"
-            readonly
-            @click="showIconPicker = true"
-          >
-            <template #right-icon>
-              <svg class="icon" aria-hidden="true">
-                <use :xlink:href="'#' + addForm.icon" />
-              </svg>
-            </template>
-          </van-field>
-        </div>
-        <div class="popup-footer mt-4">
-          <van-button
-            type="primary"
-            block
-            @click="saveAddHabit"
-            :loading="adding"
-          >
-            {{ showAddPopupButtonName }}
-          </van-button>
-        </div>
-      </div>
-    </van-popup>
-
-    <!-- 图标选择器 -->
-    <van-popup
-      v-model:show="showIconPicker"
-      position="bottom"
-      :style="{ height: '50%' }"
-    >
-      <div class="icon-picker p-4">
-        <div class="picker-title text-16 font-bold text-center mb-4 text-gray700">选择图标</div>
-        <div class="icon-grid grid grid-cols-4 gap-3">
-          <div
-            v-for="icon in iconList"
-            :key="icon.id"
-            class="icon-item flex flex-col items-center justify-center px-2 py-3 radius-8"
-            :class="{ active: addForm.icon === icon.icon }"
-            @click="selectIcon(icon)"
-          >
-            <svg class="icon mb-2" aria-hidden="true">
-              <use :xlink:href="'#' + icon.icon" />
+        <van-field v-model="addForm.icon" label="图标" placeholder="选择图标" readonly @click="showIconPicker = true">
+          <template #right-icon>
+            <svg class="icon" aria-hidden="true">
+              <use :xlink:href="'#' + addForm.icon" />
             </svg>
-            <span class="text-gray600 text-center">{{ icon.name }}</span>
-          </div>
+          </template>
+        </van-field>
+      </div>
+      <div class="popup-footer mt-4">
+        <van-button type="primary" block @click="saveAddHabit" :loading="adding">
+          {{ showAddPopupButtonName }}
+        </van-button>
+      </div>
+    </div>
+  </van-popup>
+
+  <!-- 图标选择器 -->
+  <van-popup v-model:show="showIconPicker" position="bottom" :style="{ height: '50%' }">
+    <div class="icon-picker p-4">
+      <div class="picker-title text-16 font-bold text-center mb-4">选择图标</div>
+      <div class="icon-grid grid grid-cols-4 gap-3">
+        <div v-for="icon in iconList" :key="icon.id"
+          class="icon-item flex flex-col items-center justify-center px-2 py-3 radius-8"
+          :class="{ active: addForm.icon === icon.icon }" @click="selectIcon(icon)">
+          <svg class="icon mb-2" aria-hidden="true">
+            <use :xlink:href="'#' + icon.icon" />
+          </svg>
+          <span class="text-center">{{ icon.name }}</span>
         </div>
       </div>
-    </van-popup>
+    </div>
+  </van-popup>
 </template>
 
 <script setup>
@@ -161,23 +108,23 @@ const iconList = ref([])
 // 方法
 // 弹出按钮
 const showPopup = async (habit) => {
-    showAddPopup.value = true
-    showAddPopupButtonName.value = habit ? '修改' : '添加'
-    showAddPopupType.value = habit ? 'edit' : 'add'
-    if(habit){
-      addForm.value = {
-        name: habit.name,
-        icon: habit.icon,
-        type: habit.type.toString()
-      }
+  showAddPopup.value = true
+  showAddPopupButtonName.value = habit ? '修改' : '添加'
+  showAddPopupType.value = habit ? 'edit' : 'add'
+  if (habit) {
+    addForm.value = {
+      name: habit.name,
+      icon: habit.icon,
+      type: habit.type.toString()
     }
+  }
 }
-const closePopup = async () =>{
-   addForm.value = {
-      name: '',
-      icon: 'star',
-      type: activeTab.value
-    }
+const closePopup = async () => {
+  addForm.value = {
+    name: '',
+    icon: 'star',
+    type: activeTab.value
+  }
 }
 
 const loadHabits = async () => {
@@ -254,9 +201,9 @@ const saveAddHabit = async () => {
   try {
     adding.value = true
 
-    if(showAddPopupType.value == 'add'){
+    if (showAddPopupType.value == 'add') {
       await habitStore.createHabit(addForm.value.name, addForm.value.type, addForm.value.icon)
-    }else{
+    } else {
       await habitStore.editHabit(addForm.value.name, addForm.value.type, addForm.value.icon)
     }
 
@@ -287,6 +234,7 @@ onMounted(() => {
 .habit-edit-page {
   min-height: 100vh;
 }
+
 .habits-list {
   padding: 16px;
 }

@@ -1,10 +1,11 @@
 <template>
   <div class="value-habits">
-    <br/>
+    <br />
     <!-- 记录列表 -->
     <div class="records-container">
       <div class="habit-list">
-        <div class="habit-item bg-gray100" v-for="value in habits" :key="value.id" @click="showRecordForm(value, 'add')">
+        <div class="habit-item bg-gray100" v-for="value in habits" :key="value.id"
+          @click="showRecordForm(value, 'add')">
           <div class="habit-icon">
             <svg class="icon" aria-hidden="true">
               <use :xlink:href="'#' + value.icon" />
@@ -20,110 +21,94 @@
           <p>暂无记录</p>
         </div>
         <div v-else class="records-list">
-          <div
-            v-for="(record, record_date, index) in valueRecords"
-            :key="record_date"
-            class="record-item"
-          >
-          <!-- 格式n月n日record.record_date -->
+          <div v-for="(record, record_date, index) in valueRecords" :key="record_date" class="record-item">
+            <!-- 格式n月n日record.record_date -->
+            <div>
+              <span>{{ formatDate(record.record_date) }}</span>
+              <span>
+                <IconifyIcon icon="fluent-color:arrow-trending-lines-24" size="16" />
+              </span>
 
-            <div class="record-date">{{ formatDate(record.record_date) }}</div>
-              <div class="record-info m-8" v-for="(v, i) in record.list" :key="v.id" @click="showRecordForm(v, 'edit')">
-                <!-- <div class="record-habit">{{ getHabitName(record.habit_id) }}</div> -->
+            </div>
+            <!-- 这里来一条很细的分割线 -->
+            <van-divider class="record-divider" />
+            <div class="record-info" v-for="(v, i) in record.list" :key="v.id" @click="showRecordForm(v, 'edit')">
+              <!-- <div class="record-habit">{{ getHabitName(record.habit_id) }}</div> -->
 
-                <div class="record-time">{{formatTime(v.record_start_time)}}</div>
-                <div class="record-name">
-                  <svg class="icon" aria-hidden="true">
-                    <use :xlink:href="'#' + v.user_habit.icon" />
-                  </svg>
-                  {{ v.user_habit.name }}
-                </div>
+              <div class="record-time">
+                <span>{{ formatTime(v.record_start_time) }}</span>
+                <!-- 一个点 -->
+              </div>
+
+              <div class="record-name">
+                <svg class="icon" aria-hidden="true">
+                  <use :xlink:href="'#' + v.user_habit.icon" />
+                </svg>
+                {{ v.user_habit.name }}
+              </div>
+              <div class="record-value-container">
+                <div>{{ v.value }} min</div>
                 <div>
-                  <div class="record-value">{{ v.value }} min</div>
-                  <div class="record-value2 radius-4 pl-2 pr-2 bg-gray-200">
-                    <span v-if="index == 0 && i == 0">{{ getRelativeTime(v.record_start_time) }}</span>
-                  </div>
+                  <span v-if="index == 0 && i == 0">{{ getRelativeTime(v.record_start_time) }}</span>
                 </div>
               </div>
+            </div>
           </div>
         </div>
       </van-pull-refresh>
     </div>
 
     <!-- 记录表单弹出窗 -->
-    <van-popup
-      v-model:show="showFormPopup"
-      position="bottom"
-      :style="{ height: '100vh' }"
-      @click-overlay="closePopup"
-    >
+    <van-popup v-model:show="showFormPopup" position="bottom" :style="{ height: '100vh' }" @click-overlay="closePopup">
       <div class="record-form">
         <div class="popup-header">
           <div class="header-left">
             <van-icon name="arrow-left" size="22" @click="closePopup" />
           </div>
-          <div class="header-title">编辑信息</div>
-          <div class="header-right">
-            <van-icon v-if="showFormPopupType == 'edit'" name="delete-o" size="22" @click="handleDelete(formValue.id)" />
-          </div>
-        </div>
-        <div class="form-content">
-          <div class="habit-info-display">
+          <div class="header-title">
             <svg class="icon" aria-hidden="true">
               <use :xlink:href="'#' + selectedHabit.icon" />
             </svg>
             <span>{{ selectedHabit.name }}</span>
           </div>
-
+          <div class="header-right">
+            <van-icon v-if="showFormPopupType == 'edit'" name="delete-o" size="22"
+              @click="handleDelete(formValue.id)" />
+          </div>
+        </div>
+        <div class="form-content">
           <!-- 表单字段框架 - 您可以在这里添加具体的表单内容 -->
-          <div class="form-fields">
-            <!-- 示例字段，您可以根据需要修改 -->
-           <van-field
-              v-model="formValue.record_start_time"
-              label="开始时间"
-              placeholder="请选择开始时间"
-              readonly
-              @click="showStartTiemPicker = true"
-              class="mb-4"
-            >
+          <!-- 示例字段，您可以根据需要修改 -->
+          <br />
+          <div>
+            <van-field v-model="formValue.record_start_time" label="开始时间" placeholder="请选择开始时间" readonly
+              @click="showStartTiemPicker = true" class="mb-4">
               <template #right-icon>
                 <van-icon name="clock-o" />
               </template>
             </van-field>
-            <WheelTimePicker
-              v-model="formValue.value"
-              @change="handleTimeChange"
-            />
-            <van-field
-              v-model="formValue.note"
-              label="备注"
-              placeholder="请输入备注"
-              maxlength="100"
-              show-word-limit
-              class="mt-4"
-            />
+          </div>
+          <br />
+          <div>
+            <WheelTimePicker v-model="formValue.value" class="mr-12 ml-12" />
+          </div>
+          <br />
+          <div>
+            <van-field v-model="formValue.note" label="备注" placeholder="请输入备注" maxlength="100" class="mt-4" />
           </div>
         </div>
 
         <div class="form-footer">
-          <van-button
-            type="primary"
-            block
-            @click="saveRecord"
-            :loading="saving"
-          >
-          保持
+          <van-button type="primary" plain block @click="saveRecord" :loading="saving">
+            保存
           </van-button>
         </div>
       </div>
     </van-popup>
 
-     <!-- 使用封装的滚轮日期选择器 -->
-    <WheelDateTimePicker
-      v-model:show="showStartTiemPicker"
-      :default-date="formValue.record_start_time"
-      @confirm="handlePickerConfirm"
-    />
+    <!-- 使用封装的滚轮日期选择器 -->
+    <WheelDateTimePicker v-model:show="showStartTiemPicker" :default-date="formValue.record_start_time"
+      @confirm="handlePickerConfirm" />
   </div>
 </template>
 
@@ -199,10 +184,10 @@ const onRefresh = async () => {
 const showRecordForm = (habit, type) => {
   showFormPopup.value = true
   showFormPopupType.value = type
-  if(type == 'add'){
+  if (type == 'add') {
     selectedHabit.value = habit
     formValue.value.record_start_time = getCurrentTime('datetime_cn')
-  }else{
+  } else {
     selectedHabit.value.icon = habit.user_habit.icon
     selectedHabit.value.name = habit.user_habit.name
     formValue.value.id = habit.id
@@ -237,10 +222,6 @@ const handleDelete = async (id) => {
   }
 }
 
-const handleTimeChange = (value) => {
-  console.log('时长变化:', value)
-}
-
 // 保存记录
 const saveRecord = async () => {
   if (!formValue.value.value) {
@@ -258,7 +239,7 @@ const saveRecord = async () => {
     //   return `-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
     // });
 
-    if(showFormPopupType.value == 'add'){
+    if (showFormPopupType.value == 'add') {
       habitStore.createValueRecord(
         selectedHabit.value.id,
         formValue.value.value,
@@ -266,7 +247,7 @@ const saveRecord = async () => {
         formValue.value.note,
         formValue.value.note_image
       )
-    } else{
+    } else {
       habitStore.editValueRecord(
         formValue.value.id,
         formValue.value.value,
@@ -299,6 +280,7 @@ onMounted(() => {
 .value-habits {
   display: flex;
   flex-direction: column;
+
 }
 
 /* 页面头部 */
@@ -335,13 +317,16 @@ onMounted(() => {
   margin-bottom: 16px;
   overflow-x: auto;
   white-space: nowrap;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .habit-list::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
+  /* Chrome, Safari, Opera */
 }
 
 .habit-item {
@@ -353,8 +338,10 @@ onMounted(() => {
   min-width: 80px;
   border-radius: 8px;
   transition: all 0.2s ease;
-  flex-shrink: 0; /* 防止收缩 */
-  white-space: nowrap; /* 防止文字换行 */
+  flex-shrink: 0;
+  /* 防止收缩 */
+  white-space: nowrap;
+  /* 防止文字换行 */
 }
 
 
@@ -381,22 +368,27 @@ onMounted(() => {
 }
 
 .record-item {
+  /* overflow: hidden; */
+  gap: 16px;
+  padding: 16px;
   border-radius: 12px;
-  margin-bottom: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--border-light);
-  transition: all 0.2s ease;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  box-shadow: 0 2px 8px 2px rgba(0, 0, 0, 0.05);
 
 }
 
 .record-info {
-  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: space-around;
   border: 1px solid var(--border-light);
-  border-radius: 8px;
+  height: 60px;
 }
 
 .record-habit {
@@ -404,17 +396,29 @@ onMounted(() => {
   font-weight: 500;
 }
 
-.record-value {
-  min-width: 60px;
-  text-align: center;
-}
-.record-value2 {
-  min-width: 60px;
-  text-align: center;
-}
+
+
 .record-time {
   min-width: 60px;
   text-align: right;
+}
+
+.record-value-container {
+  width: 40%;
+
+  >div {
+    min-width: 80px;
+    max-width: 80px;
+    text-align: left;
+    text-align: center;
+  }
+
+  /*第二个div */
+  >div:nth-child(2) {
+    background: var(--primary100);
+    color: var(--primary);
+    border-radius: 8px;
+  }
 }
 
 /* 记录表单弹出窗样式 */
@@ -440,13 +444,18 @@ onMounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
+  background: var(--gray300);
 }
 
 .form-content {
   flex: 1;
   overflow-y: auto;
-  border-radius: 12px;
+  border-radius: 8px;
   max-height: 70vh;
+  /* 垂直居中 */
+  background: var(--white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin: 0 2;
 }
 
 .habit-info-display {
@@ -458,21 +467,11 @@ onMounted(() => {
   margin-bottom: 16px;
 }
 
-.habit-info-display svg {
-  width: 24px;
-  height: 24px;
-}
-
-.habit-info-display span {
-  font-weight: 500;
-}
-
-.form-fields {
-  margin-bottom: 16px;
-}
-
 .form-footer {
   margin-top: auto;
 }
 
+:deep(.van-field__label) {
+  margin-right: 0;
+}
 </style>

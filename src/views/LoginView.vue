@@ -4,7 +4,7 @@
 
     <div class="login-shell">
       <section class="brand" aria-label="品牌信息">
-        <div class="brand-mark bg-black100 flex items-center justify-center">
+        <div class="brand-mark bg-gray500 flex items-center justify-center">
           <img class="brand-logo" src="/logo.png" alt="Logo" />
         </div>
         <div class="brand-title text-32 text-white font-bold">Self Youth</div>
@@ -18,46 +18,27 @@
         </header>
 
         <div class="mode-row flex gap-2" role="tablist" aria-label="登录方式">
-          <button
-            type="button"
-            class="mode-pill flex-1 radius-9999 text-12 font-bold"
-            :class="{ active: loginMode === 'email_code' }"
-            @click="setLoginMode('email_code')"
-          >
+          <button type="button" class="mode-pill flex-1 radius-9999 text-12 font-bold"
+            :class="{ active: loginMode === 'email_code' }" @click="setLoginMode('email_code')">
             邮箱验证码
           </button>
-          <button
-            type="button"
-            class="mode-pill flex-1 radius-9999 text-12 font-bold"
-            :class="{ active: loginMode === 'email_password' }"
-            @click="setLoginMode('email_password')"
-          >
+          <button type="button" class="mode-pill flex-1 radius-9999 text-12 font-bold"
+            :class="{ active: loginMode === 'email_password' }" @click="setLoginMode('email_password')">
             邮箱+密码
           </button>
-          <button
-            v-if="web3Support.supported"
-            type="button"
-            class="mode-pill flex-1 radius-9999 text-12 font-bold"
-            :class="{ active: loginMode === 'web3' }"
-            @click="setLoginMode('web3')"
-          >
+          <button v-if="web3Support.supported" type="button" class="mode-pill flex-1 radius-9999 text-12 font-bold"
+            :class="{ active: loginMode === 'web3' }" @click="setLoginMode('web3')">
             Web3
           </button>
         </div>
 
         <EmailCodeLogin v-if="loginMode === 'email_code'" @login-success="handleLoginSuccess" />
-        <EmailPasswordLogin
-          v-else-if="loginMode === 'email_password'"
-          @login-success="handleLoginSuccess"
-        />
+        <EmailPasswordLogin v-else-if="loginMode === 'email_password'" @login-success="handleLoginSuccess" />
         <Web3Login v-else @login-success="handleLoginSuccess" />
 
         <div class="visitor-login text-center">
-          <button
-            type="button"
-            class="visitor-btn inline-flex items-center gap-2 radius-9999 text-16 font-bold"
-            @click="handleVisitorLogin"
-          >
+          <button type="button" class="visitor-btn inline-flex items-center gap-2 radius-9999 text-16 font-bold"
+            @click="handleVisitorLogin">
             <span class="visitor-icon text-16">👤</span>
             <span>游客登录</span>
           </button>
@@ -155,7 +136,10 @@ onMounted(() => {
   filter: saturate(1.05);
 }
 
+/* 左右平分剧中啊 */
 .login-shell {
+  /* 平分屏幕 */
+  margin: 0 auto;
   position: relative;
   z-index: 1;
   min-height: 100vh;
@@ -172,6 +156,7 @@ onMounted(() => {
     grid-template-columns: 1fr;
     padding: 18px 14px 26px;
   }
+
   .brand {
     padding: 10px 6px 0;
     text-align: center;

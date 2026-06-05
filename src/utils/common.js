@@ -135,3 +135,8 @@ export const getRelativeTime = (targetTime) => {
 
   return isFuture ? '即将' : '刚刚'
 }
+
+
+export const getDefaultCover = (id, width=72, height=96) => {
+  return `https://picsum.photos/seed/${id}/${width}/${height}`
+}

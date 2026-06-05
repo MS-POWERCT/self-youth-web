@@ -1,19 +1,15 @@
 <template>
   <div class="habit-page bg-gray50">
     <div class="text-center font-bold text-lg">
-      <br/>
-        <IconifyIcon icon="fluent-color:circle-multiple-hint-checkmark-48" width="16" class="mr-2"/>
-        习惯管理
-        <van-icon
-          name="edit"
-          size="18"
-          @click="$router.push('/habits/edit?tab=' + (activeTab === 'check' ? '1' : '2'))"
-          style="cursor: pointer;"
-        />
+      <br />
+      <IconifyIcon icon="fluent-color:circle-multiple-hint-checkmark-48" width="16" class="mr-2" />
+      习惯管理
+      <van-icon name="edit" size="18" @click="$router.push('/habits/edit?tab=' + (activeTab === 'check' ? '1' : '2'))"
+        style="cursor: pointer;" />
     </div>
-      <!-- left-arrow
+    <!-- left-arrow
       @click-left="$router.go(-1)" -->
-      <!-- <template #right>
+    <!-- <template #right>
         <van-icon
           name="edit"
           size="18"
@@ -21,7 +17,7 @@
           style="cursor: pointer;"
         />
       </template>
-    </van-nav-bar> -->
+</van-nav-bar> -->
     <div class="habit-tabs mt-12">
       <van-tabs v-model:active="activeTab" @update:active="onTabChange">
         <van-tab title="打卡习惯" name="check">
@@ -86,14 +82,5 @@ onMounted(() => {
   cursor: pointer;
   transition: all 0.3s ease;
   z-index: 1000;
-}
-
-.stats-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
-}
-
-.stats-button:active {
-  transform: scale(0.95);
 }
 </style>

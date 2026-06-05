@@ -43,9 +43,14 @@ import {
   ActionSheet,
   Tab,
   Tabs,
+  Divider,
   Popup,
   Tag,
-  BackTop
+  BackTop,
+  Col,
+  Row,
+  DropdownMenu,
+  DropdownItem
 } from 'vant'
 
 // 1. 引入 Capacitor 核心和平台判断
@@ -85,9 +90,15 @@ async function initApp() {
   app.use(ActionSheet)
   app.use(Tab)
   app.use(Tabs)
+  app.use(Divider)
   app.use(Popup)
   app.use(Tag)
   app.use(BackTop)
+  app.use(Col)
+  app.use(Row)
+  app.use(DropdownMenu)
+  app.use(DropdownItem)
+
   // 获取全局 store
   // 💡 建议: globalStore 在此处获取但未在组件中使用，需确认是否必需
   const globalStore = useGlobalStore()

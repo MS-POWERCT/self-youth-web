@@ -1,10 +1,6 @@
 <template>
   <div class="habit-stats-page bg-gray50">
-    <van-nav-bar
-      title="习惯统计"
-      left-arrow
-      @click-left="$router.go(-1)"
-    />
+    <van-nav-bar title="习惯统计" left-arrow @click-left="$router.go(-1)" />
 
     <div class="stats-content">
       <!-- 调试信息 -->
@@ -20,11 +16,7 @@
       </div>
 
       <!-- GitHub风格贡献表 -->
-      <GitHubContributionChart
-        :data="statsData"
-        :title="'打卡贡献图'"
-        @day-click="onDayClick"
-      />
+      <GitHubContributionChart :data="statsData" :title="'打卡贡献图'" @day-click="onDayClick" />
     </div>
   </div>
 </template>
@@ -48,17 +40,13 @@ const totalChecks = computed(() => {
 const loadStatsData = async () => {
   try {
     loading.value = true
-    console.log('开始加载统计数据...')
 
     const response = await habitStore.checkStatsRecords()
-    console.log('API响应:', response)
 
     // 处理API返回的数据格式
     if (response) {
       statsData.value = response
-      console.log('处理后的统计数据:', statsData.value)
     } else {
-      console.log('API返回数据格式不正确:', response)
       showToast('数据格式错误')
     }
   } catch (error) {

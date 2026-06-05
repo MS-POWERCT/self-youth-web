@@ -1,15 +1,10 @@
 <template>
   <div class="web3">
-    <div class="web3-copy text-12 text-gray600 pb-2">
+    <div class="web3-copy text-12 pb-2">
       使用 Web3 钱包进行身份验证，无需邮箱或密码。
     </div>
 
-    <van-field
-      v-model="walletAddress"
-      readonly
-      label="钱包地址"
-      placeholder="点击下方按钮连接钱包"
-    />
+    <van-field v-model="walletAddress" readonly label="钱包地址" placeholder="点击下方按钮连接钱包" />
 
     <div v-if="walletAddress" class="wallet-info flex items-center gap-10 p-6">
       <van-tag type="success" size="medium">
@@ -17,27 +12,12 @@
       </van-tag>
     </div>
 
-    <van-button
-      v-if="!walletAddress"
-      block
-      round
-      type="primary"
-      class="primary-btn mt-6"
-      @click="handleConnect"
-      :loading="connecting"
-    >
+    <van-button v-if="!walletAddress" block round type="primary" class="primary-btn mt-6" @click="handleConnect"
+      :loading="connecting">
       {{ connecting ? '连接中...' : '连接钱包' }}
     </van-button>
 
-    <van-button
-      v-else
-      block
-      round
-      type="primary"
-      class="primary-btn mt-6"
-      @click="handleLogin"
-      :loading="logging"
-    >
+    <van-button v-else block round type="primary" class="primary-btn mt-6" @click="handleLogin" :loading="logging">
       {{ logging ? '登录中...' : '钱包登录' }}
     </van-button>
 
@@ -45,10 +25,7 @@
       断开连接
     </van-button>
 
-    <div
-      v-if="error"
-      class="error-message text-12 text-danger-error p-8 bg-danger-error-light text-center"
-    >
+    <div v-if="error" class="error-message text-12 text-danger-error p-8 bg-danger-error-light text-center">
       {{ error }}
     </div>
   </div>
@@ -77,7 +54,7 @@ async function checkExistingConnection() {
   try {
     const account = await getCurrentAccount()
     if (account) {
-      walletAddress.value =  formatAddress(account)
+      walletAddress.value = formatAddress(account)
       walletName.value = '已连接'
     }
   } catch (err) {

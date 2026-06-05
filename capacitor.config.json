@@ -1,6 +1,6 @@
 {
-  "appId": "cn.chenyicheng.app",
-  "appName": "self-youth-web",
+  "appId": "cn.powerct.app",
+  "appName": "自律青年",
   "webDir": "dist",
   "server": {
     "androidScheme": "https"

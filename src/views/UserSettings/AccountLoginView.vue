@@ -5,11 +5,11 @@
     <!-- {{ globalStore.initData?.llconfig?.EMAIL_CODE_COOLING_TIME }} -->
     <div class="content-container p-12">
       <!-- 邮箱 -->
-      <div class="login-item bg-white p-16 mb-12 flex items-center justify-between radius-12" >
+      <div class="login-item bg-white p-16 mb-12 flex items-center justify-between radius-12">
         <div>邮箱</div>
         <div class="item-right flex items-center">
           <span v-if="!user?.email" class="text-primary" @click="showEmailPopup = true">绑定邮箱</span>
-          <span v-else class="text-gray500">{{ user?.email }}</span>
+          <span v-else class="">{{ user?.email }}</span>
         </div>
       </div>
 
@@ -19,9 +19,9 @@
         <div class="item-right flex items-center">
           <span v-if="!user?.has_password" class="text-primary">
             <span v-if="user?.email" @click="showPasswordPopup = true">设置密码</span>
-            <span v-else class="text-gray500">（请先绑定邮箱）</span>
+            <span v-else class="">（请先绑定邮箱）</span>
           </span>
-          <span v-else class="text-gray500">已设置</span>
+          <span v-else class="">已设置</span>
         </div>
       </div>
 
@@ -30,7 +30,7 @@
         <div>Web3登录</div>
         <div class="item-right flex items-center">
           <span v-if="!user?.address" class="text-primary" @click="showWeb3Popup = true">绑定地址</span>
-          <span v-else class="text-gray500">{{ formatAddress(user?.address) }}</span>
+          <span v-else class="">{{ formatAddress(user?.address) }}</span>
         </div>
       </div>
     </div>
@@ -43,23 +43,10 @@
         </div>
 
         <div class="popup-body flex-1 overflow-y-auto p-16">
-          <van-field
-            v-model="emailForm.email"
-            label="邮箱"
-            placeholder="请输入邮箱地址"
-            class="mb-12 radius-8"
-          />
-          <van-field
-            v-model="emailForm.code"
-            label="验证码"
-            placeholder="请输入验证码"
-            class="radius-8"
-          >
+          <van-field v-model="emailForm.email" label="邮箱" placeholder="请输入邮箱地址" class="mb-12 radius-8" />
+          <van-field v-model="emailForm.code" label="验证码" placeholder="请输入验证码" class="radius-8">
             <template #button>
-              <span
-                :disabled="emailCountdown > 0"
-                @click="sendEmailCode"
-              >
+              <span :disabled="emailCountdown > 0" @click="sendEmailCode">
                 {{ emailCountdown > 0 ? `${emailCountdown}s` : '发送验证码' }}
               </span>
             </template>
@@ -67,13 +54,7 @@
         </div>
 
         <div class="popup-footer p-16 border-t border-gray-200">
-          <van-button
-            type="primary"
-            block
-            round
-            :loading="emailLoading"
-            @click="handleBindEmail"
-          >
+          <van-button type="primary" block round :loading="emailLoading" @click="handleBindEmail">
             确认绑定
           </van-button>
         </div>
@@ -81,53 +62,30 @@
     </van-popup>
 
     <!-- 密码设置弹窗 -->
-    <van-popup v-model:show="showPasswordPopup" position="center" :style="{ width: '90%', height: '70%' }" round closeable>
+    <van-popup v-model:show="showPasswordPopup" position="center" :style="{ width: '90%', height: '70%' }" round
+      closeable>
       <div class="flex flex-col h-full">
         <div class="popup-header p-16 border-b border-gray-200 text-center">
           <h3 class="text-16 font-bold">设置密码</h3>
         </div>
         <!-- 这里显示用户当前的邮箱 -->
-        <div class="text-gray500 text-center">{{ user?.email || '未绑定邮箱, 请先绑定邮箱' }}</div>
+        <div class=" text-center">{{ user?.email || '未绑定邮箱, 请先绑定邮箱' }}</div>
         <div class="popup-body flex-1 overflow-y-auto p-16">
-          <van-field
-            v-model="passwordForm.code"
-            label="验证码"
-            placeholder="请输入验证码"
-            class="mb-12 radius-8"
-          >
+          <van-field v-model="passwordForm.code" label="验证码" placeholder="请输入验证码" class="mb-12 radius-8">
             <template #button>
-              <span
-                :disabled="passwordCountdown > 0"
-                @click="sendPasswordCode"
-              >
+              <span :disabled="passwordCountdown > 0" @click="sendPasswordCode">
                 {{ passwordCountdown > 0 ? `${passwordCountdown}s` : '发送验证码' }}
               </span>
             </template>
           </van-field>
-          <van-field
-            v-model="passwordForm.password"
-            type="password"
-            label="新密码"
-            placeholder="请输入新密码"
-            class="mb-12 radius-8"
-          />
-          <van-field
-            v-model="passwordForm.password_confirmation"
-            type="password"
-            label="确认密码"
-            placeholder="请再次输入新密码"
-            class="radius-8"
-          />
+          <van-field v-model="passwordForm.password" type="password" label="新密码" placeholder="请输入新密码"
+            class="mb-12 radius-8" />
+          <van-field v-model="passwordForm.password_confirmation" type="password" label="确认密码" placeholder="请再次输入新密码"
+            class="radius-8" />
         </div>
 
         <div class="popup-footer p-16 border-t border-gray-200">
-          <van-button
-            type="primary"
-            block
-            round
-            :loading="passwordLoading"
-            @click="handleSetPassword"
-          >
+          <van-button type="primary" block round :loading="passwordLoading" @click="handleSetPassword">
             确认设置
           </van-button>
         </div>
@@ -143,17 +101,11 @@
 
         <div class="popup-body flex-1 overflow-y-auto p-16">
           <div v-if="!web3Address" class="flex flex-col items-center justify-center py-40">
-            <div class="text-gray500 text-center mb-16">
+            <div class=" text-center mb-16">
               <p class="mb-8">使用 Web3 钱包进行身份验证</p>
               <p class="text-12">连接您的钱包即可完成绑定</p>
             </div>
-            <van-button
-              type="primary"
-              block
-              round
-              :loading="web3Connecting"
-              @click="handleConnectWallet"
-            >
+            <van-button type="primary" block round :loading="web3Connecting" @click="handleConnectWallet">
               {{ web3Connecting ? '连接中...' : '连接钱包' }}
             </van-button>
           </div>
@@ -163,25 +115,12 @@
               <van-tag type="success" size="large" class="mb-8">
                 {{ web3WalletName }}
               </van-tag>
-              <span class="text-14 text-gray500">{{ web3Address }}</span>
+              <span class="text-14 ">{{ web3Address }}</span>
             </div>
-            <van-button
-              type="primary"
-              block
-              round
-              :loading="web3Binding"
-              @click="handleBindWeb3"
-            >
+            <van-button type="primary" block round :loading="web3Binding" @click="handleBindWeb3">
               {{ web3Binding ? '绑定中...' : '确认绑定' }}
             </van-button>
-            <van-button
-              plain
-              type="primary"
-              block
-              round
-              class="mt-12"
-              @click="handleDisconnectWallet"
-            >
+            <van-button plain type="primary" block round class="mt-12" @click="handleDisconnectWallet">
               更换钱包
             </van-button>
           </div>
@@ -232,7 +171,7 @@ async function sendEmailCode() {
   }
 
   try {
-     await globalApi.sendCode({
+    await globalApi.sendCode({
       email: emailForm.value.email,
       category: 'bind_email'
     })
@@ -380,7 +319,7 @@ async function handleBindWeb3() {
     await userStore.web3Sign()
     const nonce = userStore.web3_nonce
 
-    const message = `Security code : ${nonce}`
+    const message = `Self Youth Bind\n\nAddress: ${fullAddress}\nNonce: ${nonce}`
     const signature = await signMessage(message)
 
     await userApi.bindAddress({
@@ -411,9 +350,8 @@ function handleDisconnectWallet() {
 }
 
 onMounted(() => {
-    userStore.getUserInfo()
+  userStore.getUserInfo()
 })
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

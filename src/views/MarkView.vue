@@ -1,48 +1,33 @@
 <template>
   <div class="mark-view">
     <div class="text-center mb-2 font-bold text-lg">
-      <br/>
-        <IconifyIcon icon="noto:kiss-mark" width="16" class="mr-2"/>
-        标记吧
+      <br />
+      <IconifyIcon icon="noto:kiss-mark" width="16" class="mr-2" />
+      标记吧
     </div>
     <div class="category-section mt-16">
-      <div
-        v-for="category in categoryList"
-        :key="category.id"
+      <div v-for="category in categoryList" :key="category.id"
         class="category-card flex flex-col items-center justify-center mt-16 radius-20"
-        :class="{ active: activeCategory === category.id }"
-        :style="{ background: getCategoryGradient(category.id) }"
-        @click="handleCategoryClick(category.id)"
-      >
-        <IconifyIcon :icon="category.icon" width="32" class="mb-2"/>
+        :class="{ active: activeCategory === category.id }" :style="{ background: getCategoryGradient(category.id) }"
+        @click="handleCategoryClick(category.id)">
+        <IconifyIcon :icon="category.icon" width="32" class="mb-2" />
         <div class="category-name text-white text-16 font-bold">{{ category.name }}</div>
       </div>
     </div>
 
     <div class="module-list">
-      <div
-        v-for="module in moduleList"
-        :key="module.id"
-        class="module-card flex items-center bg-white radius-12 p-12 mb-12"
-        @click="navigateToItem(module)"
-      >
-        <van-image
-          class="radius-8"
-          radius="8"
-          width="72"
-          height="96"
-          lazy-load
-          loading-icon="photo-o"
-          :src="module.cover_url || getDefaultCover(module.id)"
-        />
+      <div v-for="module in moduleList" :key="module.id"
+        class="module-card flex items-center bg-white radius-12 p-12 mb-12" @click="navigateToItem(module)">
+        <van-image class="radius-8" radius="8" width="72" height="96" lazy-load loading-icon="photo-o"
+          :src="module.cover_url || getDefaultCover(module.id)" />
         <div class="ml-12 flex-1">
-          <div class="font-bold text-gray700 text-16 text-ellipsis">{{ module.name }}</div>
+          <div class="font-bold  text-16 text-ellipsis">{{ module.name }}</div>
           <div class="flex items-center gap-3 mt-16">
             <div class="px-6 py-2 radius-8 bg-gray100">
-              <span class="text-gray600 text-12">{{ module.participant || 0 }} 人参与</span>
+              <span class=" text-12">{{ module.participant || 0 }} 人参与</span>
             </div>
             <div class="px-6 py-2 radius-8 bg-gray100">
-              <span class="text-gray600 text-12">{{ module.pv || 0 }} 次访问</span>
+              <span class=" text-12">{{ module.pv || 0 }} 次访问</span>
             </div>
           </div>
         </div>
@@ -57,6 +42,7 @@ import { ref, onMounted } from 'vue'
 import { Image as VanImage } from 'vant'
 import { useRouter } from 'vue-router'
 import { useMarkStore } from '../stores/mark'
+import { getDefaultCover } from '@/utils/common'
 
 const router = useRouter()
 const markStore = useMarkStore()
@@ -71,15 +57,13 @@ const getCategoryGradient = (id) => {
     1: 'linear-gradient(180deg, #33cccc 0%, #00cccc 30%, #88a2fb 100%)',
     2: 'linear-gradient(180deg, #fb5c84 0%, #fa6199 30%, #fda872 100%)',
     3: 'linear-gradient(180deg, #19d0aa 0%, #66cc99 30%, #3ed3d2 100%)',
-    4: 'linear-gradient(180deg, #FFE4B5 0%, #FFF8DC 30%, #FFF0F5 100%)',
+    4: 'linear-gradient(180deg, #e091bf 0%, #f9d4ea 30%, #FFF0F5 100%)',
     5: 'linear-gradient(180deg, #ff3399 0%, #ff6699 30%, #ff9999 100%)',
   }
   return gradients[id] || 'linear-gradient(180deg, #8B7355 0%, #C4B4A0 100%)'
 }
 
-const getDefaultCover = (id) => {
-  return `https://picsum.photos/seed/${id}/72/96`
-}
+
 
 const navigateToItem = (module) => {
   router.push({

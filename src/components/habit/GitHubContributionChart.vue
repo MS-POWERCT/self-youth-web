@@ -17,12 +17,8 @@
 
     <div class="chart-container">
       <div class="months-label">
-        <div
-          v-for="(month, index) in monthLabels"
-          :key="index"
-          class="month-label"
-          :style="{ left: month.left + 'px' }"
-        >
+        <div v-for="(month, index) in monthLabels" :key="index" class="month-label"
+          :style="{ left: month.left + 'px' }">
           {{ month.name }}
         </div>
       </div>
@@ -35,19 +31,9 @@
         </div>
 
         <div class="weeks-container">
-          <div
-            v-for="(week, weekIndex) in weeks"
-            :key="weekIndex"
-            class="week"
-          >
-            <div
-              v-for="(day, dayIndex) in week"
-              :key="dayIndex"
-              class="day-cell"
-              :class="getDayClass(day)"
-              :title="getDayTitle(day)"
-              @click="onDayClick(day)"
-            >
+          <div v-for="(week, weekIndex) in weeks" :key="weekIndex" class="week">
+            <div v-for="(day, dayIndex) in week" :key="dayIndex" class="day-cell" :class="getDayClass(day)"
+              :title="getDayTitle(day)" @click="onDayClick(day)">
             </div>
           </div>
         </div>
@@ -106,9 +92,9 @@ const generateDateGrid = () => {
         weekData.push({ date: null, count: 0, level: 0 })
       } else {
         // 修复时区问题：使用本地时间格式化日期
-      const dateStr = currentDate.getFullYear() + '-' +
-        String(currentDate.getMonth() + 1).padStart(2, '0') + '-' +
-        String(currentDate.getDate()).padStart(2, '0')
+        const dateStr = currentDate.getFullYear() + '-' +
+          String(currentDate.getMonth() + 1).padStart(2, '0') + '-' +
+          String(currentDate.getDate()).padStart(2, '0')
         const count = props.data[dateStr] || 0
 
         weekData.push({
@@ -141,7 +127,7 @@ const getLevel = (count) => {
 const monthLabels = computed(() => {
   const labels = []
   const months = ['一月', '二月', '三月', '四月', '五月', '六月',
-                  '七月', '八月', '九月', '十月', '十一月', '十二月']
+    '七月', '八月', '九月', '十月', '十一月', '十二月']
 
   if (weeks.value.length > 0) {
     const firstDate = weeks.value[0].find(d => d.date)?.date
@@ -217,16 +203,15 @@ const onDayClick = (day) => {
 
 // 监听数据变化
 watch(() => props.data, () => {
-  console.log('数据更新:', props.data)
+  // console.log('数据更新:', props.data)
 }, { deep: true })
 
 onMounted(() => {
-  console.log('GitHub贡献表组件挂载，数据:', props.data)
+  // console.log('GitHub贡献表组件挂载，数据:', props.data)
 })
 </script>
 
 <style scoped>
-
 .github-contribution-chart {
   border-radius: 12px;
   padding: 20px;
@@ -323,17 +308,45 @@ onMounted(() => {
 }
 
 
-.level-0 { background: var(--github-contribution-color); }
-.level-1 { background: var(--github-contribution-color-1); }
-.level-2 { background: var(--github-contribution-color-2); }
-.level-3 { background: var(--github-contribution-color-3); }
-.level-4 { background: var(--github-contribution-color-4); }
+.level-0 {
+  background: var(--github-contribution-color);
+}
 
-.day-cell.level-0 { background: var(--github-contribution-color); }
-.day-cell.level-1 { background: var(--github-contribution-color-1); }
-.day-cell.level-2 { background: var(--github-contribution-color-2); }
-.day-cell.level-3 { background: var(--github-contribution-color-3); }
-.day-cell.level-4 { background: var(--github-contribution-color-4); }
+.level-1 {
+  background: var(--github-contribution-color-1);
+}
+
+.level-2 {
+  background: var(--github-contribution-color-2);
+}
+
+.level-3 {
+  background: var(--github-contribution-color-3);
+}
+
+.level-4 {
+  background: var(--github-contribution-color-4);
+}
+
+.day-cell.level-0 {
+  background: var(--github-contribution-color);
+}
+
+.day-cell.level-1 {
+  background: var(--github-contribution-color-1);
+}
+
+.day-cell.level-2 {
+  background: var(--github-contribution-color-2);
+}
+
+.day-cell.level-3 {
+  background: var(--github-contribution-color-3);
+}
+
+.day-cell.level-4 {
+  background: var(--github-contribution-color-4);
+}
 
 
 .chart-summary {
@@ -342,6 +355,4 @@ onMounted(() => {
   border-top: 1px solid #ebedf0;
   text-align: center;
 }
-
-
 </style>
