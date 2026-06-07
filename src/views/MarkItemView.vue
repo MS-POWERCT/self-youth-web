@@ -1,5 +1,6 @@
 <template>
   <div class="mark-detail-view bg-gray300">
+    <!-- y右边 -->
     <van-nav-bar :title="moduleName" left-arrow @click-left="$router.go(-1)" />
     <div class="bg-white radius-bottom-12 p-8">
       <br />
@@ -13,14 +14,17 @@
           全部 ({{ counts.all }})
         </div>
         <div class="filter-tab" :class="{ active: filterStatus === 0 }" @click="filterStatus = 0">
-          {{ moduleTypeList[2] }} ({{ counts[0] }})
+          {{ moduleTypeList[0] }} ({{ counts[0] }})
         </div>
         <div class="filter-tab" :class="{ active: filterStatus === 1 }" @click="filterStatus = 1">
-          {{ moduleTypeList[0] }} ({{ counts[1] }})
+          {{ moduleTypeList[1] }} ({{ counts[1] }})
         </div>
         <div class="filter-tab" :class="{ active: filterStatus === 2 }" @click="filterStatus = 2">
-          {{ moduleTypeList[1] }} ({{ counts[2] }})
+          {{ moduleTypeList[2] }} ({{ counts[2] }})
         </div>
+      </div>
+      <div class="bg-primary text-white p-8 text-center radius-8 mb-8 " @click="showPosterPopup = true">
+        生成标记海报
       </div>
       <!-- 二段筛选 部分类型可以有-->
       <div class="province-filter" v-if="moduleTypeAAAAAProvince.length > 1">
@@ -63,14 +67,14 @@
         </van-col>
         <van-col span="4" class="flex flex-col justify-center items-end">
           <template v-if="item.mark_type === 0">
-            <div class="item-btn text-12 text-white bg-yellow-gold" @click="markItem(item, 1)">{{ moduleTypeList[0] }}
+            <div class="item-btn text-12 text-white bg-yellow-gold" @click="markItem(item, 2)">{{ moduleTypeList[2] }}
             </div>
-            <div class="item-btn text-12 text-white bg-primary" @click="markItem(item, 2)">{{ moduleTypeList[1] }}</div>
+            <div class="item-btn text-12 text-white bg-primary" @click="markItem(item, 1)">{{ moduleTypeList[1] }}</div>
           </template>
           <template v-else>
-            <span class="text-12 text-bold" :class="item.mark_type === 1 ? 'text-yellow-gold' : 'text-primary'">
-              {{ moduleTypeList[item.mark_type - 1] }}
-              <van-icon name="close" :class="item.mark_type === 1 ? 'text-yellow-gold' : 'text-primary'"
+            <span class="text-12 text-bold" :class="item.mark_type === 2 ? 'text-yellow-gold' : 'text-primary'">
+              {{ moduleTypeList[item.mark_type] }}
+              <van-icon name="close" :class="item.mark_type === 2 ? 'text-yellow-gold' : 'text-primary'"
                 @click="markItem(item, 0)" size="16" />
             </span>
           </template>
@@ -256,6 +260,68 @@
     </van-popup>
 
 
+    <!-- 下面弹出 -->
+    <van-popup v-model:show="showPosterPopup" position="bottom" :style="{ height: '20vh' }" round>
+      <div class="m-16">
+        <div class="font-bold text-16">
+          选择海报样式
+        </div>
+        <div class="">
+          <div class="mt-8 p-12 radius-8 bg-primary100" @click="exportPoster()">
+            <IconifyIcon class="mr-8" icon="streamline-stickies-color:photography" size="24" />
+            海报墙
+          </div>
+          <div class="mt-8 p-12 radius-8 bg-primary100" @click="exportText()">
+            <IconifyIcon class="mr-8" icon="streamline-stickies-color:education-degree" size="24" />
+            文字卡片
+          </div>
+        </div>
+      </div>
+    </van-popup>
+
+    <!-- 导出文字弹窗 -->
+    <van-popup v-model:show="showExportTextPopup" position="right" :style="{ height: '100%', width: '100%' }">
+      <div class="export-text-container">
+        <!-- 标题区域 -->
+        <div class="export-header">
+          <van-icon name="arrow-left" size="10" @click="showExportTextPopup = false" />
+          <span>海报预览</span>
+        </div>
+
+        <!-- 内容区域 -->
+        <div class="export-content">
+          <div class="text-center text-16 font-bold">{{ exportTextContent['name'] }} 海报</div>
+          <div class="export-status flex justify-center items-center">
+            <span class="m-8 text-10 bg-primary100 py-2 px-8 font-bold text-primary radius-8">{{
+              exportTextContent['yes']
+              }}</span>
+            <span class="m-8 text-10 bg-yellow-gold100 py-2 px-8 font-bold text-yellow-gold radius-8">{{
+              exportTextContent['want']
+              }}</span>
+            <span class="m-8 text-10 bg-gray300 py-2 px-8 font-bold text-gray radius-8">{{
+              exportTextContent['no']
+              }}</span>
+          </div>
+          <div>
+            <span v-for="(item, index) in exportTextContent['itemList']" :key="index"
+              class="item-tag mr-4 text-8 font-bold radius-8 py-2 px-8" :class="{
+                'bg-gray300 text-gray': item.markType === 0,
+                'bg-primary100 text-primary': item.markType === 1,
+                'bg-yellow-gold100 text-yellow-gold': item.markType === 2,
+                'line-through': item.markType === 1
+              }">
+              {{ item.name }}
+            </span>
+          </div>
+        </div>
+
+        <!-- 操作按钮区域 -->
+        <div class="export-actions">
+          <van-button type="default" block @click="saveToAlbum">保存到相册</van-button>
+        </div>
+      </div>
+    </van-popup>
+
   </div>
 </template>
 
@@ -265,7 +331,6 @@ import { useRoute } from 'vue-router'
 import { NavBar as VanNavBar, showToast } from 'vant'
 import { useMarkStore } from '../stores/mark'
 import { markApi } from '../api/mark'
-// import { copyToClipboard } from '@/utils/common'
 import ProgressBar from '@/components/tools/ProgressBar.vue'
 import { getDefaultCover } from '@/utils/common'
 
@@ -280,24 +345,24 @@ const moduleTypeList = ref([])
 
 const moduleTypeConfig = ref({
   1: [
-    '想看',
-    '已看',
     '未看',
+    '已看',
+    '想看',
   ],
   2: [
-    '想看',
-    '已看',
     '未看',
+    '已看',
+    '想看',
   ],
   3: [
-    '想去',
-    '已去',
     '未去',
+    '已去',
+    '想去',
   ],
   4: [
-    '想完成',
-    '已完成',
     '未完成',
+    '已完成',
+    '想完成',
   ],
 })
 
@@ -310,6 +375,11 @@ const filterStatus = ref('all')
 const showDetailPopup = ref(false)
 const showHikingDetailPopup = ref(false)
 const selectedItem = ref(null)
+const showPosterPopup = ref(false)
+const showExportTextPopup = ref(false)
+const exportTextContent = ref([])
+//
+
 
 // 下拉筛选
 const dropdownValue = ref('all')
@@ -478,11 +548,44 @@ const getItemList = async () => {
   }
 }
 
+
+// 跳转海报墙
+const exportPoster = () => {
+  showToast('暂未开放,可以尝试导出卡片文字')
+}
+// 跳转卡片文字
+const exportText = () => {
+  // 统计信息
+  exportTextContent.value = {
+    name: moduleName.value,
+    title: moduleTitle.value,
+    yes: moduleTypeList.value[1] + ' ' + counts.value[1],
+    want: moduleTypeList.value[2] + ' ' + counts.value[2],
+    no: moduleTypeList.value[0] + ' ' + counts.value[0],
+    itemList: []
+  }
+
+  filteredList.value.forEach((item) => {
+    exportTextContent.value.itemList.push({
+      name: item.name,
+      markType: item.mark_type
+    })
+  })
+
+  showExportTextPopup.value = true
+}
+// 保存到相册（预留接口）
+const saveToAlbum = () => {
+  // TODO: 保存到相册功能，需要后端接口支持
+  showToast('保存到相册功能开发中')
+}
+
+
 const markItem = async (item, markType) => {
   await markApi.markItem(item.id, markType)
   item.mark_type = markType
   // 刷新进度条
-  itemListCurrent.value = itemList.value.filter(item => item.mark_type == 2).length
+  itemListCurrent.value = itemList.value.filter(item => item.mark_type == 1).length
 }
 
 onMounted(() => {
@@ -974,6 +1077,48 @@ onMounted(() => {
     font-size: var(--rem-7);
     line-height: 1.6;
     padding-left: 12px;
+  }
+}
+
+/* 导出文字弹窗样式 */
+.export-text-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background: var(--white);
+
+  .export-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .export-content {
+    flex: 1;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    background: var(--gray100);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+
+    .item-tag {
+      display: inline-block;
+      white-space: nowrap;
+    }
+  }
+
+  .export-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
   }
 }
 </style>

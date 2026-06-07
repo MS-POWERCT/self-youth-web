@@ -16,23 +16,24 @@
   --primary: #1989fa;
   --pink: #e091bf;
   --orange: #ff9800;
-  --yellow-gold: #ffc31f;
+  --yellow-gold: #bd9426;
   --green: #5dc361;
 
   /* 几个浅色 */
   --primary100: #e6f7ff;
   --pink100: #f9d4ea;
   --orange100: #fce7c9;
-  --yellow-gold100: #ffd73f;
+  --yellow-gold100: #f1e8c1;
   --green100: #cfef98;
 
 
+
   /* github 贡献表颜色 */
-  --github-contribution-color: #ebedf0;
-  --github-contribution-color-1: #9be9a8;
-  --github-contribution-color-2: #40c463;
-  --github-contribution-color-3: #30a14e;
-  --github-contribution-color-4: #216e39;
+  --github-contribution-color: #f0f2f5;
+  --github-contribution-color-1: #aceebb;
+  --github-contribution-color-2: #4ac36b;
+  --github-contribution-color-3: #2ea44b;
+  --github-contribution-color-4: #126329;
 
 
   /* 像素值 */
@@ -144,6 +145,12 @@
   6. 边框 - border
 */
 /* 字体大小 */
+.text-8 {
+  font-size: var(--rem-6);
+}
+.text-10 {
+  font-size: var(--rem-7);
+}
 .text-12 {
   font-size: var(--rem-8);
 }
@@ -170,6 +177,9 @@
 }
 .font-bold {
   font-weight: var(--number-700);
+}
+.line-through {
+  text-decoration: line-through;
 }
 
 /* 文本颜色 */

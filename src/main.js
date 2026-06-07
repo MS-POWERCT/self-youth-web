@@ -12,11 +12,11 @@ import { Icon } from '@iconify/vue'
 import { CapacitorService } from './utils/capacitor'
 
 // 导入 VConsole 插件
-import VConsole from 'vconsole'
+// import VConsole from 'vconsole'
 // 💡 建议: 仅在开发环境启用 VConsole，生产环境应禁用
-if (import.meta.env.DEV) {
-  new VConsole()
-}
+// if (import.meta.env.DEV) {
+//   new VConsole()
+// }
 // 导入需要的 Vant 组件
 import {
   Icon as VanIcon,

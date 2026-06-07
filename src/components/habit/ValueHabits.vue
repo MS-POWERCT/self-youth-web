@@ -98,10 +98,8 @@
           </div>
         </div>
 
-        <div class="form-footer">
-          <van-button type="primary" plain block @click="saveRecord" :loading="saving">
+        <div class="form-footer"  @click="saveRecord" :loading="saving">
             保存
-          </van-button>
         </div>
       </div>
     </van-popup>
@@ -469,6 +467,11 @@ onMounted(() => {
 
 .form-footer {
   margin-top: auto;
+  text-align: center;
+  padding: 16px;
+  background: var(--white);
+  border-radius: 8px;
+  font-weight: 700;
 }
 
 :deep(.van-field__label) {

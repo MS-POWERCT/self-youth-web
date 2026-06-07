@@ -57,8 +57,8 @@ const showTabbar = computed(() => {
     rgba(255, 255, 255, 0.6) 30%,
     rgba(255, 255, 255, 0.9) 100%
   ),
-  radial-gradient(circle at 20% 20%, rgba(237, 131, 131, 0.5) 0%, transparent 75%),
-  radial-gradient(circle at 80% 20%, rgba(121, 236, 228, 0.5) 0%, transparent 75%);
+  radial-gradient(circle at 20% 20%, rgba(237, 131, 131, 0.5) 0%),
+  radial-gradient(circle at 80% 20%, rgba(121, 236, 228, 0.5) 0%);
   background-blend-mode: screen;
   /* 没有边框 */
   /* border: none; */

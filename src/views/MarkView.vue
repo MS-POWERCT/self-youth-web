@@ -108,7 +108,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .mark-view {
-  min-height: 100vh;
   background:
     radial-gradient(circle at 20% 20%, rgba(237, 131, 131, 0.5) 0%, transparent 75%),
     radial-gradient(circle at 80% 20%, rgba(121, 236, 228, 0.5) 0%, transparent 75%);

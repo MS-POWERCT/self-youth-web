@@ -3,8 +3,7 @@
     <van-nav-bar title="习惯统计" left-arrow @click-left="$router.go(-1)" />
 
     <div class="stats-content">
-      <!-- 调试信息 -->
-      <div class="debug-info p-10 bg-gray100 m-10 radius-4">
+      <!-- <div class="debug-info p-10 bg-gray100 m-10 radius-4">
         <p>统计数据数量: {{ Object.keys(statsData).length }}</p>
         <p>总打卡次数: {{ totalChecks }}</p>
         <button @click="loadStatsData" class="p-4">重新加载数据</button>
@@ -13,7 +12,7 @@
             {{ date }}: {{ count }}次
           </p>
         </div>
-      </div>
+      </div> -->
 
       <!-- GitHub风格贡献表 -->
       <GitHubContributionChart :data="statsData" :title="'打卡贡献图'" @day-click="onDayClick" />
@@ -22,19 +21,21 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { showToast } from 'vant'
 import { useHabitStore } from '../stores/habit'
 import GitHubContributionChart from '../components/habit/GitHubContributionChart.vue'
+
+
 
 const habitStore = useHabitStore()
 
 const statsData = ref({})
 const loading = ref(false)
 
-const totalChecks = computed(() => {
-  return Object.values(statsData.value).reduce((sum, count) => sum + count, 0)
-})
+// const totalChecks = computed(() => {
+//   return Object.values(statsData.value).reduce((sum, count) => sum + count, 0)
+// })
 
 // 加载统计数据
 const loadStatsData = async () => {
@@ -58,9 +59,9 @@ const loadStatsData = async () => {
 }
 
 // 处理贡献表点击
-const onDayClick = (day) => {
-  showToast(`${day.dateStr} 打卡 ${day.count} 次`)
-}
+// const onDayClick = (day) => {
+//   showToast(`${day.dateStr} 打卡 ${day.count} 次`)
+// }
 
 onMounted(() => {
   loadStatsData()

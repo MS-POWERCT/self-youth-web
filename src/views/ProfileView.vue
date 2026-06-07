@@ -22,15 +22,15 @@
       </van-row>
       <div class="statistics">
         <div>
-          <div>{{ userStore.user.continuous_days_check || 0 }} 天</div>
+          <div><span class="text-24 font-bold">{{ userStore.user.continuous_days_check || 0 }}</span>&nbsp;天</div>
           <div class="text-gray500">连续打卡</div>
         </div>
         <div>
-          <div>{{ userStore.user.continuous_days_value || 0 }} 天</div>
+          <div><span class="text-24 font-bold">{{ userStore.user.continuous_days_value || 0 }}</span>&nbsp;天</div>
           <div class="text-gray500">连续记录</div>
         </div>
         <div>
-          <div>{{ userStore.user.mark_user_count }}</div>
+          <div><span class="text-24 font-bold">{{ userStore.user.mark_user_count || 0 }}</span></div>
           <div class="text-gray500">累计标记</div>
         </div>
       </div>
@@ -62,10 +62,7 @@ onMounted(async () => {
   await userStore.getUserInfo()
 })
 
-// const handleLogout = () => {
-//   userStore.logout()
-//   router.push('/login')
-// }
+
 </script>
 <style scoped>
 .profile-container {
@@ -89,11 +86,6 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-
-    >div:nth-child(1) {
-      font-size: 24px;
-      font-weight: bold;
-    }
   }
 }
 </style>
