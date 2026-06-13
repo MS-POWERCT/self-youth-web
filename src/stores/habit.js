@@ -16,6 +16,11 @@ export const useHabitStore = defineStore('habit', {
       try {
         this.loading = true
         const response = await habitApi.getList(type)
+        // 处理图标
+        response.forEach(h => {
+          h.habit_icon = h.habit_icon || {}
+        })
+
         this.habits = response || []
         return response
       } catch (error) {
@@ -30,6 +35,10 @@ export const useHabitStore = defineStore('habit', {
       try {
         this.loading = true
         const response = await habitApi.getEditableList(type)
+        // 处理图标
+        response.forEach(h => {
+          h.habit_icon = h.habit_icon || {}
+        })
         this.editableHabits = response || []
         return response
       } catch (error) {
@@ -40,9 +49,9 @@ export const useHabitStore = defineStore('habit', {
       }
     },
     // 创建习惯
-    async createHabit(name, type, icon) {
+    async createHabit(name, type, icon_id) {
       try {
-        await habitApi.create(name, type, icon)
+        await habitApi.create(name, type, icon_id)
         // 重新获取习惯列表
         await this.fetchHabits(type)
       } catch (error) {
@@ -51,9 +60,9 @@ export const useHabitStore = defineStore('habit', {
       }
     },
     // 编辑习惯
-    async editHabit(name, type, icon) {
+    async editHabit(id, name, type, icon_id) {
       try {
-        await habitApi.edit(name, type, icon)
+        await habitApi.edit(id, name, type, icon_id)
         // 重新获取习惯列表
         await this.fetchHabits(type)
       } catch (error) {

@@ -11,6 +11,10 @@ import './assets/main.css'
 import { Icon } from '@iconify/vue'
 import { CapacitorService } from './utils/capacitor'
 
+// 初始化一些变量
+const APP_NAME = import.meta.env.APP_NAME
+
+
 // 导入 VConsole 插件
 // import VConsole from 'vconsole'
 // 💡 建议: 仅在开发环境启用 VConsole，生产环境应禁用
@@ -54,7 +58,6 @@ import {
 } from 'vant'
 
 // 1. 引入 Capacitor 核心和平台判断
-import { Capacitor } from '@capacitor/core'
 
 
 async function initApp() {

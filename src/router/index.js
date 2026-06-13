@@ -76,6 +76,12 @@ const router = createRouter({
       component: () => import('../views/MarkItemView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/mark/cycling',
+      name: 'mark-cycling',
+      component: () => import('../views/mark/CyclingView.vue'),
+      meta: { requiresAuth: true },
+    },
 
     // 用户设置路由
     ...UserSettingsRoutes,

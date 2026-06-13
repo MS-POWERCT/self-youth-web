@@ -10,7 +10,17 @@
     "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint . --fix",
     "lint": "run-s lint:*",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:sync:android": "npm run build && npx cap sync android",
+    "cap:sync:ios": "npm run build && npx cap sync ios",
+    "cap:open:android": "npx cap open android",
+    "cap:open:ios": "npx cap open ios",
+    "package:android:debug": "npm run cap:sync:android && cd android && ./gradlew assembleDebug && cd ..",
+    "package:android:release": "npm run cap:sync:android && cd android && ./gradlew assembleRelease && cd ..",
+    "package:android:bundle": "npm run cap:sync:android && cd android && ./gradlew bundleRelease && cd ..",
+    "run:android": "npm run cap:sync:android && npx cap run android",
+    "run:android:device": "npm run cap:sync:android && npx cap run android --target"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.4",

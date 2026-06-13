@@ -11,9 +11,8 @@
                 :color="isCheckedToday(habit.id) ? '#07c160' : '#c8c9cc'" size="20" />
             </div>
             <div class="habit-info">
-              <svg class="icon" aria-hidden="true">
-                <use :xlink:href="'#' + habit.icon" />
-              </svg>
+
+              <IconifyIcon :icon="habit.habit_icon.icon" width="24" />
               <h4 class="habit-name font-bold">{{ habit.name }}</h4>
               <div class="habit-streak" v-if="habit.streak > 0">
                 <van-icon name="fire" color="#ff6b6b" size="12" />
@@ -96,7 +95,6 @@ const toggleCheck = async (habit) => {
     showToast(isCheckedToday(habit.id) ? '打卡成功' : '取消打卡成功')
   } catch (error) {
     console.error('打卡操作失败', error)
-    showToast(error || '操作失败')
   } finally {
     checkingId.value = null
   }

@@ -2,7 +2,8 @@
   <div class="mark-view">
     <div class="text-center mb-2 font-bold text-lg">
       <br />
-      <IconifyIcon icon="noto:kiss-mark" width="16" class="mr-2" />
+      <IconifyIcon icon="streamline-stickies-color:keyboard-direction" width="14" class="mr-2" />
+      &nbsp;
       标记吧
     </div>
     <div class="category-section mt-16">
@@ -22,19 +23,22 @@
           :src="module.cover_url || getDefaultCover(module.id)" />
         <div class="ml-12 flex-1">
           <div class="font-bold  text-16 text-ellipsis">{{ module.name }}</div>
-          <div class="flex items-center gap-3 mt-16">
+          <div class="mt-16 text-12 text-ellipsis">{{ module.title }}</div>
+          <!-- <div class="flex items-center gap-3 mt-16">
             <div class="px-6 py-2 radius-8 bg-gray100">
               <span class=" text-12">{{ module.participant || 0 }} 人参与</span>
             </div>
             <div class="px-6 py-2 radius-8 bg-gray100">
               <span class=" text-12">{{ module.pv || 0 }} 次访问</span>
             </div>
-          </div>
+          </div> -->
         </div>
         <!-- <IconifyIcon icon="mingcute:arrow-right-fill" class="mr-2" width="24" height="24" /> -->
       </div>
     </div>
   </div>
+  <br />
+  <br />
 </template>
 
 <script setup>
@@ -66,14 +70,18 @@ const getCategoryGradient = (id) => {
 
 
 const navigateToItem = (module) => {
-  router.push({
-    path: '/mark/item',
-    query: {
-      id: module.id,
-      name: module.name,
-      title: module.title || module.name
-    }
-  })
+  if (module.id === 48) {
+    router.push('/mark/cycling')
+  } else {
+    router.push({
+      path: '/mark/item',
+      query: {
+        id: module.id,
+        name: module.name,
+        title: module.title || module.name
+      }
+    })
+  }
 }
 
 const handleCategoryClick = (categoryId) => {

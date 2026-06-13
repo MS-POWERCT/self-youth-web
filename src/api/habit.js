@@ -30,26 +30,27 @@ export const habitApi = {
     })
   },
   // 新增习惯
-  create(name, type, icon) {
+  create(name, type, icon_id) {
     return request({
       url: '/api/habit/create',
       method: 'post',
       data: {
         name,
         type,
-        icon
+        icon_id
       }
     })
   },
   // 编辑习惯
-  edit(name, type, icon) {
+  edit(id,name, type, icon_id) {
     return request({
       url: '/api/habit/edit',
       method: 'post',
       data: {
+        id,
         name,
         type,
-        icon
+        icon_id
       }
     })
   },

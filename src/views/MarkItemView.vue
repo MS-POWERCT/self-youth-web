@@ -92,7 +92,7 @@
         <div class="popup-content">
           <div class="detail-title">{{ selectedItem.name }}</div>
           <div class="detail-location flex items-center text-14">
-            <IconifyIcon icon="fluent-color:location-ripple-16" size="16" /> &nbsp;
+            <IconifyIcon icon="streamline-stickies-color:3d-duo" width="16" /> &nbsp;
             <span>{{ selectedItem.tags.province || '未知位置' }}</span>
             <span class="text-12">&nbsp; · &nbsp;</span>
             <span>{{ selectedItem.tags.city || '未知位置' }}</span>
@@ -156,7 +156,7 @@
             <div class="hiking-title">{{ selectedItem?.name }}</div>
             <div class="hiking-subtitle">
               <span class="hiking-location">
-                <IconifyIcon icon="fluent-color:location-ripple-16" size="16" /> &nbsp;
+                <IconifyIcon icon="streamline-stickies-color:3d-duo" width="16" /> &nbsp;
                 {{ selectedItem?.tags.province || '未知位置' }}
                 ·
                 {{ selectedItem?.tags.region || '未知位置' }}
@@ -261,18 +261,18 @@
 
 
     <!-- 下面弹出 -->
-    <van-popup v-model:show="showPosterPopup" position="bottom" :style="{ height: '20vh' }" round>
+    <van-popup v-model:show="showPosterPopup" position="bottom" :style="{ height: '24vh' }" round>
       <div class="m-16">
         <div class="font-bold text-16">
           选择海报样式
         </div>
-        <div class="">
-          <div class="mt-8 p-12 radius-8 bg-primary100" @click="exportPoster()">
-            <IconifyIcon class="mr-8" icon="streamline-stickies-color:photography" size="24" />
+        <div>
+          <div class="mt-8 p-12 flex items-center justify-center radius-8 bg-primary100" @click="exportPoster()">
+            <IconifyIcon class="mr-8" icon="streamline-stickies-color:photography" width="20" />
             海报墙
           </div>
-          <div class="mt-8 p-12 radius-8 bg-primary100" @click="exportText()">
-            <IconifyIcon class="mr-8" icon="streamline-stickies-color:education-degree" size="24" />
+          <div class="mt-8 p-12 flex items-center justify-center radius-8 bg-primary100" @click="exportText()">
+            <IconifyIcon class="mr-8" icon="streamline-stickies-color:education-degree" width="20" />
             文字卡片
           </div>
         </div>
@@ -294,13 +294,13 @@
           <div class="export-status flex justify-center items-center">
             <span class="m-8 text-10 bg-primary100 py-2 px-8 font-bold text-primary radius-8">{{
               exportTextContent['yes']
-              }}</span>
+            }}</span>
             <span class="m-8 text-10 bg-yellow-gold100 py-2 px-8 font-bold text-yellow-gold radius-8">{{
               exportTextContent['want']
-              }}</span>
+            }}</span>
             <span class="m-8 text-10 bg-gray300 py-2 px-8 font-bold text-gray radius-8">{{
               exportTextContent['no']
-              }}</span>
+            }}</span>
           </div>
           <div>
             <span v-for="(item, index) in exportTextContent['itemList']" :key="index"

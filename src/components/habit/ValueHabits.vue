@@ -7,9 +7,7 @@
         <div class="habit-item bg-gray100" v-for="value in habits" :key="value.id"
           @click="showRecordForm(value, 'add')">
           <div class="habit-icon">
-            <svg class="icon" aria-hidden="true">
-              <use :xlink:href="'#' + value.icon" />
-            </svg>
+            <IconifyIcon :icon="value.habit_icon.icon" width="24" />
           </div>
           <div class="habit-name">{{ value.name }}</div>
         </div>
@@ -17,7 +15,7 @@
 
       <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
         <div v-if="!loading && valueRecords.length === 0" class="empty-state">
-          <van-icon name="chart-trending-o" size="48" color="#c8c9cc" />
+          <IconifyIcon icon="streamline-stickies-color:rocket-launch-chart" width="48" />
           <p>暂无记录</p>
         </div>
         <div v-else class="records-list">
@@ -25,25 +23,17 @@
             <!-- 格式n月n日record.record_date -->
             <div>
               <span>{{ formatDate(record.record_date) }}</span>
-              <span>
-                <IconifyIcon icon="fluent-color:arrow-trending-lines-24" size="16" />
-              </span>
-
             </div>
             <!-- 这里来一条很细的分割线 -->
             <van-divider class="record-divider" />
             <div class="record-info" v-for="(v, i) in record.list" :key="v.id" @click="showRecordForm(v, 'edit')">
-              <!-- <div class="record-habit">{{ getHabitName(record.habit_id) }}</div> -->
-
               <div class="record-time">
                 <span>{{ formatTime(v.record_start_time) }}</span>
-                <!-- 一个点 -->
               </div>
 
               <div class="record-name">
-                <svg class="icon" aria-hidden="true">
-                  <use :xlink:href="'#' + v.user_habit.icon" />
-                </svg>
+                <IconifyIcon :icon="v.user_habit.habit_icon.icon" width="20" />
+                &nbsp;
                 {{ v.user_habit.name }}
               </div>
               <div class="record-value-container">
@@ -66,9 +56,8 @@
             <van-icon name="arrow-left" size="22" @click="closePopup" />
           </div>
           <div class="header-title">
-            <svg class="icon" aria-hidden="true">
-              <use :xlink:href="'#' + selectedHabit.icon" />
-            </svg>
+            <IconifyIcon :icon="selectedHabit.icon" width="20" />
+            &nbsp;
             <span>{{ selectedHabit.name }}</span>
           </div>
           <div class="header-right">
@@ -98,8 +87,8 @@
           </div>
         </div>
 
-        <div class="form-footer"  @click="saveRecord" :loading="saving">
-            保存
+        <div class="form-footer" @click="saveRecord" :loading="saving">
+          保存
         </div>
       </div>
     </van-popup>
@@ -186,7 +175,7 @@ const showRecordForm = (habit, type) => {
     selectedHabit.value = habit
     formValue.value.record_start_time = getCurrentTime('datetime_cn')
   } else {
-    selectedHabit.value.icon = habit.user_habit.icon
+    selectedHabit.value.icon = habit.user_habit.habit_icon.icon
     selectedHabit.value.name = habit.user_habit.name
     formValue.value.id = habit.id
     formValue.value.record_start_time = getCurrentTime('datetime_cn', new Date(habit.record_start_time))
@@ -297,10 +286,7 @@ onMounted(() => {
 }
 
 .empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
   padding: 60px 20px;
 }
 
@@ -340,6 +326,12 @@ onMounted(() => {
   /* 防止收缩 */
   white-space: nowrap;
   /* 防止文字换行 */
+}
+
+.record-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 
@@ -430,6 +422,8 @@ onMounted(() => {
 
 .header-title {
   font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 
 .header-left .van-icon,

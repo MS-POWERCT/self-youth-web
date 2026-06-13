@@ -1,10 +1,11 @@
 // src/utils/request.js
 
 import axios from 'axios'
-import { showToast, showDialog } from 'vant'
+import { showToast, showDialog, showConfirmDialog } from 'vant'
 import { useUserStore } from '../stores/user'
 import { deviceType } from './device'
 import router from '../router'
+// import { showConfirmDialog } from './dialog'
 
 const service = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -42,9 +43,11 @@ service.interceptors.response.use(
     if ('res_code' in res) {
       if (res.res_code === 6200) {
         // 需要绑定邮箱或地址，跳转到登录管理页面
-        showDialog({
+        showConfirmDialog({
           title: '需要完善账户',
           message: res.res_msg || '请先绑定邮箱或地址以继续操作',
+          icon: 'streamline-stickies-color:user-circle-question',
+          iconClass: 'icon-warning'
         }).then(() => {
           router.push('/userSettings/account-login')
         })

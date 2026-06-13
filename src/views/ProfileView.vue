@@ -8,15 +8,15 @@
     <div v-if="userStore.token && userStore.user">
       <van-row class="flex items-center">
         <van-col span="8" class="flex justify-center">
-          <van-image round width="100" height="100"
-            :src="userStore.user.avatar || 'https://img.yzcdn.cn/vant/cat.jpeg'" />
+          <van-image class="border-white" round
+            :src="userStore.user.avatar || `https://picsum.photos/seed/${userStore.user.id}/64/64`" />
         </van-col>
         <van-col span="12">
           <span class="font-bold text-24">{{ userStore.user.name || '用户名' }}</span>
         </van-col>
         <van-col span="4">
           <div @click="$router.push('/userSettings/statistics')">
-            <IconifyIcon icon="fluent-color:settings-24" width="32" />
+            <IconifyIcon icon="streamline-stickies-color:android-setting" width="32" />
           </div>
         </van-col>
       </van-row>
@@ -44,12 +44,28 @@
 
       <!-- 如果userNextLover 有内容 -->
     </div>
+    <div class="user-active py-16">
+      <div class="user-log">
+        <div v-for="item in userLog" :key="item.id" class="user-item py-4 flex justify-between">
+          <div>
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            <IconifyIcon :icon="getLogIcon(item.type)" width="12" /> &nbsp;
+            {{ item.log }}
+          </div>
+          <div class="text-12" :class="{ 'text-gray500': !isToday(item.updated_at) }">
+            {{ !isToday(item.updated_at) ? '◆ ' : '' }}{{ item.updated_at.substring(10, 16) }}
+            &nbsp;&nbsp;&nbsp;&nbsp;
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- <van-button type="danger" block @click="handleLogout" class="logout-btn mt-10"> 退出登录 </van-button> -->
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useUserStore } from '../stores/user'
 // import { useRouter } from 'vue-router'
 
@@ -57,9 +73,42 @@ import { useUserStore } from '../stores/user'
 const userStore = useUserStore()
 // const router = useRouter()
 
+const userLog = ref([])
+
+// 判断是否是今天
+const isToday = (dateString) => {
+  const date = new Date(dateString)
+  const today = new Date()
+  return date.toDateString() === today.toDateString()
+}
+
+// 加载用户操作日志
+const loadUserLog = async () => {
+  try {
+    const log = await userStore.getUserLog()
+    userLog.value = log || []
+  } catch (error) {
+    console.error('加载用户操作日志失败', error)
+  }
+}
+
+
+
+// 获取日志图标
+const getLogIcon = (type) => {
+  if (type === 'mark') {
+    return 'streamline-stickies-color:keyboard-direction'
+  } else if (type === 'habit') {
+    return 'streamline-stickies-color:validation-1'
+  } else {
+    return 'streamline-stickies-color:star-duo'
+  }
+}
+
 
 onMounted(async () => {
   await userStore.getUserInfo()
+  await loadUserLog()
 })
 
 
@@ -75,7 +124,7 @@ onMounted(async () => {
 }
 
 .statistics {
-  background-color: #fff;
+  background-color: var(--white);
   margin: 30px 20px;
   border-radius: 16px;
   display: flex;
@@ -87,5 +136,17 @@ onMounted(async () => {
     flex-direction: column;
     align-items: center;
   }
+}
+
+.user-active {
+  background-color: var(--white);
+  margin: 30px 20px;
+  border-radius: 16px;
+
+}
+
+.user-log {
+  height: 220px;
+  overflow-y: auto;
 }
 </style>

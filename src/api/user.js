@@ -70,5 +70,12 @@ export const userApi = {
       method: 'post',
       data,
     })
+  },
+  // 获取用户操作日志
+  getUserLog(){
+    return request({
+      url: '/api/my/getUserLog',
+      method: 'get',
+    })
   }
 }

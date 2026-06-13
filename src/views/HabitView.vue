@@ -1,11 +1,13 @@
 <template>
   <div class="habit-page bg-gray50">
-    <div class="text-center font-bold text-lg">
+    <div class="text-center font-bold">
       <br />
-      <IconifyIcon icon="fluent-color:circle-multiple-hint-checkmark-48" width="16" class="mr-2" />
+      <IconifyIcon icon="streamline-stickies-color:validation-1" width="14" class="mr-2" />
+      &nbsp;
       习惯管理
-      <van-icon name="edit" size="18" @click="$router.push('/habits/edit?tab=' + (activeTab === 'check' ? '1' : '2'))"
-        style="cursor: pointer;" />
+      &nbsp;
+      <IconifyIcon icon="streamline-stickies-color:wrench" width="14" class="ml-2"
+        @click="$router.push('/habits/edit?tab=' + (activeTab === 'check' ? '1' : '2'))" />
     </div>
     <!-- left-arrow
       @click-left="$router.go(-1)" -->
@@ -30,8 +32,9 @@
     </div>
 
     <!-- 统计入口 -->
-    <div class="stats-button text-white" @click="$router.push('/habits/stats')">
-      <van-icon name="chart-trending-o" size="24" />
+    <div class="stats-button" @click="$router.push('/habits/stats')">
+      <!-- <van-icon name="chart-trending-o" size="24" /> -->
+      <IconifyIcon icon="streamline-stickies-color:graph-bar" width="24" />
     </div>
 
 
@@ -73,14 +76,12 @@ onMounted(() => {
   right: 20px;
   width: 56px;
   height: 56px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
   cursor: pointer;
-  transition: all 0.3s ease;
   z-index: 1000;
 }
 </style>

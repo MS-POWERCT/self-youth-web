@@ -6,6 +6,7 @@ export const useGlobalStore = defineStore('global', {
   state: () => ({
     initData: JSON.parse(localStorage.getItem('initData')) || null,
     isLoading: false,
+    APP_NAME: import.meta.env.VITE_APP_NAME,
   }),
   actions: {
     async fetchInitData() {

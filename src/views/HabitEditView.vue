@@ -8,9 +8,7 @@
         class="habit-item flex items-center justify-between p-4 mb-12 bg-white radius-8"
         :class="{ hidden: !habit.is_show }">
         <div class="habit-info flex items-center gap-3 flex-1">
-          <svg class="icon" aria-hidden="true">
-            <use :xlink:href="'#' + habit.icon" />
-          </svg>
+          <IconifyIcon :icon="habit.habit_icon.icon" width="24" />
           <span class="text-16">{{ habit.name }}</span>
           <van-tag v-if="habit.fixed" type="warning" size="small">系统默认</van-tag>
         </div>
@@ -34,13 +32,12 @@
   <van-popup v-model:show="showAddPopup" position="bottom" :style="{ height: '50%' }" round @click-overlay="closePopup">
     <div class="add-popup p-4">
       <div class="popup-content mb-4">
-        <van-field v-model="addForm.name" label="习惯名称" placeholder="请输入习惯名称" maxlength="20" show-word-limit />
+        <van-field v-model="addForm.name" label="习惯名称" :placeholder="isEditMode ? '' : '请输入习惯名称'" show-word-limit
+          :disabled="isEditMode" :class="{ 'name-disabled': isEditMode }" />
 
         <van-field v-model="addForm.icon" label="图标" placeholder="选择图标" readonly @click="showIconPicker = true">
           <template #right-icon>
-            <svg class="icon" aria-hidden="true">
-              <use :xlink:href="'#' + addForm.icon" />
-            </svg>
+            <IconifyIcon :icon="addForm.icon" width="24" />
           </template>
         </van-field>
       </div>
@@ -60,9 +57,7 @@
         <div v-for="icon in iconList" :key="icon.id"
           class="icon-item flex flex-col items-center justify-center px-2 py-3 radius-8"
           :class="{ active: addForm.icon === icon.icon }" @click="selectIcon(icon)">
-          <svg class="icon mb-2" aria-hidden="true">
-            <use :xlink:href="'#' + icon.icon" />
-          </svg>
+          <IconifyIcon class="icon mb-2" :icon="icon.icon" width="24" />
           <span class="text-center">{{ icon.name }}</span>
         </div>
       </div>
@@ -88,6 +83,8 @@ const habitStore = useHabitStore()
 const editableHabits = computed(() => habitStore.editableHabits)
 const activeTab = computed(() => route.query.tab || '1') // 从路由参数获取activeTab
 
+// 保存编辑id
+const editId = ref(0)
 
 // 弹窗相关
 const showAddPopup = ref(false)
@@ -95,9 +92,14 @@ const showAddPopupType = ref('')
 const showAddPopupButtonName = ref('')
 const showIconPicker = ref(false)
 const adding = ref(false)
+
+// 判断是否为编辑模式
+const isEditMode = computed(() => showAddPopupType.value === 'edit')
+
 const addForm = ref({
   name: '',
-  icon: 'icon-jianshen',
+  icon: '',
+  icon_id: 0,
   type: activeTab.value
 })
 
@@ -111,10 +113,12 @@ const showPopup = async (habit) => {
   showAddPopup.value = true
   showAddPopupButtonName.value = habit ? '修改' : '添加'
   showAddPopupType.value = habit ? 'edit' : 'add'
+  // 保存编辑id
+  editId.value = habit ? habit.id || 0 : 0
   if (habit) {
     addForm.value = {
       name: habit.name,
-      icon: habit.icon,
+      icon: habit.icon || '',
       type: habit.type.toString()
     }
   }
@@ -122,7 +126,7 @@ const showPopup = async (habit) => {
 const closePopup = async () => {
   addForm.value = {
     name: '',
-    icon: 'star',
+    icon: '',
     type: activeTab.value
   }
 }
@@ -187,6 +191,7 @@ const loadIconList = async () => {
 
 // 选择图标
 const selectIcon = (icon) => {
+  addForm.value.icon_id = icon.id
   addForm.value.icon = icon.icon
   showIconPicker.value = false
 }
@@ -198,16 +203,21 @@ const saveAddHabit = async () => {
     return
   }
 
+  if (!addForm.value.icon) {
+    showToast('请选择图标')
+    return
+  }
+
   try {
     adding.value = true
 
     if (showAddPopupType.value == 'add') {
-      await habitStore.createHabit(addForm.value.name, addForm.value.type, addForm.value.icon)
+      await habitStore.createHabit(addForm.value.name, addForm.value.type, addForm.value.icon_id)
     } else {
-      await habitStore.editHabit(addForm.value.name, addForm.value.type, addForm.value.icon)
+      await habitStore.editHabit(editId.value, addForm.value.name, addForm.value.type, addForm.value.icon_id)
     }
 
-    showToast('添加成功')
+    showToast('成功')
     showAddPopup.value = false
     addForm.value = {
       name: '',
@@ -217,8 +227,8 @@ const saveAddHabit = async () => {
     // 重新加载列表
     await loadHabits()
   } catch (error) {
-    console.error('添加习惯失败', error)
-    showToast(error || '添加失败')
+    console.error('操作失败', error)
+    showToast(error || '失败')
   } finally {
     adding.value = false
   }
@@ -272,7 +282,7 @@ onMounted(() => {
 .habit-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex: 1;
 }
 
@@ -338,28 +348,20 @@ onMounted(() => {
   transition: all 0.2s ease;
 }
 
-.icon-item:hover {
-  background: var(--primary100);
-}
-
-.icon-item.active {
-  border-color: #1989fa;
-  background: var(--primary100);
-}
-
-.icon-item svg {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 4px;
-}
-
-.icon-item span {
-  text-align: center;
-}
 
 /* 右侧图标样式 */
 .van-field__right-icon svg {
-  width: 20px;
+  width: 30px;
   height: 20px;
+}
+
+/* 名称禁用时的样式 */
+.name-disabled {
+  opacity: 0.7;
+}
+
+.name-disabled .van-field__control {
+  color: #999;
+  font-weight: 500;
 }
 </style>

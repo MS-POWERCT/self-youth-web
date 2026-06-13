@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', {
     token: localStorage.getItem('user-token') || null,
     user_sign: null,
     web3_message:   localStorage.getItem('web3_message') || null,
-    web3_nonce: localStorage.getItem('web3_nonce') || null
+    web3_nonce: localStorage.getItem('web3_nonce') || null,
   }),
   actions: {
     setUser(userData) {
@@ -84,6 +84,16 @@ export const useUserStore = defineStore('user', {
         throw error
       }
     },
+    // 获取用户操作日志
+    async getUserLog(){
+      try {
+        const log = await userApi.getUserLog()
+        return log || []
+      } catch (error) {
+        console.error('getUserLog failed', error)
+        throw error
+      }
+    },
     logout() {
       this.user = null
       this.token = null
@@ -92,6 +102,7 @@ export const useUserStore = defineStore('user', {
       localStorage.removeItem('user-token')
       localStorage.removeItem('user')
       localStorage.removeItem('web3_nonce')
+      localStorage.removeItem('visitor_id')
     },
   },
 })

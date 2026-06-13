@@ -16,14 +16,14 @@
   --primary: #1989fa;
   --pink: #e091bf;
   --orange: #ff9800;
-  --yellow-gold: #bd9426;
+  --yellow-gold: #ecbf44;
   --green: #5dc361;
 
   /* 几个浅色 */
   --primary100: #e6f7ff;
   --pink100: #f9d4ea;
   --orange100: #fce7c9;
-  --yellow-gold100: #f1e8c1;
+  --yellow-gold100: #f5e8b0;
   --green100: #cfef98;
 
 
@@ -133,6 +133,21 @@
 }
 
 * { margin:0; padding:0; box-sizing:border-box; }
+
+/* 隐藏滚动条但保持滚动功能 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: none;
+}
+
+/* IE and Edge */
+* {
+  -ms-overflow-style: none;
+}
 
 
 /* 强制6大类 */
@@ -272,7 +287,7 @@
   background-color: var(--orange100);
 }
 .bg-yellow-gold {
-  background-color: var(--yellow-gold100);
+  background-color: var(--yellow-gold);
 }
 .bg-yellow-gold100 {
   background-color: var(--yellow-gold100);
@@ -494,6 +509,15 @@
   margin-bottom: var(--px-8);
 }
 
+.my-12 {
+  margin-top: var(--px-12);
+  margin-bottom: var(--px-12);
+}
+.my-16 {
+  margin-top: var(--px-16);
+  margin-bottom: var(--px-16);
+}
+
 /* 边距 - padding */
 .p-2 {
   padding: var(--px-2);
@@ -640,6 +664,20 @@
   padding-top: var(--px-8);
   padding-bottom: var(--px-8);
 }
+.py-10 {
+  padding-top: var(--px-10);
+  padding-bottom: var(--px-10);
+}
+.py-12 {
+  padding-top: var(--px-12);
+  padding-bottom: var(--px-12);
+}
+.py-16 {
+  padding-top: var(--px-16);
+  padding-bottom: var(--px-16);
+}
+
+
 
 /* 边框 - border */
 .border {
@@ -736,6 +774,12 @@
 .gap-3 {
   gap: var(--rem-3);
 }
+
+/* 白色边框 */
+.border-white {
+  border: 2px solid var(--white);
+}
+
 
 /* 变成块元素 */
 .inline-block {
