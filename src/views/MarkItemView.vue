@@ -23,7 +23,7 @@
           {{ moduleTypeList[2] }} ({{ counts[2] }})
         </div>
       </div>
-      <div class="bg-primary text-white p-8 text-center radius-8 mb-8 " @click="showPosterPopup = true">
+      <div class="bg-primary text-white py-4 text-center radius-8 mb-8 " @click="showPosterPopup = true">
         生成标记海报
       </div>
       <!-- 二段筛选 部分类型可以有-->
@@ -261,17 +261,17 @@
 
 
     <!-- 下面弹出 -->
-    <van-popup v-model:show="showPosterPopup" position="bottom" :style="{ height: '24vh' }" round>
+    <van-popup v-model:show="showPosterPopup" position="bottom" :style="{ height: '20vh' }" round>
       <div class="m-16">
         <div class="font-bold text-16">
           选择海报样式
         </div>
         <div>
-          <div class="mt-8 p-12 flex items-center justify-center radius-8 bg-primary100" @click="exportPoster()">
+          <div class="mt-8 py-8   flex items-center justify-center radius-8 bg-primary100">
             <IconifyIcon class="mr-8" icon="streamline-stickies-color:photography" width="20" />
             海报墙
           </div>
-          <div class="mt-8 p-12 flex items-center justify-center radius-8 bg-primary100" @click="exportText()">
+          <div class="mt-8 py-8 flex items-center justify-center radius-8 bg-primary100" @click="exportText()">
             <IconifyIcon class="mr-8" icon="streamline-stickies-color:education-degree" width="20" />
             文字卡片
           </div>
@@ -294,13 +294,13 @@
           <div class="export-status flex justify-center items-center">
             <span class="m-8 text-10 bg-primary100 py-2 px-8 font-bold text-primary radius-8">{{
               exportTextContent['yes']
-            }}</span>
+              }}</span>
             <span class="m-8 text-10 bg-yellow-gold100 py-2 px-8 font-bold text-yellow-gold radius-8">{{
               exportTextContent['want']
-            }}</span>
+              }}</span>
             <span class="m-8 text-10 bg-gray300 py-2 px-8 font-bold text-gray radius-8">{{
               exportTextContent['no']
-            }}</span>
+              }}</span>
           </div>
           <div>
             <span v-for="(item, index) in exportTextContent['itemList']" :key="index"
@@ -549,12 +549,9 @@ const getItemList = async () => {
 }
 
 
-// 跳转海报墙
-const exportPoster = () => {
-  showToast('暂未开放,可以尝试导出卡片文字')
-}
 // 跳转卡片文字
 const exportText = () => {
+
   // 统计信息
   exportTextContent.value = {
     name: moduleName.value,
@@ -564,6 +561,9 @@ const exportText = () => {
     no: moduleTypeList.value[0] + ' ' + counts.value[0],
     itemList: []
   }
+
+  filterStatus.value = 'all'
+  dropdownValue.value = 'all'
 
   filteredList.value.forEach((item) => {
     exportTextContent.value.itemList.push({

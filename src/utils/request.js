@@ -49,7 +49,7 @@ service.interceptors.response.use(
           icon: 'streamline-stickies-color:user-circle-question',
           iconClass: 'icon-warning'
         }).then(() => {
-          router.push('/userSettings/account-login')
+          router.push('/userSettings/statistics')
         })
         return Promise.reject(res.res_msg || '需要绑定邮箱或地址')
       } else if (res.res_code !== 0) {

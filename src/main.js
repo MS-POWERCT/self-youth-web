@@ -11,9 +11,6 @@ import './assets/main.css'
 import { Icon } from '@iconify/vue'
 import { CapacitorService } from './utils/capacitor'
 
-// 初始化一些变量
-const APP_NAME = import.meta.env.APP_NAME
-
 
 // 导入 VConsole 插件
 // import VConsole from 'vconsole'

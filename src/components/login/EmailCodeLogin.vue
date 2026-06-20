@@ -1,37 +1,15 @@
 <template>
   <div class="fields">
-    <van-field
-      v-model="email"
-      type="text"
-      label="邮箱"
-      placeholder="name@company.com"
-      clearable
-    />
-    <van-field
-      v-model="verificationCode"
-      type="text"
-      label="验证码"
-      placeholder="6 位验证码"
-      clearable
-    >
+    <van-field v-model="email" type="text" label="邮箱" placeholder="name@company.com" clearable />
+    <van-field v-model="verificationCode" type="text" label="验证码" placeholder="6 位验证码" clearable>
       <template #button>
-        <span
-          :disabled="isGettingCode"
-          @click.stop.prevent="sendCode"
-        >
+        <span :disabled="isGettingCode" @click.stop.prevent="sendCode">
           {{ codeButtonText }}
-      </span>
+        </span>
       </template>
     </van-field>
 
-    <van-button
-      class="primary-btn"
-      block
-      round
-      type="primary"
-      :loading="isSubmitting"
-      @click="handleLogin"
-    >
+    <van-button class="primary-btn" block round type="primary" :loading="isSubmitting" @click="handleLogin">
       登录
     </van-button>
   </div>
@@ -43,14 +21,17 @@ import { showToast } from 'vant'
 import { useUserStore } from '../../stores/user'
 import { globalApi } from '../../api/global'
 
+import { useGlobalStore } from '@/stores/global'
 const emit = defineEmits(['login-success'])
+
+const globalStore = useGlobalStore()
 
 const email = ref('')
 const verificationCode = ref('')
 const isGettingCode = ref(false)
 const isSubmitting = ref(false)
 const codeButtonText = ref('获取验证码')
-const countdown = ref(60)
+const countdown = ref(0)
 const countdownTimer = ref(null)
 
 const userStore = useUserStore()
@@ -64,7 +45,7 @@ const clearCountdownTimer = () => {
 
 const startCountdown = () => {
   clearCountdownTimer()
-  countdown.value = 60
+  countdown.value = globalStore.initData.llconfig.EMAIL_CODE_TIME
   isGettingCode.value = true
   codeButtonText.value = `${countdown.value}s`
 
@@ -153,9 +134,9 @@ onBeforeUnmount(() => {
   overflow: hidden;
   border: 1px solid rgba(11, 18, 32, 0.08);
 }
+
 :deep(.van-field__label) {
   width: 44px;
   font-weight: var(--number-700);
 }
-
 </style>

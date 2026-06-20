@@ -7,6 +7,10 @@ export const useGlobalStore = defineStore('global', {
     initData: JSON.parse(localStorage.getItem('initData')) || null,
     isLoading: false,
     APP_NAME: import.meta.env.VITE_APP_NAME,
+    API_URL: import.meta.env.VITE_API_URL,
+    APP_ENV: import.meta.env.VITE_APP_ENV,
+    APP_VERSION: '1.0.0',
+    FARM_NAME: '修仙农场'
   }),
   actions: {
     async fetchInitData() {

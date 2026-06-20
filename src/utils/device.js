@@ -44,7 +44,19 @@ export async function getVisitorId() {
   if (Capacitor.isNativePlatform()) {
     deviceId = await getNativeDeviceId()
   } else {
-    deviceId = createUUID()
+    // Web端：优先使用已保存的设备ID，确保同一设备稳定
+    const STORAGE_KEY = 'device_id'
+    deviceId = localStorage.getItem(STORAGE_KEY)
+
+    if (!deviceId) {
+      // 生成新的UUID并保存
+      deviceId = createUUID()
+      try {
+        localStorage.setItem(STORAGE_KEY, deviceId)
+      } catch (error) {
+        console.warn('无法保存设备ID:', error)
+      }
+    }
   }
 
   vid = `visitor_${type}_${deviceId}`
@@ -53,29 +65,49 @@ export async function getVisitorId() {
   return vid
 }
 
-// 获取本地设备ID
+// 获取本地设备ID - 生成稳定的设备标识符
 async function getNativeDeviceId() {
+  const STORAGE_KEY = 'device_id'
+
+  // 1. 首先尝试从 localStorage 获取已保存的设备ID
+  const savedDeviceId = localStorage.getItem(STORAGE_KEY)
+  if (savedDeviceId) {
+    return savedDeviceId
+  }
+
+  // 2. 如果没有保存的ID，则尝试获取原生设备ID
+  let deviceId
   try {
     const { Device } = await import('@capacitor/device')
     const info = await Device.getId()
 
-    // Capacitor Device 返回的是 { identifier: string }，不是 uuid
+    // Capacitor Device 返回的是 { identifier: string }
     if (info && info.identifier) {
-      return info.identifier
+      deviceId = info.identifier
+    } else {
+      // 如果没有 identifier，尝试获取其他设备信息
+      const deviceInfo = await Device.getInfo()
+      if (deviceInfo) {
+        deviceId = `${deviceInfo.platform}-${deviceInfo.model}-${deviceInfo.uuid}`
+      }
     }
-
-    // 如果没有 identifier，尝试获取其他设备信息
-    const deviceInfo = await Device.getInfo()
-
-    // 组合生成一个唯一标识
-    if (deviceInfo) {
-      return `${deviceInfo.platform}-${deviceInfo.model}-${Date.now()}`
-    }
-
-    return createUUID()
   } catch (error) {
-    return createUUID()
+    console.warn('无法获取原生设备ID:', error)
   }
+
+  // 3. 如果仍然没有，生成一个新的UUID
+  if (!deviceId) {
+    deviceId = createUUID()
+  }
+
+  // 4. 保存到 localStorage，确保同一设备稳定
+  try {
+    localStorage.setItem(STORAGE_KEY, deviceId)
+  } catch (error) {
+    console.warn('无法保存设备ID到localStorage:', error)
+  }
+
+  return deviceId
 }
 // 创建UUID
 function createUUID() {

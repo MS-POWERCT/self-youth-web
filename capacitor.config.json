@@ -1,6 +1,6 @@
 {
   "appId": "cn.powerct.app",
-  "appName": "自律青年",
+  "appName": "小汤圆",
   "webDir": "dist",
   "server": {
     "androidScheme": "https"

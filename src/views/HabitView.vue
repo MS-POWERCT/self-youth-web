@@ -37,7 +37,9 @@
       <IconifyIcon icon="streamline-stickies-color:graph-bar" width="24" />
     </div>
 
-
+    <br />
+    <br />
+    <br />
   </div>
 </template>
 

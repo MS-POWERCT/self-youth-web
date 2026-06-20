@@ -34,7 +34,6 @@
           <div class="text-gray500">累计标记</div>
         </div>
       </div>
-      <!-- <van-cell-group inset> -->
 
       <!-- 测试组件 -->
       <!-- <van-cell title="测试组件" is-link @click="$router.push('/demo/test-tool')" /> -->
@@ -44,7 +43,7 @@
 
       <!-- 如果userNextLover 有内容 -->
     </div>
-    <div class="user-active py-16">
+    <div class="user-active py-16" v-if="userLog.length > 0">
       <div class="user-log">
         <div v-for="item in userLog" :key="item.id" class="user-item py-4 flex justify-between">
           <div>
@@ -60,7 +59,13 @@
       </div>
     </div>
 
-    <!-- <van-button type="danger" block @click="handleLogout" class="logout-btn mt-10"> 退出登录 </van-button> -->
+    <!-- <van-cell-group inset> -->
+    <div class="farm-entry" @click="$router.push('/farm')">
+      <IconifyIcon icon="token-branded:farm" width="24" />{{ globalStore.FARM_NAME }}
+    </div>
+
+    <br />
+    <br />
   </div>
 </template>
 
@@ -68,6 +73,12 @@
 import { onMounted, ref } from 'vue'
 import { useUserStore } from '../stores/user'
 // import { useRouter } from 'vue-router'
+import { useGlobalStore } from '../stores/global'
+
+
+
+const globalStore = useGlobalStore()
+
 
 
 const userStore = useUserStore()
@@ -148,5 +159,13 @@ onMounted(async () => {
 .user-log {
   height: 220px;
   overflow-y: auto;
+}
+
+.farm-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border-bottom: 1px solid #eee;
 }
 </style>
