@@ -11,6 +11,19 @@ import './assets/main.css'
 import { Icon } from '@iconify/vue'
 import { CapacitorService } from './utils/capacitor'
 
+// 导入 IconFont 组件
+import IconFont from './components/IconFont.vue'
+
+// 引入 iconfont.cn Symbol 方式的 JS 文件
+// 步骤：
+// 1. 在 iconfont.cn 创建项目并添加图标
+// 2. 选择 Symbol 方式，生成在线链接
+// 3. 将链接粘贴到下方（去掉 https: 前缀，保留 //at.alicdn.com/...）
+// 示例：import '//at.alicdn.com/t/font_xxxxx.js'
+// 或者下载到本地，放在 public 或 assets 目录中
+// import './assets/iconfont/iconfont.js'
+// ⚠️ 请在下方添加你的 iconfont Symbol JS 文件引入：
+
 
 // 导入 VConsole 插件
 // import VConsole from 'vconsole'
@@ -51,7 +64,8 @@ import {
   Col,
   Row,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  CountDown,
 } from 'vant'
 
 // 1. 引入 Capacitor 核心和平台判断
@@ -64,6 +78,9 @@ async function initApp() {
   app.use(router)
   // 注册 Iconify Icon 组件
   app.component('IconifyIcon', Icon)
+
+  // 注册 IconFont 组件（用于 iconfont.cn Symbol 方式）
+  app.component('IconFont', IconFont)
 
   // 注册 Vant 组件
   app.use(VanIcon)
@@ -98,6 +115,9 @@ async function initApp() {
   app.use(Row)
   app.use(DropdownMenu)
   app.use(DropdownItem)
+  app.use(CountDown)
+
+
 
   // 获取全局 store
   // 💡 建议: globalStore 在此处获取但未在组件中使用，需确认是否必需

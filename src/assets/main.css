@@ -27,6 +27,9 @@
   --green100: #cfef98;
 
 
+  /* farm使用到的颜色 */
+  --land-level-red: #ff4d4f;
+  --land-level-gold: #ffd700;
 
   /* github 贡献表颜色 */
   --github-contribution-color: #f0f2f5;
@@ -149,6 +152,15 @@
   -ms-overflow-style: none;
 }
 
+/* iconfont Symbol 方式通用样式 */
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
 
 /* 强制6大类 */
 /*
@@ -225,6 +237,9 @@
 }
 .text-primary {
   color: var(--primary);
+}
+.text-primary100 {
+  color: var(--primary100);
 }
 .text-pink {
   color: var(--pink);

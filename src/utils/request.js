@@ -53,7 +53,10 @@ service.interceptors.response.use(
         })
         return Promise.reject(res.res_msg || '需要绑定邮箱或地址')
       } else if (res.res_code !== 0) {
-        showToast(res.res_msg || 'Error')
+        // 如果配置了 silent，则不显示错误提示
+        if (!response.config.silent) {
+          showToast(res.res_msg || 'Error')
+        }
         return Promise.reject(res.res_msg || 'Error')
       } else {
         return res.data

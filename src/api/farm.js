@@ -5,63 +5,73 @@ export const farmApi = {
     return request({
       url: '/api/farmUser/initFarm',
       method: 'post',
+      silent: true,
     })
   },
   getLandList() {
     return request({
       url: '/api/farmUser/getLandList',
       method: 'post',
+      silent: true,
     })
   },
-  // plant(data) {
-  //   return request({
-  //     url: '/api/farmLand/plant', // 种植
-  //     method: 'post',
-  //     data,
-  //   })
-  // },
-  // refresh(data) {
-  //   return request({
-  //     url: '/api/farmLand/refresh', // 刷新
-  //     method: 'post',
-  //     data,
-  //   })
-  // },
-  // harvest(data) {
-  //   return request({
-  //     url: '/api/farmLand/harvest', // 收获
-  //     method: 'post',
-  //     data,
-  //   })
-  // },
-  // remove(data) {
-  //   return request({
-  //     url: '/api/farmLand/remove', // 铲除
-  //     method: 'post',
-  //     data,
-  //   })
-  // },
-  // productGetList(data) {
-  //   return request({
-  //     url: '/api/farmProduct/getList', // 商店列表
-  //     method: 'post',
-  //     data,
-  //   })
-  // },
-  // productBuy(data) {
-  //   return request({
-  //     url: '/api/farmProduct/buy', // 购买
-  //     method: 'post',
-  //     data,
-  //   })
-  // },
-  // warehouseGetList(data) {
-  //   return request({
-  //     url: '/api/farmWarehouse/getList', // 仓库列表
-  //     method: 'post',
-  //     data,
-  //   })
-  // },
+  plant(data) {
+    return request({
+      url: '/api/farmUser/plant', // 种植
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
+  remove(data) {
+    return request({
+      url: '/api/farmUser/remove', // 铲除
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
+  refresh(data) {
+    return request({
+      url: '/api/farmUser/refresh', // 刷新
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
+  harvest(data) {
+    return request({
+      url: '/api/farmUser/harvest', // 收获
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
+  getShopList(data) {
+    return request({
+      url: '/api/farmShop/getList', // 商店列表
+      method: 'get',
+      data,
+      silent: true,
+    })
+  },
+  shopBuy(data) {
+    return request({
+      url: '/api/farmShop/buy', // 购买
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
+
+  getWarehouseList(data) {
+    return request({
+      url: '/api/farmWarehouse/getList', // 仓库列表
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
   // warehouseSell(data) {
   //   return request({
   //     url: '/api/farmWarehouse/sell', // 卖出
@@ -75,4 +85,30 @@ export const farmApi = {
   //     method: 'post',
   //   })
   // },
+  getMarketList(data) {
+    return request({
+      url: '/api/farmTask/getList', // 集市列表
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
+  // 交付集市任务
+  deliverTask(data) {
+    return request({
+      url: '/api/farmTask/submit', // 交付
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
+  // 放弃集市任务
+  cancelTask(data) {
+    return request({
+      url: '/api/farmTask/cancel', // 放弃
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
 }
