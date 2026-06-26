@@ -111,4 +111,22 @@ export const farmApi = {
       silent: true,
     })
   },
+
+  // 土地升级/开垦信息
+  getLandUpgradeInfo() {
+    return request({
+      url: '/api/farmUser/getLandUpgradeInfo', // 土地升级/开垦信息
+      method: 'post',
+      silent: true,
+    })
+  },
+  // 土地升级/开垦
+  upgradeLand(data) {
+    return request({
+      url: '/api/farmUser/upgradeLand', // 土地升级/开垦
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
 }

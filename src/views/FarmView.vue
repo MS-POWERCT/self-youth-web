@@ -67,7 +67,7 @@
 
     <!-- 操作工具栏 -->
     <div class="tool-bar">
-      <span class="tool-btn" @click="onFinish(0)">刷新</span>
+      <span class="tool-btn" @click="init()">刷新</span>
     </div>
 
     <!-- 功能选择区域 -->
@@ -156,16 +156,19 @@
 
       <!-- 土地升级内容 -->
       <div v-if="currentFunction === 'upgrade'" class="function-list">
-        <div v-for="upgrade in landUpgrades" :key="upgrade.id" class="upgrade-item">
+        <div v-for="upgrade in landUpgradeInfo" :key="upgrade.id" class="upgrade-item">
           <span class="upgrade-name">{{ upgrade.name }}</span>
           <span class="upgrade-desc">{{ upgrade.desc }}</span>
-          <span class="upgrade-cost">{{ upgrade.cost }}金币</span>
+          <span class="upgrade-cost">{{ upgrade.price }}灵石</span>
           <span class="upgrade-btn" @click="upgradeLand(upgrade)">{{ upgrade.bottom }}</span>
         </div>
       </div>
 
       <!-- 集市内容 -->
       <div v-if="currentFunction === 'market'" class="function-list">
+
+        <!-- 目前解锁的集市订单 code... 这里可以显示当前解锁的集市订单 -->
+        <!-- <div class="market-title">目前解锁的集市订单</div> -->
         <div v-if="marketList.length > 0">
           <div v-for="item in marketList" :key="item.id" class="market-item">
             <div>
@@ -278,7 +281,6 @@ const farmStore = useFarmStore()
 // 功能标签持久化
 const STORAGE_KEY = 'farm_active_tab'
 const currentFunction = ref('backpack')
-
 // 切换标签
 const switchTab = (tab) => {
   currentFunction.value = tab
@@ -302,23 +304,21 @@ watch(currentFunction, () => {
   saveCurrentTab()
 })
 
+// 消息队列系统
+const messages = ref([])
+let messageId = 0
+// 种植模式状态
+const isPlantingMode = ref(false)
+const selectedLandId = ref(null)
 
-//土地
+//土地时间计算
 const getTime = (time) => {
   const now = new Date()
   const targetTime = new Date(time)
   return Math.floor(targetTime.getTime() - now.getTime())
 }
 
-
-// 消息队列系统
-const messages = ref([])
-let messageId = 0
-
-// 种植模式状态
-const isPlantingMode = ref(false)
-const selectedLandId = ref(null)
-
+// 显示提示消息
 const showToast = (msg) => {
   const id = ++messageId
   const message = typeof msg === 'string' ? msg : msg.message || '操作完成'
@@ -347,16 +347,6 @@ const showToast = (msg) => {
   }, 3000)
 }
 
-// 使用 computed 缓存常用值，减少重复访问
-const userInfo = computed(() => farmStore.info || {})
-const userName = computed(() => userInfo.value.user_name || '')
-const levelId = computed(() => userInfo.value.level_id || 1)
-const levelTitle = computed(() => userInfo.value.level_title || '')
-const exp = computed(() => userInfo.value.exp || 0)
-const handbooks = computed(() => userInfo.value.handbooks || [])
-const nextLevelExp = computed(() => userInfo.value.next_level_exp || 100)
-const walletAssets = computed(() => userInfo.value.wallet_assets || [])
-
 // 增加经验并检查升级
 const addExp = async (expValue, actionName = '') => {
   if (expValue <= 0) return
@@ -375,34 +365,72 @@ const addExp = async (expValue, actionName = '') => {
   }
 }
 
+// 资产变动函数（增加或扣除）
+const updateAsset = async (assetId, amount, action = 'add') => {
+  // 查找对应的资产
+  const asset = walletAssets.value.find(a => a.asset_id === assetId)
+
+  if (!asset) {
+    console.error(`未找到资产 ID: ${assetId}`)
+    return false
+  }
+
+  // 确保当前余额是数字
+  const currentBalance = Number(asset.balance)
+  const changeAmount = Number(amount)
+
+  if (action === 'deduct') {
+    // 扣除操作：检查余额是否足够
+    if (currentBalance < changeAmount) {
+      showToast({ message: `${asset.asset.name}不足`, type: 'warning' })
+      return false
+    }
+    // 执行扣除
+    asset.balance = currentBalance - changeAmount
+    showToast({ message: `${asset.asset.name}-${changeAmount}`, type: 'info' })
+  } else {
+    // 增加操作
+    asset.balance = currentBalance + changeAmount
+    showToast({ message: `${asset.asset.name}+${changeAmount}`, type: 'success' })
+  }
+
+  return true
+}
+
+// 使用 computed 缓存常用值，减少重复访问
 // const expProgress = computed(() => (exp.value / nextLevelExp.value * 100) || 0)
+const userInfo = computed(() => farmStore.info || {})
+const userName = computed(() => userInfo.value.user_name || '')
+const levelId = computed(() => userInfo.value.level_id || 1)
+const levelTitle = computed(() => userInfo.value.level_title || '')
+const exp = computed(() => userInfo.value.exp || 0)
+const handbooks = computed(() => userInfo.value.handbooks || [])
+const nextLevelExp = computed(() => userInfo.value.next_level_exp || 100)
+const walletAssets = computed(() => userInfo.value.wallet_assets || [])
 const lands = computed(() => farmStore.lands || [])
 const shops = computed(() => farmStore.shops || [])
 const seedList = computed(() => farmStore.seedList || [])
 const fruitList = computed(() => farmStore.fruitList || [])
 const marketList = computed(() => farmStore.marketList || [])
+const landUpgradeInfo = computed(() => farmStore.landUpgradeInfo || [])
+
+
 
 // 交付集市任务
 const deliverTask = async (task) => {
-
-  // 执行交付
   try {
     await farmStore.deliverTask(task.id)
-    // 增加奖励
-    await addExp(task.farm_task.reward_exp, '任务')
 
-    // 增加金币
-    const goldAsset = walletAssets.value.find(a => a.asset_id === task.reward_asset_id)
-    if (goldAsset) {
-      goldAsset.balance += task.reward_gold
-    }
+    // 增加经验和金币奖励
+    await addExp(task.farm_task.reward_exp, '任务')
+    await updateAsset(task.farm_task.reward_asset_id, task.farm_task.reward_gold, 'add')
 
     // 刷新仓库
     await farmStore.fetchWarehouseList('fruit')
 
     showToast({ message: '任务完成！', type: 'success' })
   } catch (error) {
-    showToast({ message: '交付失败' + error, type: 'error' })
+    showToast({ message: error || '交付失败', type: 'error' })
   }
 }
 
@@ -469,11 +497,11 @@ const farmLogs = ref([
 ])
 
 // 土地升级数据
-const landUpgrades = ref([
-  { id: 1, name: '普通土地', desc: '适合种植普通作物', cost: 0, 'bottom': '开垦' },
-  { id: 2, name: '红土地', desc: '可产量提升20%，可种植高级作物', cost: 500, 'bottom': '升级' },
-  { id: 3, name: '金土地', desc: '可产量提升50%，生长速度加快', cost: 1000, 'bottom': '升级' },
-])
+// const landUpgrades = ref([
+//   { id: 1, name: '普通土地', desc: '适合种植普通作物', cost: 0, 'bottom': '开垦' },
+//   { id: 2, name: '红土地', desc: '可产量提升20%，可种植高级作物', cost: 500, 'bottom': '升级' },
+//   { id: 3, name: '金土地', desc: '可产量提升50%，生长速度加快', cost: 1000, 'bottom': '升级' },
+// ])
 
 // 特殊建筑数据
 // const specialBuildings = ref([
@@ -494,8 +522,6 @@ const landUpgrades = ref([
 
 // 刷新土地数据
 const onFinish = async (land_id) => {
-  // 刷新土地数据
-  // await farmStore.fetchLands()
   await farmStore.LandRefresh(land_id)
 }
 
@@ -507,7 +533,6 @@ const sow = (id) => {
   isPlantingMode.value = true
   selectedLandId.value = id
 }
-
 // 执行种植
 const doPlant = async (handbook_id) => {
   if (!selectedLandId.value) {
@@ -581,28 +606,46 @@ const buy = async (item) => {
   try {
     const num = 1
 
-    // 检查是否有足够的金币
-    const walletAsset = farmStore.info.wallet_assets.find(a => a.asset_id === item.handbook.asset_id)
-    if (!walletAsset || walletAsset.balance < num * item.handbook.price) {
-      showToast({ message: walletAsset.asset.name + '不足', type: 'error' })
-      return
+    // 先扣除金币
+    const deducted = await updateAsset(item.handbook.asset_id, num * item.handbook.price, 'deduct')
+    if (!deducted) {
+      return // 余额不足，已在 updateAsset 中提示
     }
 
     const result = await farmStore.shopBuy(item, num)
     if (result.success) {
-      showToast({ message: `购买成功，花了${result.spent}金币`, type: 'success' })
       // 刷新背包数据
-      await farmStore.fetchWarehouseList('seed') // 初始化种子仓库信息
+      await farmStore.fetchWarehouseList('seed')
+    } else {
+      // 购买失败，回滚金币
+      await updateAsset(item.handbook.asset_id, num * item.handbook.price, 'add')
     }
   } catch (error) {
-    // 失败时不更新余额，只显示错误信息
-    showToast({ message: error.message || '购买失败', type: 'error' })
+    // 失败时回滚金币
+    await updateAsset(item.handbook.asset_id, item.handbook.price, 'add')
+    showToast({ message: error || '购买失败', type: 'error' })
   }
 }
 
 // 土地升级
-const upgradeLand = (upgrade) => {
-  showToast({ message: `升级${upgrade.name}需要${upgrade.cost}金币`, type: 'info' })
+const upgradeLand = async (upgrade) => {
+  try {
+    // 先扣除金币
+    const deducted = await updateAsset(1, upgrade.price, 'deduct')
+    if (!deducted) {
+      return // 余额不足，已在 updateAsset 中提示
+    }
+
+    await farmStore.upgradeLand(upgrade.upgrade_type)
+    showToast({ message: `土地${upgrade.bottom}成功`, type: 'success' })
+
+    // 刷新土地升级信息
+    await farmStore.getLandUpgradeInfo()
+  } catch (error) {
+    // 失败时回滚金币
+    await updateAsset(1, upgrade.price, 'add')
+    showToast({ message: error || '土地升级/开垦失败', type: 'error' })
+  }
 }
 
 // // 建造特殊建筑
@@ -614,16 +657,19 @@ const upgradeLand = (upgrade) => {
 // const buyDeliveryTool = (tool) => {
 //   showToast({ message: `购买${tool.name}需要${tool.cost}金币`, type: 'info' })
 // }
-
-onMounted(async () => {
-  loadSavedTab() // 恢复保存的标签
+const init = async () => {
   await farmStore.fetchFarmInfo() // 初始化农场信息
   await farmStore.fetchLands() // 初始化土地信息
   await farmStore.fetchShops() // 初始化商店信息
   await farmStore.fetchWarehouseList('seed') // 初始化种子仓库信息
   await farmStore.fetchWarehouseList('fruit') // 初始化水果仓库信息
-  // await farmStore.fetchWarehouseList('tool') // 初始化工具仓库信息
   await farmStore.fetchMarketList() // 初始化集市列表信息
+  await farmStore.getLandUpgradeInfo() // 初始化土地升级/开垦信息
+}
+
+onMounted(async () => {
+  loadSavedTab() // 恢复保存的标签
+  await init()
 })
 </script>
 
@@ -944,7 +990,7 @@ onMounted(async () => {
   align-items: flex-start;
   padding: 4px 0;
   border-bottom: 1px solid #2a2a2a;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .log-time {

@@ -11,6 +11,7 @@
       fruitList: [], // 仓库列表（水果）
       toolList: [], // 仓库列表（工具）
       marketList: [], // 仓库列表（集市）
+      landUpgradeInfo: [], // 土地升级/开垦信息（土地）
     }),
     actions: {
       async fetchFarmInfo() {
@@ -189,6 +190,34 @@
           return response
         } catch (error) {
           console.error('放弃集市任务失败', error)
+          throw error
+        } finally {
+          this.loading = false
+        }
+      },
+      // 土地升级/开垦信息
+      async getLandUpgradeInfo() {
+        try {
+          this.loading = true
+          const response = await farmApi.getLandUpgradeInfo() || []
+          this.landUpgradeInfo = response || []
+          return response
+        } catch (error) {
+          console.error('获取土地升级/开垦信息失败', error)
+          throw error
+        } finally {
+          this.loading = false
+        }
+      },
+      // 土地升级/开垦
+      async upgradeLand(upgrade_type) {
+        try {
+          this.loading = true
+          const response = await farmApi.upgradeLand({upgrade_type: upgrade_type}) || []
+          this.lands = response || []
+          return response
+        } catch (error) {
+          console.error('土地升级/开垦失败', error)
           throw error
         } finally {
           this.loading = false

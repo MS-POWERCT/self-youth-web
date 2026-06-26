@@ -1,10 +1,7 @@
 <template>
   <div class="profile-container">
-
     <br />
     <br />
-    <!-- <van-nav-bar title="个人中心" left-arrow @click-left="goBack" /> -->
-    <!-- 水平垂直居中 -->
     <div v-if="userStore.token && userStore.user">
       <van-row class="flex items-center">
         <van-col span="8" class="flex justify-center">
@@ -34,15 +31,21 @@
           <div class="text-gray500">累计标记</div>
         </div>
       </div>
-
-      <!-- 测试组件 -->
-      <!-- <van-cell title="测试组件" is-link @click="$router.push('/demo/test-tool')" /> -->
-      <!-- 登录管理 -->
-      <!-- <van-cell title="登录管理" is-link @click="$router.push('/userSettings/account-login')" /> -->
-      <!-- </van-cell-group> -->
-
-      <!-- 如果userNextLover 有内容 -->
     </div>
+
+    <!-- 农场入口 -->
+    <div class="farm-entry-card" @click="handleFarmEntry">
+      <div class="farm-content-overlay">
+        <div class="farm-icon-large">
+          <IconifyIcon icon="token-branded:farm" width="48" />
+        </div>
+        <div class="farm-title-large">{{ globalStore.FARM_NAME }}</div>
+        <div class="farm-subtitle">种植、收获、享受田园乐趣</div>
+      </div>
+    </div>
+
+
+    <!-- 用户活动记录 -->
     <div class="user-active py-16" v-if="userLog.length > 0">
       <div class="user-log">
         <div v-for="item in userLog" :key="item.id" class="user-item py-4 flex justify-between">
@@ -58,12 +61,6 @@
         </div>
       </div>
     </div>
-
-    <!-- <van-cell-group inset> -->
-    <div class="farm-entry" @click="$router.push('/farm')">
-      <IconifyIcon icon="token-branded:farm" width="24" />{{ globalStore.FARM_NAME }}
-    </div>
-
     <br />
     <br />
   </div>
@@ -72,8 +69,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useUserStore } from '../stores/user'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useGlobalStore } from '../stores/global'
+import { showConfirmDialog } from 'vant'
 
 
 
@@ -82,9 +80,42 @@ const globalStore = useGlobalStore()
 
 
 const userStore = useUserStore()
-// const router = useRouter()
+const router = useRouter()
 
 const userLog = ref([])
+
+// 检查用户是否绑定了邮箱或地址
+const checkUserBinding = () => {
+  const user = userStore.user
+  if (!user) {
+    return false
+  }
+  // 检查邮箱或地址是否绑定
+  return user.email || user.address
+}
+
+// 点击农场入口
+const handleFarmEntry = () => {
+  // 检查用户是否绑定了邮箱或地址
+  if (!checkUserBinding()) {
+    // 显示提示框，引导用户去绑定
+    showConfirmDialog({
+      title: '需要完善账户',
+      message: '请先绑定邮箱或地址以使用农场功能',
+      confirmButtonText: '去绑定',
+      cancelButtonText: '取消',
+    }).then(() => {
+      // 用户点击"去绑定"，跳转到设置页面
+      router.push('/userSettings/statistics')
+    }).catch(() => {
+      // 用户点击"取消"，不做任何操作
+    })
+    return
+  }
+
+  // 已绑定，跳转到农场页面
+  router.push('/farm')
+}
 
 // 判断是否是今天
 const isToday = (dateString) => {
@@ -161,11 +192,65 @@ onMounted(async () => {
   overflow-y: auto;
 }
 
-.farm-entry {
+/* 农场入口卡片 */
+.farm-entry-card {
+  position: relative;
+  margin: 20px;
+  height: 180px;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.farm-entry-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.farm-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.farm-content-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.7) 0%, rgba(139, 195, 74, 0.7) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.farm-icon-large {
+  margin-bottom: 10px;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
-  border-bottom: 1px solid #eee;
+  backdrop-filter: blur(10px);
+}
+
+.farm-title-large {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.farm-subtitle {
+  font-size: 14px;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 </style>
