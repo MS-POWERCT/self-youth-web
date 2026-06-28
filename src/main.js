@@ -66,6 +66,7 @@ import {
   DropdownMenu,
   DropdownItem,
   CountDown,
+  NoticeBar
 } from 'vant'
 
 // 1. 引入 Capacitor 核心和平台判断
@@ -116,6 +117,7 @@ async function initApp() {
   app.use(DropdownMenu)
   app.use(DropdownItem)
   app.use(CountDown)
+  app.use(NoticeBar)
 
 
 

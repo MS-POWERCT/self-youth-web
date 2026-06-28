@@ -72,6 +72,14 @@ export const farmApi = {
       silent: true,
     })
   },
+  // 扩充仓库
+  extendWarehouse() {
+    return request({
+      url: '/api/farmWarehouse/extend', // 扩充仓库
+      method: 'post',
+      silent: true,
+    })
+  },
   // warehouseSell(data) {
   //   return request({
   //     url: '/api/farmWarehouse/sell', // 卖出
@@ -124,6 +132,58 @@ export const farmApi = {
   upgradeLand(data) {
     return request({
       url: '/api/farmUser/upgradeLand', // 土地升级/开垦
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
+
+  // 特殊建筑基础信息
+  getSpecialInfo() {
+    return request({
+      url: '/api/farmUser/getSpecialInfo', // 特殊建筑基础信息
+      method: 'post',
+      silent: true,
+    })
+  },
+  // 点击世界树
+  clickWorldTree() {
+    return request({
+      url: '/api/farmUser/clickWorldTree', // 点击世界树
+      method: 'post',
+      silent: true,
+    })
+  },
+  // 配送工具列表
+  getDeliveryToolList() {
+    return request({
+      url: '/api/farmUser/getDeliveryToolInfo', // 配送工具列表
+      method: 'post',
+      silent: true,
+    })
+  },
+  // 购买配送工具
+  buyDeliveryTool(data) {
+    return request({
+      url: '/api/farmUser/buyDeliveryTool', // 购买配送工具
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
+  // 使用配送工具
+  useDeliveryTool(data) {
+    return request({
+      url: '/api/farmUser/useDeliveryTool', // 使用配送工具
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
+  // 配送结束后更新用户资产和配送记录
+  updateDeliveryRecord(data) {
+    return request({
+      url: '/api/farmUser/updateDeliveryRecord', // 配送结束后更新用户资产和配送记录
       method: 'post',
       data,
       silent: true,
