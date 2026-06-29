@@ -88,6 +88,12 @@ const router = createRouter({
       component: () => import('../views/FarmView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/farm-new',
+      name: 'farm-new',
+      component: () => import('../views/FarmNewView.vue'),
+      meta: { requiresAuth: true },
+    },
     // 用户设置路由
     ...UserSettingsRoutes,
   ],
