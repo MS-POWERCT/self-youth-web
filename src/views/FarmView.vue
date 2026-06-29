@@ -13,10 +13,6 @@
       </div>
     </div>
 
-    <!-- 通知栏 -->
-    <!-- 透明 -->
-    <van-notice-bar v-if="notice" scrollable background="transparent" color="#fff" :text="notice" />
-
 
     <!-- 状态栏 -->
     <div class="status-bar">
@@ -43,14 +39,16 @@
       </div>
     </div>
 
+    <!-- 通知栏 -->
+    <van-notice-bar v-if="notice" scrollable background="transparent" color="#fff" :text="notice" />
+
+
     <!-- 土地区域 -->
     <div class="land-section">
       <div class="section-tabs">
         <span class="tab-btn active">我的土地</span>
         <!-- <span class="tab-btn">我的池塘</span> -->
-        <span v-if="isChoiceMode">
-          已选择【{{ selectedHandbookName }}】&nbsp;&nbsp;<span @click="cancelChoice">[取消]</span>
-        </span>
+
       </div>
 
       <!-- 土地列表 -->
@@ -79,6 +77,13 @@
     <!-- 操作工具栏 -->
     <div class="tool-bar">
       <span class="tool-btn" @click="init()">刷新</span>
+
+      <!-- 如果有种植的土地状态=1或者3就出现一健铲除按钮 -->
+      <span class="tool-btn" @click="clearAll()">一健铲除</span>
+
+      <!-- 如果种子被选择后出现一健种植按钮 -->
+      <span v-if="isChoiceMode" class="tool-btn" @click="sowAll()">一健播种</span>
+
     </div>
 
     <!-- 功能选择区域 -->
@@ -114,12 +119,13 @@
 
       <!-- 背包种子 -->
       <div v-if="currentFunction === 'backpack'" class="function-list">
-        <!-- 种植模式提示 -->
-        <div v-if="isPlantingMode" class="text-right">
-          土地{{ selectedLandIndex }}&nbsp;&nbsp;<span @click="cancelPlant">[取消]</span>
-        </div>
-        <div v-else class="text-center text-gray500">
-          空闲土地点击种植后选择种子
+        <div class="text-center text-gray500">
+          <span v-if="isChoiceMode">
+            已选择【{{ selectedHandbookName }}】&nbsp;&nbsp;<span class="text-primary100" @click="cancelChoice">[取消]</span>
+          </span>
+          <span v-else>
+            请选择要种植的种子
+          </span>
         </div>
         <div v-if="seedList.length > 0">
           <div v-for="seed in seedList" :key="seed.name"
@@ -130,8 +136,7 @@
               x {{ seed.num }}
             </span>
             <!-- 种植模式下显示种植按钮 -->
-            <span v-if="isPlantingMode" @click="doPlant(seed.handbook_id)">[种植]</span>
-            <span v-else @click="doChoice(seed.handbook_id, seed.handbook.name)">[选择种植]</span>
+            <span @click="doChoice(seed.handbook_id, seed.handbook.name)">[选择种植]</span>
           </div>
         </div>
         <!-- 空状态提示 -->
@@ -324,7 +329,7 @@
             <div class="record-info">
               <span class="text-gray500">收益：{{ tool.delivery_record.amount }}{{
                 tool.delivery_record.handbook?.selling_asset_name || '灵石'
-                }}</span>
+              }}</span>
               <span v-if="tool.delivery_record.status === 0" class="record-time">
                 当前使用中·剩余 <van-count-down :time="getDeliveryTime(tool.delivery_record.end_at)" format="mm:ss"
                   class="text-primary100 text-12 inline-block" @finish="onDeliveryFinish(tool)" />
@@ -430,10 +435,6 @@ watch(currentFunction, () => {
 // 消息队列系统
 const messages = ref([])
 let messageId = 0
-// 种植模式状态
-const isPlantingMode = ref(false)
-const selectedLandId = ref(null)
-const selectedLandIndex = ref(null)
 // 送货模式状态
 const showDeliveryPopup = ref(false)
 const selectedFruit = ref(null)
@@ -459,10 +460,10 @@ const selectDeliveryTool = async (tool) => {
   if (!selectedFruit.value) return
 
   // 检查果实数量是否满足配送工具容量
-  if (selectedFruit.value.num < tool.capacity) {
-    showToast({ message: `数量不足，至少需要${tool.capacity}个`, type: 'error' })
-    return
-  }
+  // if (selectedFruit.value.num < tool.capacity) {
+  //   showToast({ message: `数量不足，至少需要${tool.capacity}个`, type: 'error' })
+  //   return
+  // }
 
   try {
     await farmStore.useDeliveryTool(tool.id, selectedFruit.value.handbook_id)
@@ -476,7 +477,7 @@ const selectDeliveryTool = async (tool) => {
     showToast({ message: error || '配送失败', type: 'error' })
   }
 }
-
+const selectedLandId = ref(null)
 const isChoiceMode = ref(false)
 const selectedHandbookId = ref(null)
 const selectedHandbookName = ref(null)
@@ -786,7 +787,9 @@ const onFinish = async (land_id) => {
 }
 
 // 点击播种
-const sow = (id, index) => {
+const sow = (id) => {
+  // 切换到背包tab
+  switchTab('backpack')
 
   // 如果是选择模式，不允许播种
   if (isChoiceMode.value) {
@@ -794,15 +797,37 @@ const sow = (id, index) => {
     doPlant(selectedHandbookId.value)
     return
   }
-
-
-  // 切换到背包tab
-  switchTab('backpack')
-  // 进入种植模式
-  isPlantingMode.value = true
-  selectedLandId.value = id
-  selectedLandIndex.value = index
 }
+// 点击一健播种
+const sowAll = async () => {
+  if (!isChoiceMode.value) return
+
+  // 获取种子数量
+  const seed = seedList.value.find(s => s.handbook_id === selectedHandbookId.value)
+  if (!seed) {
+    showToast({ message: '该种子已用完', type: 'error' })
+    return
+  }
+
+  // 获取空闲土地列表
+  const emptyLands = lands.value.filter(l => l.status === 0)
+  const seedCount = seed.num
+  const plantCount = Math.min(seedCount, emptyLands.length)
+
+  if (plantCount === 0) {
+    showToast({ message: '没有可种植的土地', type: 'warning' })
+    return
+  }
+
+  // 逐个种植
+  for (let i = 0; i < plantCount; i++) {
+    selectedLandId.value = emptyLands[i].id
+    await doPlant(selectedHandbookId.value)
+  }
+
+  showToast({ message: `成功种植${plantCount}块地！`, type: 'success' })
+}
+
 // 执行种植
 const doPlant = async (handbook_id) => {
   if (!selectedLandId.value) {
@@ -820,8 +845,6 @@ const doPlant = async (handbook_id) => {
   // 如果不是空闲土地，不允许种植
   if (land.status !== 0) {
     showToast({ message: '该土地不是空闲状态', type: 'warning' })
-    isPlantingMode.value = false
-    selectedLandId.value = null
     return
   }
 
@@ -843,9 +866,6 @@ const doPlant = async (handbook_id) => {
   // 增加种植经验
   await addExp(userInfo.value.default_exp.plant, '种植')
 
-  // 退出种植模式
-  isPlantingMode.value = false
-  selectedLandId.value = null
 }
 // 执行选择
 const doChoice = async (handbook_id, handbook_name) => {
@@ -854,11 +874,6 @@ const doChoice = async (handbook_id, handbook_name) => {
   isChoiceMode.value = true
 }
 
-// 取消种植
-const cancelPlant = () => {
-  isPlantingMode.value = false
-  selectedLandId.value = null
-}
 // 取消选择
 const cancelChoice = () => {
   isChoiceMode.value = false
@@ -878,11 +893,29 @@ const clearland = async (id) => {
   await addExp(userInfo.value.default_exp.shovel, '铲除土地')
 }
 
+// 点击一健铲除
+const clearAll = async () => {
+
+  // 获取生长中土地列表
+  const growingLands = lands.value.filter(l => l.status === 1 || l.status === 3)
+  if (growingLands.length === 0) {
+    showToast({ message: '没有可铲除的土地', type: 'warning' })
+    return
+  }
+
+  // 逐个铲除
+  for (let i = 0; i < growingLands.length; i++) {
+    clearland(growingLands[i].id)
+  }
+
+  showToast({ message: `成功铲除${growingLands.length}块地！`, type: 'success' })
+}
+
 // 点击收获
 const harvest = async (land) => {
 
   // 回跳到仓库tab
-  switchTab('fruit')
+  // switchTab('fruit')
 
   try {
 
@@ -898,6 +931,7 @@ const harvest = async (land) => {
     showToast({ message: error || '收获失败', type: 'error' })
   }
 }
+
 
 // 点击购买
 const buy = async (item) => {
