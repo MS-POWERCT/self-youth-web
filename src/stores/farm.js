@@ -57,6 +57,19 @@
         } finally {
           this.loading = false
         }
+      },// 一键种植土地
+      async plantAll(data){
+        try {
+          this.loading = true
+          const response = await farmApi.plantAll(data) || []
+          this.lands = response
+          return response
+        } catch (error) {
+          console.error('一键种植土地失败', error)
+          throw error
+        } finally {
+          this.loading = false
+        }
       },
       // 铲除土地
       async landRemove(data){
@@ -67,6 +80,20 @@
           return response
         } catch (error) {
           console.error('移除土地失败', error)
+          throw error
+        } finally {
+          this.loading = false
+        }
+      },
+      // 一键铲除所有土地
+      async LandRemoveAll(){
+           try {
+          this.loading = true
+          const response = await farmApi.removeAll() || []
+          this.lands = response
+          return response
+        } catch (error) {
+          console.error('一键铲除所有土地失败', error)
           throw error
         } finally {
           this.loading = false
@@ -91,6 +118,20 @@
         try {
           this.loading = true
           const response = await farmApi.harvest({ land_id: land_id }) || []
+          this.lands = response
+          return response
+        } catch (error) {
+          console.error('收获土地失败', error)
+          throw error
+        } finally {
+          this.loading = false
+        }
+      },
+      // 一键收获
+      async LandHarvestAll(){
+        try {
+          this.loading = true
+          const response = await farmApi.harvestAll() || []
           this.lands = response
           return response
         } catch (error) {

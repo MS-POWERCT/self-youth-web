@@ -85,13 +85,16 @@
               <IconFont :name="land.handbook.icon" />
             </span>
             {{ landName(land, index) }}
-            <van-count-down v-if="land.status === 1" class="inline-block text-gray500" @finish="onFinish(land.id)"
-              :time="getTime(land.plant_mature_at)" format="HH:mm:ss" />
+            <van-count-down v-if="land.status === 1" class="land-count-down inline-block text-gray500"
+              @finish="onFinish(land.id)" :time="getTime(land.plant_mature_at)" format="HH:mm:ss" />
           </span>
           <span class="land-status">[{{ landStatus(land.status) }}]</span>
           <span v-if="land.status === 0" class="land-action" @click="sow(land.id, index + 1)">播种</span>
-          <span v-if="land.status === 1 || land.status === 3" class="land-action" @click="clearland(land.id)">铲除</span>
+          <span v-if="land.status === 1" class="land-action text-center">
+            <IconFont name="icon-sanweishengchangmonixianshi" />
+          </span>
           <span v-if="land.status === 2" class="land-action" @click="harvest(land)">收获</span>
+          <span v-if="land.status === 3" class="land-action" @click="clearland(land.id)">铲除</span>
           <span v-if="land.status === 9" class="land-action" @click="switchTab('upgrade')">开垦</span>
         </div>
       </div>
@@ -103,9 +106,11 @@
 
       <!-- 如果有种植的土地状态=1或者3就出现一健铲除按钮 -->
       <span class="tool-btn" @click="clearAll()">一健铲除</span>
+      <!-- 一键收获 -->
+      <span class="tool-btn" @click="harvestAll()">一键收获</span>
 
       <!-- 如果种子被选择后出现一健种植按钮 -->
-      <span v-if="isChoiceMode" class="tool-btn" @click="sowAll()">一健播种</span>
+      <span v-if="isChoiceMode" class="tool-btn" @click="doPlantAll()">一键种植</span>
 
     </div>
 
@@ -115,14 +120,11 @@
         <span class="function-tab" :class="{ active: currentFunction === 'backpack' }" @click="switchTab('backpack')">
           背包种子
         </span>
-        <span class="function-tab" :class="{ active: currentFunction === 'shop' }" @click="switchTab('shop')">
-          种子商店
-        </span>
         <span class="function-tab" :class="{ active: currentFunction === 'fruit' }" @click="switchTab('fruit')">
           仓库
         </span>
-        <span class="function-tab" :class="{ active: currentFunction === 'upgrade' }" @click="switchTab('upgrade')">
-          土地升级
+        <span class="function-tab" :class="{ active: currentFunction === 'shop' }" @click="switchTab('shop')">
+          种子商店
         </span>
         <span class="function-tab" :class="{ active: currentFunction === 'market' }" @click="switchTab('market')">
           集市
@@ -132,6 +134,9 @@
         </span>
         <span class="function-tab" :class="{ active: currentFunction === 'delivery' }" @click="switchTab('delivery')">
           配送工具
+        </span>
+        <span class="function-tab" :class="{ active: currentFunction === 'upgrade' }" @click="switchTab('upgrade')">
+          土地升级
         </span>
 
         <!-- <span class="function-tab" :class="{ active: currentFunction === 'tool' }" @click="switchTab('tool')">
@@ -153,11 +158,12 @@
         <div v-if="seedList.length > 0">
           <div v-for="seed in seedList" :key="seed.name"
             :class="{ 'function-item-active': selectedHandbookId === seed.handbook_id }" class="function-item">
-            <span class="item-name">
+            <span style="width: 120px;">
               <IconFont :name="seed.handbook.icon" />
               {{ seed.handbook.name }}
               x {{ seed.num }}
             </span>
+            <span>{{ seed.handbook.quarter }}季</span>&nbsp;&nbsp;
             <!-- 种植模式下显示种植按钮 -->
             <span @click="doChoice(seed.handbook_id, seed.handbook.name)">[选择种植]</span>
           </div>
@@ -185,7 +191,8 @@
               {{ item.handbook.name }}
             </span>
             <span>
-              {{ item.handbook.price }}{{ item.handbook.asset.name }}
+              <span>{{ item.handbook.quarter }}季</span>&nbsp;&nbsp;
+              <span>{{ item.handbook.price }}{{ item.handbook.asset.name }}</span>
             </span>
             <span>
               <span class="mr-4"></span>
@@ -424,6 +431,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useGlobalStore } from '../stores/global'
 import { useFarmStore } from '../stores/farm'
+import IconFont from '@/components/IconFont.vue'
 
 const globalStore = useGlobalStore()
 const farmStore = useFarmStore()
@@ -890,7 +898,7 @@ const sow = (id) => {
   }
 }
 // 点击一健播种
-const sowAll = async () => {
+const doPlantAll = async () => {
   if (!isChoiceMode.value) return
 
   // 获取种子数量
@@ -910,13 +918,28 @@ const sowAll = async () => {
     return
   }
 
-  // 逐个种植
-  for (let i = 0; i < plantCount; i++) {
-    selectedLandId.value = emptyLands[i].id
-    await doPlant(selectedHandbookId.value)
-  }
+  if (!isChoiceMode.value) return
+
+  // 获取种子数量
+  await farmStore.plantAll({ handbook_id: selectedHandbookId.value })
 
   showToast({ message: `成功种植${plantCount}块地！`, type: 'success' })
+
+  // 种子扣除
+  // 更新该背包种子-1
+  const index = seedList.value.findIndex(seed => seed.handbook_id === selectedHandbookId.value);
+  if (index !== -1) {
+    const seed = seedList.value[index];
+    seed.num -= plantCount;
+    if (seed.num <= 0) {
+      seedList.value.splice(index, 1); // 删除该种子
+    }
+  }
+  // 取消选择种植
+  cancelChoice()
+  // 增加种植经验
+  await addExp(userInfo.value.default_exp.plant * plantCount, '种植')
+
 }
 
 // 执行种植
@@ -986,20 +1009,19 @@ const clearland = async (id) => {
 
 // 点击一健铲除
 const clearAll = async () => {
-
   // 获取生长中土地列表
-  const growingLands = lands.value.filter(l => l.status === 1 || l.status === 3)
+  const growingLands = lands.value.filter(l => l.status === 3)
   if (growingLands.length === 0) {
     showToast({ message: '没有可铲除的土地', type: 'warning' })
+    showToast({ message: '一键铲除无法铲除生长中的的作物', type: 'warning' })
     return
   }
 
-  // 逐个铲除
-  for (let i = 0; i < growingLands.length; i++) {
-    clearland(growingLands[i].id)
-  }
-
-  showToast({ message: `成功铲除${growingLands.length}块地！`, type: 'success' })
+  // 调用一键铲除所有土地接口
+  await farmStore.LandRemoveAll()
+  // 经验
+  await addExp(userInfo.value.default_exp.shovel * growingLands.length, '铲除土地')
+  showToast({ message: `成功铲除${growingLands.length}块地`, type: 'success' })
 }
 
 // 点击收获
@@ -1022,7 +1044,30 @@ const harvest = async (land) => {
     showToast({ message: error || '收获失败', type: 'error' })
   }
 }
+// 一键收获
+const harvestAll = async () => {
+  try {
 
+    // 判断是否有可收获的土地
+    const growingLands = lands.value.filter(l => l.status === 2)
+    if (growingLands.length === 0) {
+      showToast({ message: '没有可收获的土地', type: 'warning' })
+      return
+    }
+
+    await farmStore.LandHarvestAll()
+
+    // 计算得到的经验
+    const totalExp = growingLands.reduce((acc, land) => acc + land.handbook.quarter_exp, 0)
+    // 增加经验
+    await addExp(totalExp, `收获${growingLands.length}块土地`)
+
+    // 提示收获成功
+    showToast({ message: `一键收获成功，获得${totalExp}点经验`, type: 'success' })
+  } catch (error) {
+    showToast({ message: error || '一键收获失败', type: 'error' })
+  }
+}
 
 // 点击购买
 const buy = async (item) => {
@@ -1253,7 +1298,7 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   gap: 20px;
-  padding: 10px 15px;
+  padding: 6px 12px;
   background: var(--black100);
   border: 1px solid var(--gray500);
   border-bottom: none;
@@ -1358,7 +1403,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  border-bottom: 1px dashed var(--gray500);
+  /* border-bottom: 1px dashed var(--gray500); */
   gap: 8px;
 }
 
@@ -1376,6 +1421,12 @@ onUnmounted(() => {
   color: var(--white);
 }
 
+.land-count-down {
+  font-size: 10px;
+  min-height: 19.2px;
+  max-height: 19.2px;
+}
+
 .land-status {
   color: var(--gray500);
 }
@@ -1383,6 +1434,7 @@ onUnmounted(() => {
 .land-action {
   color: var(--primary100);
   cursor: pointer;
+  min-width: 24px;
 }
 
 .land-action:hover {
@@ -1515,8 +1567,10 @@ onUnmounted(() => {
 .function-tab {
   color: var(--gray500);
   cursor: pointer;
-  padding: 6px 12px;
-  min-width: 60px;
+  padding: 3px;
+  margin-right: 3px;
+  margin-left: 3px;
+  /* min-width: 60px; */
   text-align: center;
   user-select: none;
   flex-shrink: 0;

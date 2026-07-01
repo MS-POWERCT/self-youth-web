@@ -23,11 +23,27 @@ export const farmApi = {
       silent: true,
     })
   },
+  // 一键种植
+  plantAll(data) {
+    return request({
+      url: '/api/farmUser/plantAll', //
+      method: 'post',
+      data,
+      silent: true,
+    })
+  },
   remove(data) {
     return request({
       url: '/api/farmUser/remove', // 铲除
       method: 'post',
       data,
+      silent: true,
+    })
+  },
+  removeAll() {
+    return request({
+      url: '/api/farmUser/removeAll', // 一键铲除所有
+      method: 'post',
       silent: true,
     })
   },
@@ -43,6 +59,22 @@ export const farmApi = {
     return request({
       url: '/api/farmUser/harvest', // 收获
       method: 'post',
+      data,
+      silent: true,
+    })
+  },
+  harvestAll() {
+     return request({
+      url: '/api/farmUser/harvestAll', // 收获全部
+      method: 'post',
+      silent: true,
+    })
+  },
+  // 一键收获
+  getShopList(data) {
+    return request({
+      url: '/api/farmShop/getList', // 商店列表
+      method: 'get',
       data,
       silent: true,
     })
