@@ -82,7 +82,8 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+  background-color: var(--white);
+  box-shadow: 0 4px 20px rgb(152, 187, 239);
   cursor: pointer;
   z-index: 1000;
 }

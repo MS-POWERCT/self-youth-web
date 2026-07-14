@@ -4,7 +4,7 @@
 
     <div class="login-shell">
       <section class="brand" aria-label="品牌信息">
-          <img class="brand-logo" src="/logo.png" alt="Logo" />
+        <img class="brand-logo" src="/logo.png" alt="Logo" />
         <div class="brand-title text-32 text-white font-bold">{{ globalStore.APP_NAME }}</div>
       </section>
 
@@ -15,12 +15,12 @@
 
         <div class="mode-row flex gap-2" role="tablist" aria-label="登录方式">
           <button type="button" class="mode-pill flex-1 radius-9999 text-12 font-bold"
-            :class="{ active: loginMode === 'email_code' }" @click="setLoginMode('email_code')">
-            邮箱验证码
+            :class="{ active: loginMode === 'email_password' }" @click="setLoginMode('email_password')">
+            邮箱&密码
           </button>
           <button type="button" class="mode-pill flex-1 radius-9999 text-12 font-bold"
-            :class="{ active: loginMode === 'email_password' }" @click="setLoginMode('email_password')">
-            邮箱+密码
+            :class="{ active: loginMode === 'email_code' }" @click="setLoginMode('email_code')">
+            邮箱验证码
           </button>
           <button v-if="web3Support.supported" type="button" class="mode-pill flex-1 radius-9999 text-12 font-bold"
             :class="{ active: loginMode === 'web3' }" @click="setLoginMode('web3')">
@@ -164,6 +164,7 @@ onMounted(() => {
 .brand {
   padding: 10px 10px 10px 6px;
 }
+
 .brand-logo {
   width: 64px;
   height: 6%;

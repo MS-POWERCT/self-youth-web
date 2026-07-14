@@ -37,12 +37,10 @@ import {
   Form,
   Field,
   CellGroup,
+  Toast,
   Cell,
   Button,
-  Slider,
-  Toast,
   NavBar,
-  Empty,
   Image as VanImage,
   Lazyload,
   NumberKeyboard,
@@ -63,10 +61,6 @@ import {
   BackTop,
   Col,
   Row,
-  DropdownMenu,
-  DropdownItem,
-  CountDown,
-  NoticeBar
 } from 'vant'
 
 // 1. 引入 Capacitor 核心和平台判断
@@ -87,16 +81,14 @@ async function initApp() {
   app.use(VanIcon)
   app.use(Form)
   app.use(Field)
-  app.use(Slider)
-  app.use(Toast)
   app.use(Button)
   app.use(NavBar)
+  app.use(Toast)
   app.use(VanImage)
   app.use(Lazyload)
   app.use(NumberKeyboard)
   app.use(CellGroup)
   app.use(Cell)
-  app.use(Empty)
   app.use(Tabbar)
   app.use(TabbarItem)
   app.use(PullRefresh)
@@ -114,12 +106,6 @@ async function initApp() {
   app.use(BackTop)
   app.use(Col)
   app.use(Row)
-  app.use(DropdownMenu)
-  app.use(DropdownItem)
-  app.use(CountDown)
-  app.use(NoticeBar)
-
-
 
   // 获取全局 store
   // 💡 建议: globalStore 在此处获取但未在组件中使用，需确认是否必需

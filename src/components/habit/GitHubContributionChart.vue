@@ -1,46 +1,47 @@
 <template>
   <div class="github-contribution-chart">
-    <div class="chart-summary">
-      <span class="summary-text" v-if="totalChecks > 0">
-        已连续打卡 <strong>{{ currentStreak }}</strong> 天，
-        总计 <strong>{{ totalChecks }}</strong> 次
+    <div class="chart-header">
+      <div class="chart-title-row">
+        <h3 class="chart-title">{{ title }}</h3>
+      </div>
+      <div class="chart-summary">
+        <span class="summary-item">
+          <span>连续 <strong>{{ currentStreak }}</strong> 天</span>
+        </span>
+        <span class="summary-divider">|</span>
+        <span class="summary-item">
+          <span>总计 <strong>{{ totalChecks }}</strong> 次</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="period-tabs">
+      <span v-for="period in periods" :key="period.value"
+        :class="['period-tab', { active: selectedPeriod === period.value }]" @click="selectedPeriod = period.value">
+        <!-- <IconifyIcon :icon="period.icon" width="20" /> -->
+        <span>{{ period.label }}</span>
       </span>
-      <span class="summary-text" v-else>暂无打卡记录</span>
     </div>
 
     <div class="chart-scroll">
       <div class="chart-container">
         <div class="months-label">
-          <div
-            v-for="(month, index) in monthLabels"
-            :key="index"
-            class="month-label"
-            :style="{ left: month.left + 'px' }"
-          >
+          <div v-for="(month, index) in visibleMonthLabels" :key="index" class="month-label"
+            :style="{ left: month.left + 'px' }">
             {{ month.name }}
           </div>
         </div>
 
         <div class="chart-grid">
           <div class="weekdays-label">
-            <div
-              class="weekday-label"
-              v-for="(day, index) in weekdays"
-              :key="index"
-            >
+            <div class="weekday-label" v-for="(day, index) in weekdays" :key="index">
               {{ day }}
             </div>
           </div>
           <div class="weeks-container">
-            <div v-for="(week, weekIndex) in weeks" :key="weekIndex" class="week">
-              <div
-                v-for="(day, dayIndex) in week"
-                :key="dayIndex"
-                class="day-cell"
-                :class="getDayClass(day)"
-                :title="getDayTitle(day)"
-                @click="onDayClick(day)"
-              ></div>
+            <div v-for="(week, weekIndex) in visibleWeeks" :key="weekIndex" class="week">
+              <div v-for="(day, dayIndex) in week" :key="dayIndex" class="day-cell" :class="getDayClass(day)"
+                :title="getDayTitle(day)" @click="onDayClick(day)"></div>
             </div>
           </div>
         </div>
@@ -48,7 +49,6 @@
     </div>
 
     <div class="chart-footer">
-      <h4 class="chart-title" v-if="title">{{ title }}</h4>
       <div class="chart-legend">
         <span class="legend-text">少</span>
         <div class="legend-levels">
@@ -65,7 +65,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
 const CELL_SIZE = 11
 const CELL_GAP = 3
@@ -84,7 +84,16 @@ const props = defineProps({
 
 const emit = defineEmits(['day-click'])
 
-const weekdays = ['', '周一', '', '周三', '', '周五', '']
+const weekdays = ['', '一', '', '三', '', '五', '']
+
+const periods = [
+  { label: '3个月', value: '3m', icon: 'streamline-stickies-color:date-time-setting' },
+  { label: '6个月', value: '6m', icon: 'streamline-stickies-color:date-time-setting' },
+  { label: '今年', value: 'year', icon: 'streamline-stickies-color:date-time-setting' },
+  { label: '全部', value: 'all', icon: 'streamline-stickies-color:date-time-setting' }
+]
+
+const selectedPeriod = ref('3m')
 
 const generateDateGrid = () => {
   const today = new Date()
@@ -135,37 +144,78 @@ const getLevel = (count) => {
   return 4
 }
 
-const monthLabels = computed(() => {
-  const labels = []
+const weeks = computed(() => generateDateGrid())
+
+const visibleWeeks = computed(() => {
+  const allWeeks = weeks.value
+  if (!allWeeks.length) return []
+
+  const today = new Date()
+  let startWeekIndex = 0
+
+  switch (selectedPeriod.value) {
+    case '3m':
+      startWeekIndex = Math.max(0, allWeeks.length - 13)
+      break
+    case '6m':
+      startWeekIndex = Math.max(0, allWeeks.length - 26)
+      break
+    case 'year': {
+      const firstDayOfYear = new Date(today.getFullYear(), 0, 1)
+      const firstWeekOfYear = allWeeks.findIndex(w =>
+        w.some(d => d.date && d.date >= firstDayOfYear)
+      )
+      startWeekIndex = firstWeekOfYear >= 0 ? firstWeekOfYear : 0
+      break
+    }
+    case 'all':
+    default:
+      startWeekIndex = 0
+      break
+  }
+
+  return allWeeks.slice(startWeekIndex)
+})
+
+const visibleMonthLabels = computed(() => {
+  if (!weeks.value.length || !visibleWeeks.value.length) return []
+
   const months = ['1月', '2月', '3月', '4月', '5月', '6月',
     '7月', '8月', '9月', '10月', '11月', '12月']
 
-  if (weeks.value.length > 0) {
-    const firstDate = weeks.value[0].find(d => d.date)?.date
-    if (firstDate) {
-      for (let i = 0; i < 12; i++) {
-        const monthDate = new Date(firstDate)
-        monthDate.setMonth(firstDate.getMonth() + i)
+  const labels = []
+  const firstWeekIndex = weeks.value.length - visibleWeeks.value.length
+  const firstDate = weeks.value[firstWeekIndex]?.find(d => d.date)?.date
 
-        if (monthDate <= new Date()) {
-          const weekIndex = Math.floor(
-            (monthDate.getTime() - firstDate.getTime()) / (7 * 24 * 60 * 60 * 1000)
-          )
-          if (weekIndex >= 0 && weekIndex < weeks.value.length) {
-            labels.push({
-              name: months[monthDate.getMonth()],
-              left: weekIndex * (CELL_SIZE + CELL_GAP) + WEEKDAY_LABEL_WIDTH
-            })
-          }
-        }
+  if (firstDate) {
+    const endDate = new Date()
+    let currentMonth = firstDate.getMonth()
+    let currentYear = firstDate.getFullYear()
+
+    while (currentYear < endDate.getFullYear() ||
+      (currentYear === endDate.getFullYear() && currentMonth <= endDate.getMonth())) {
+      const monthDate = new Date(currentYear, currentMonth, 1)
+      const weekIndex = Math.floor(
+        (monthDate.getTime() - firstDate.getTime()) / (7 * 24 * 60 * 60 * 1000)
+      ) + firstWeekIndex
+
+      if (weekIndex >= firstWeekIndex && weekIndex < weeks.value.length) {
+        labels.push({
+          name: months[currentMonth],
+          left: (weekIndex - firstWeekIndex) * (CELL_SIZE + CELL_GAP) + WEEKDAY_LABEL_WIDTH
+        })
+      }
+
+      currentMonth++
+      if (currentMonth > 11) {
+        currentMonth = 0
+        currentYear++
       }
     }
   }
 
   return labels
 })
-
-const weeks = computed(() => generateDateGrid())
 
 const totalChecks = computed(() => {
   return Object.values(props.data).reduce((sum, count) => sum + count, 0)
@@ -213,40 +263,127 @@ const onDayClick = (day) => {
   }
 }
 
-watch(() => props.data, () => {}, { deep: true })
+watch(() => props.data, () => { }, { deep: true })
 
-onMounted(() => {})
+onMounted(() => { })
 </script>
 
 <style scoped>
 .github-contribution-chart {
   --cell-size: 11px;
   --cell-gap: 3px;
-  --weekday-label-width: 32px;
+  --weekday-label-width: 24px;
 
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  background: #fff;
-  border: 1px solid #e1e4e8;
-  border-radius: 6px;
+  background: linear-gradient(135deg, #8c9ad7 0%, #9770bf 100%);
+  border-radius: 12px;
   padding: 16px;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.chart-header {
+  margin-bottom: 12px;
+}
+
+.chart-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.chart-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
 }
 
 .chart-summary {
-  margin-bottom: 12px;
-  font-size: 14px;
-  color: #24292f;
-  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.chart-summary strong {
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.summary-item strong {
+  color: #fff;
   font-weight: 600;
+}
+
+.summary-divider {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.icon-flame {
+  color: #ffd700;
+}
+
+.icon-check {
+  color: #4ade80;
+}
+
+.period-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.period-tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.period-tab:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.period-tab.active {
+  color: #a9b5ed;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .chart-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px;
+}
+
+.chart-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+
+.chart-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.chart-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
 }
 
 .chart-container {
@@ -265,10 +402,11 @@ onMounted(() => {})
 .month-label {
   position: absolute;
   top: 0;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 16px;
-  color: #57606a;
+  color: rgba(255, 255, 255, 0.8);
   white-space: nowrap;
+  font-weight: 500;
 }
 
 .chart-grid {
@@ -289,9 +427,9 @@ onMounted(() => {})
 .weekday-label {
   height: var(--cell-size);
   line-height: var(--cell-size);
-  font-size: 12px;
-  color: #57606a;
-  text-align: left;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
   flex-shrink: 0;
 }
 
@@ -316,12 +454,12 @@ onMounted(() => {})
   border-radius: 2px;
   cursor: pointer;
   flex-shrink: 0;
-  transition: outline 0.1s ease;
+  transition: all 0.2s ease;
 }
 
 .day-cell:hover:not(.empty) {
-  outline: 1px solid rgba(27, 31, 36, 0.15);
-  outline-offset: -1px;
+  transform: scale(1.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .day-cell.empty {
@@ -331,27 +469,27 @@ onMounted(() => {})
 
 .level-0,
 .day-cell.level-0 {
-  background: var(--github-contribution-color);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .level-1,
 .day-cell.level-1 {
-  background: var(--github-contribution-color-1);
+  background: rgba(74, 222, 128, 0.4);
 }
 
 .level-2,
 .day-cell.level-2 {
-  background: var(--github-contribution-color-2);
+  background: rgba(74, 222, 128, 0.6);
 }
 
 .level-3,
 .day-cell.level-3 {
-  background: var(--github-contribution-color-3);
+  background: rgba(74, 222, 128, 0.8);
 }
 
 .level-4,
 .day-cell.level-4 {
-  background: var(--github-contribution-color-4);
+  background: #4ade80;
 }
 
 .chart-footer {
@@ -362,24 +500,16 @@ onMounted(() => {})
   gap: 12px;
 }
 
-.chart-title {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 400;
-  color: #57606a;
-}
-
 .chart-legend {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-left: auto;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .legend-text {
-  font-size: 12px;
-  color: #57606a;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .legend-levels {
@@ -394,5 +524,13 @@ onMounted(() => {})
   min-height: var(--cell-size);
   border-radius: 2px;
   flex-shrink: 0;
+}
+
+.chart-tip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
 }
 </style>

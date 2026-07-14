@@ -33,17 +33,6 @@
       </div>
     </div>
 
-    <!-- 农场入口 -->
-    <div class="farm-entry-card" @click="handleFarmEntry">
-      <div class="farm-content-overlay">
-        <div class="farm-icon-large">
-          <IconifyIcon icon="token-branded:farm" width="48" />
-        </div>
-        <div class="farm-title-large">{{ globalStore.FARM_NAME }}</div>
-        <div class="farm-subtitle">种植、收获、享受田园乐趣</div>
-      </div>
-    </div>
-
 
     <!-- 用户活动记录 -->
     <div class="user-active py-16" v-if="userLog.length > 0">
@@ -69,53 +58,8 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useUserStore } from '../stores/user'
-import { useRouter } from 'vue-router'
-import { useGlobalStore } from '../stores/global'
-import { showConfirmDialog } from 'vant'
-
-
-
-const globalStore = useGlobalStore()
-
-
-
 const userStore = useUserStore()
-const router = useRouter()
-
 const userLog = ref([])
-
-// 检查用户是否绑定了邮箱或地址
-const checkUserBinding = () => {
-  const user = userStore.user
-  if (!user) {
-    return false
-  }
-  // 检查邮箱或地址是否绑定
-  return user.email || user.address
-}
-
-// 点击农场入口
-const handleFarmEntry = () => {
-  // 检查用户是否绑定了邮箱或地址
-  if (!checkUserBinding()) {
-    // 显示提示框，引导用户去绑定
-    showConfirmDialog({
-      title: '需要完善账户',
-      message: '请先绑定邮箱或地址以使用农场功能',
-      confirmButtonText: '去绑定',
-      cancelButtonText: '取消',
-    }).then(() => {
-      // 用户点击"去绑定"，跳转到设置页面
-      router.push('/userSettings/statistics')
-    }).catch(() => {
-      // 用户点击"取消"，不做任何操作
-    })
-    return
-  }
-
-  // 已绑定，跳转到农场页面
-  router.push('/farm')
-}
 
 // 判断是否是今天
 const isToday = (dateString) => {
