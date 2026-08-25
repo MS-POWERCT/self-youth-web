@@ -1,200 +1,285 @@
 <template>
   <div class="profile-container">
-    <br />
-    <br />
-    <div v-if="userStore.token && userStore.user">
-      <van-row class="flex items-center">
-        <van-col span="8" class="flex justify-center">
-          <van-image class="border-white" round
-            :src="userStore.user.avatar || `https://picsum.photos/seed/${userStore.user.id}/64/64`" />
-        </van-col>
-        <van-col span="12">
-          <span class="font-bold text-24">{{ userStore.user.name || '用户名' }}</span>
-        </van-col>
-        <van-col span="4">
-          <div @click="$router.push('/userSettings/statistics')">
-            <IconifyIcon icon="streamline-stickies-color:android-setting" width="32" />
+    <template v-if="userStore.token && userStore.user">
+      <h3 class="page-title">我的</h3>
+
+      <div class="profile-section">
+        <div class="avatar-wrap">
+          <div class="avatar-inner">
+            <van-image
+              round
+              fit="cover"
+              width="76"
+              height="76"
+              :src="userStore.user.avatar || `https://picsum.photos/seed/${userStore.user.id}/152/152`"
+            />
           </div>
-        </van-col>
-      </van-row>
-      <div class="statistics">
-        <div>
-          <div><span class="text-24 font-bold">{{ userStore.user.continuous_days_check || 0 }}</span>&nbsp;天</div>
-          <div class="text-gray500">连续打卡</div>
         </div>
-        <div>
-          <div><span class="text-24 font-bold">{{ userStore.user.continuous_days_value || 0 }}</span>&nbsp;天</div>
-          <div class="text-gray500">连续记录</div>
+        <div class="profile-name">{{ userStore.user.name || '用户名' }}</div>
+      </div>
+
+      <br />
+      <div class="statistics-card">
+        <div class="stat-item">
+          <div class="stat-value">{{ userStore.user.continuous_days_check || 0 }}<span class="stat-unit">天</span></div>
+          <div class="stat-label">连续打卡</div>
         </div>
-        <div>
-          <div><span class="text-24 font-bold">{{ userStore.user.mark_user_count || 0 }}</span></div>
-          <div class="text-gray500">累计标记</div>
+        <div class="stat-item">
+          <div class="stat-value">{{ userStore.user.continuous_days_value || 0 }}<span class="stat-unit">天</span></div>
+          <div class="stat-label">连续记录</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ userStore.user.mark_user_count || 0 }}</div>
+          <div class="stat-label">累计标记</div>
         </div>
       </div>
-    </div>
 
-
-    <!-- 用户活动记录 -->
-    <div class="user-active py-16" v-if="userLog.length > 0">
-      <div class="user-log">
-        <div v-for="item in userLog" :key="item.id" class="user-item py-4 flex justify-between">
-          <div>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <IconifyIcon :icon="getLogIcon(item.type)" width="12" /> &nbsp;
-            {{ item.log }}
+      <div class="menu-card">
+        <div
+          v-for="(item, index) in menuItems"
+          :key="item.label"
+          class="menu-item"
+          :class="{ 'no-border': index === menuItems.length - 1 }"
+          @click="handleMenuClick(item)"
+        >
+          <div class="menu-left">
+            <div class="menu-icon" :style="{ backgroundColor: item.bgColor }">
+              <IconifyIcon :icon="item.icon" width="20" />
+            </div>
+            <span class="menu-label">{{ item.label }}</span>
           </div>
-          <div class="text-12" :class="{ 'text-gray500': !isToday(item.updated_at) }">
-            {{ !isToday(item.updated_at) ? '◆ ' : '' }}{{ item.updated_at.substring(10, 16) }}
-            &nbsp;&nbsp;&nbsp;&nbsp;
-          </div>
+          <van-icon name="arrow" class="menu-arrow" />
         </div>
       </div>
-    </div>
-    <br />
-    <br />
+    </template>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { showToast } from 'vant'
 import { useUserStore } from '../stores/user'
+
+const router = useRouter()
 const userStore = useUserStore()
-const userLog = ref([])
 
-// 判断是否是今天
-const isToday = (dateString) => {
-  const date = new Date(dateString)
-  const today = new Date()
-  return date.toDateString() === today.toDateString()
-}
+const menuItems = [
+  {
+    label: '统计数据',
+    icon: 'glyphs-poly:analytics',
+    bgColor: '#d4f0e8',
+    route: '/habits/stats',
+  },
+  {
+    label: '活动记录',
+    icon: 'material-icon-theme:folder-log',
+    bgColor: '#e8dff5',
+    route: '/userSettings/activity-log',
+  },
+  {
+    label: '数据导出',
+    icon: 'fluent-color:data-trending-20',
+    bgColor: '#fce4ec',
+    action: 'export',
+  },
+  {
+    label: '关于',
+    icon: 'flat-color-icons:about',
+    bgColor: '#fff3c4',
+    action: 'about',
+  },
+  {
+    label: '设置',
+    icon: 'material-icon-theme:settings',
+    bgColor: '#dce8f5',
+    route: '/userSettings/statistics',
+  },
 
-// 加载用户操作日志
-const loadUserLog = async () => {
-  try {
-    const log = await userStore.getUserLog()
-    userLog.value = log || []
-  } catch (error) {
-    console.error('加载用户操作日志失败', error)
+]
+
+const handleMenuClick = (item) => {
+  if (item.route) {
+    router.push(item.route)
+    return
+  }
+
+  if (item.action === 'export') {
+    showToast('功能开发中')
+    return
+  }
+
+  if (item.action === 'about') {
+    showToast('Self Youth')
   }
 }
-
-
-
-// 获取日志图标
-const getLogIcon = (type) => {
-  if (type === 'mark') {
-    return 'streamline-stickies-color:keyboard-direction'
-  } else if (type === 'habit') {
-    return 'streamline-stickies-color:validation-1'
-  } else {
-    return 'streamline-stickies-color:star-duo'
-  }
-}
-
 
 onMounted(async () => {
   await userStore.getUserInfo()
-  await loadUserLog()
 })
-
-
 </script>
+
 <style scoped>
 .profile-container {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(237, 131, 131, 0.5) 0%, transparent 75%),
-    radial-gradient(circle at 80% 20%, rgba(121, 236, 228, 0.5) 0%, transparent 75%);
-  background-blend-mode: screen;
-  /* background-color: var(--van-); */
+  background-color: #f4f5f7;
+  padding: var(--px-16) var(--px-16) 80px;
 }
 
-.statistics {
-  background-color: var(--white);
-  margin: 30px 20px;
-  border-radius: 16px;
+.page-title {
+  font-size: var(--rem-18);
+  font-weight: var(--number-700);
+  color: var(--black300);
+  line-height: 1.2;
+  margin-bottom: var(--px-24);
+}
+
+.profile-section {
   display: flex;
-  justify-content: space-around;
-  padding: 20px;
-
-  >div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--px-24);
 }
 
-.user-active {
-  background-color: var(--white);
-  margin: 30px 20px;
-  border-radius: 16px;
-
-}
-
-.user-log {
-  height: 220px;
-  overflow-y: auto;
-}
-
-/* 农场入口卡片 */
-.farm-entry-card {
+.avatar-wrap {
   position: relative;
-  margin: 20px;
-  height: 180px;
-  border-radius: 16px;
+  width: 84px;
+  height: 84px;
+  padding: 3px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #5ec9a8 0%, #56b8d9 48%, #6a90d8 100%);
+  box-shadow:
+    0 8px 24px rgba(94, 185, 170, 0.32),
+    0 2px 8px rgba(91, 155, 213, 0.16);
+}
+
+.avatar-wrap::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(94, 203, 160, 0.18) 0%, transparent 70%);
+  z-index: -1;
+}
+
+.avatar-inner {
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  border-radius: 50%;
+  background: #fff;
+  box-sizing: border-box;
   overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
 }
 
-.farm-entry-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+.avatar-inner :deep(.van-image) {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50%;
+  overflow: hidden;
 }
 
-.farm-bg-image {
+.avatar-inner :deep(.van-image__img) {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.farm-content-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.7) 0%, rgba(139, 195, 74, 0.7) 100%);
+.profile-name {
+  margin-top: var(--px-12);
+  font-size: var(--rem-12);
+  font-weight: var(--number-700);
+  color: var(--black300);
+}
+
+.profile-subtitle {
+  margin-top: var(--px-4);
+  font-size: var(--rem-9);
+  color: var(--gray500);
+}
+
+.statistics-card {
+  display: flex;
+  justify-content: space-around;
+  padding: var(--px-20) var(--px-16);
+  margin-bottom: var(--px-16);
+  border-radius: var(--radius-16);
+  background-color: var(--white);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.stat-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  color: white;
+  flex: 1;
 }
 
-.farm-icon-large {
-  margin-bottom: 10px;
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
+.stat-value {
+  font-size: var(--rem-16);
+  font-weight: var(--number-700);
+  color: var(--black300);
+  line-height: 1.2;
+}
+
+.stat-unit {
+  font-size: var(--rem-10);
+  font-weight: var(--number-500);
+  margin-left: 2px;
+}
+
+.stat-label {
+  margin-top: var(--px-6);
+  font-size: var(--rem-8);
+  color: var(--gray500);
+}
+
+.menu-card {
+  border-radius: var(--radius-16);
+  background-color: var(--white);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--px-16);
+  border-bottom: 1px solid var(--gray300);
+  cursor: pointer;
+}
+
+.menu-item.no-border {
+  border-bottom: none;
+}
+
+.menu-left {
+  display: flex;
+  align-items: center;
+  gap: var(--px-12);
+}
+
+.menu-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(10px);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-12);
+  flex-shrink: 0;
 }
 
-.farm-title-large {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 8px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+.menu-label {
+  font-size: var(--rem-10);
+  font-weight: var(--number-500);
+  color: var(--black300);
 }
 
-.farm-subtitle {
+.menu-arrow {
+  color: #c8c9cc;
   font-size: 14px;
-  opacity: 0.9;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
 }
 </style>

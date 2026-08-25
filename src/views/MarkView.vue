@@ -1,6 +1,6 @@
 <template>
   <div class="mark-view">
-    <div class="text-center mb-2 font-bold text-lg">
+    <div class="text-center mb-2 font-bold">
       <br />
       <IconifyIcon icon="streamline-stickies-color:keyboard-direction" width="14" class="mr-2" />
       &nbsp;

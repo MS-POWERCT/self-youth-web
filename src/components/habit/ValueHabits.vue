@@ -1,54 +1,68 @@
 <template>
   <div class="value-habits">
-    <br />
-    <!-- 记录列表 -->
-    <div class="records-container">
-      <div class="habit-list">
-        <div class="habit-item bg-gray100" v-for="value in habits" :key="value.id"
-          @click="showRecordForm(value, 'add')">
-          <div class="habit-icon">
-            <IconifyIcon :icon="value.habit_icon.icon" width="24" />
-          </div>
-          <div class="habit-name">{{ value.name }}</div>
+    <div class="category-row">
+      <div
+        v-for="habit in visibleHabits"
+        :key="habit.id"
+        class="category-card"
+        :class="{ active: selectedHabitId === habit.id }"
+        @click="selectHabit(habit)"
+      >
+        <div class="category-icon" :style="{ backgroundColor: getIconBg(habit.id) }">
+          <IconifyIcon :icon="habit.habit_icon.icon" width="24" />
         </div>
+        <div class="category-name">{{ habit.name }}</div>
       </div>
+    </div>
 
-      <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-        <div v-if="!loading && valueRecords.length === 0" class="empty-state">
+    <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+      <div class="records-container">
+        <div v-if="!loading && isEmpty" class="empty-state">
           <IconifyIcon icon="streamline-stickies-color:rocket-launch-chart" width="48" />
           <p>暂无记录</p>
         </div>
+
         <div v-else class="records-list">
-          <div v-for="(record, record_date, index) in valueRecords" :key="record_date" class="record-item">
-            <!-- 格式n月n日record.record_date -->
-            <div>
-              <span>{{ formatDate(record.record_date) }}</span>
-            </div>
-            <!-- 这里来一条很细的分割线 -->
-            <van-divider class="record-divider" />
-            <div class="record-info" v-for="(v, i) in record.list" :key="v.id" @click="showRecordForm(v, 'edit')">
-              <div class="record-time">
-                <span>{{ formatTime(v.record_start_time) }}</span>
+          <div
+            v-for="(record, recordDate, groupIndex) in valueRecords"
+            :key="recordDate"
+            class="date-group"
+          >
+            <div class="date-header">{{ formatDate(record.record_date) }}</div>
+
+            <div
+              v-for="(item, itemIndex) in record.list"
+              :key="item.id"
+              class="record-card"
+              @click="showRecordForm(item, 'edit')"
+            >
+              <div
+                class="record-icon"
+                :style="{ backgroundColor: getIconBg(item.user_habit?.id || item.id) }"
+              >
+                <IconifyIcon :icon="item.user_habit.habit_icon.icon" width="22" />
               </div>
 
-              <div class="record-name">
-                <IconifyIcon :icon="v.user_habit.habit_icon.icon" width="20" />
-                &nbsp;
-                {{ v.user_habit.name }}
+              <div class="record-info">
+                <div class="record-name">{{ item.user_habit.name }}</div>
+                <div class="record-time">{{ formatTime(item.record_start_time) }}</div>
               </div>
-              <div class="record-value-container">
-                <div>{{ v.value }} min</div>
-                <div>
-                  <span v-if="index == 0 && i == 0">{{ getRelativeTime(v.record_start_time) }}</span>
-                </div>
+
+              <div class="record-value-wrap">
+                <div class="record-value">{{ item.value }} min</div>
+                <span
+                  v-if="groupIndex === 0 && itemIndex === 0"
+                  class="recent-badge"
+                >
+                  {{ getRelativeTime(item.record_start_time) }}
+                </span>
               </div>
             </div>
           </div>
         </div>
-      </van-pull-refresh>
-    </div>
+      </div>
+    </van-pull-refresh>
 
-    <!-- 记录表单弹出窗 -->
     <van-popup v-model:show="showFormPopup" position="bottom" :style="{ height: '100vh' }" @click-overlay="closePopup">
       <div class="record-form">
         <div class="popup-header">
@@ -61,17 +75,25 @@
             <span>{{ selectedHabit.name }}</span>
           </div>
           <div class="header-right">
-            <van-icon v-if="showFormPopupType == 'edit'" name="delete-o" size="22"
-              @click="handleDelete(formValue.id)" />
+            <van-icon
+              v-if="showFormPopupType == 'edit'"
+              name="delete-o"
+              size="22"
+              @click="handleDelete(formValue.id)"
+            />
           </div>
         </div>
         <div class="form-content">
-          <!-- 表单字段框架 - 您可以在这里添加具体的表单内容 -->
-          <!-- 示例字段，您可以根据需要修改 -->
           <br />
           <div>
-            <van-field v-model="formValue.record_start_time" label="开始时间" placeholder="请选择开始时间" readonly
-              @click="showStartTiemPicker = true" class="mb-4">
+            <van-field
+              v-model="formValue.record_start_time"
+              label="开始时间"
+              placeholder="请选择开始时间"
+              readonly
+              @click="showStartTiemPicker = true"
+              class="mb-4"
+            >
               <template #right-icon>
                 <van-icon name="clock-o" />
               </template>
@@ -93,9 +115,11 @@
       </div>
     </van-popup>
 
-    <!-- 使用封装的滚轮日期选择器 -->
-    <WheelDateTimePicker v-model:show="showStartTiemPicker" :default-date="formValue.record_start_time"
-      @confirm="handlePickerConfirm" />
+    <WheelDateTimePicker
+      v-model:show="showStartTiemPicker"
+      :default-date="formValue.record_start_time"
+      @confirm="handlePickerConfirm"
+    />
   </div>
 </template>
 
@@ -111,9 +135,10 @@ import WheelTimePicker from '../tools/WheelValuePicker.vue'
 const habitStore = useHabitStore()
 const loading = ref(false)
 const refreshing = ref(false)
+const selectedHabitId = ref(null)
 
+const iconBgColors = ['#d4f0e8', '#fff3c4', '#dce8f5', '#e8dff5', '#fce4ec']
 
-// 弹出表单相关
 const showFormPopup = ref(false)
 const showFormPopupType = ref('')
 const selectedHabit = ref({})
@@ -124,27 +149,39 @@ const formValue = ref({
   habit_id: '',
   value: 0,
   note: '',
-  record_start_time: getCurrentTime('datetime_cn'), // 当前时间
+  record_start_time: getCurrentTime('datetime_cn'),
   note_image: '',
 })
+
 const habits = computed(() => habitStore.habits)
 const valueRecords = computed(() => habitStore.valueRecords)
 
+const visibleHabits = computed(() => habits.value.filter(habit => habit.is_show))
+
+const isEmpty = computed(() => {
+  const records = valueRecords.value
+  if (!records || (Array.isArray(records) && records.length === 0)) return true
+  if (typeof records === 'object') {
+    return Object.keys(records).length === 0
+  }
+  return true
+})
+
+const getIconBg = (id) => iconBgColors[(id || 0) % iconBgColors.length]
 
 const handlePickerConfirm = (result) => {
   const { date } = result
   formValue.value.record_start_time = getCurrentTime('datetime_cn', date)
 }
 
-
-
-// 加载习惯列表
 const loadHabits = async () => {
   try {
     loading.value = true
     await habitStore.fetchHabits('2')
-    // 修复时区问题：使用本地时间格式化日期
     await habitStore.fetchValueRecords()
+    if (!selectedHabitId.value && visibleHabits.value.length > 0) {
+      selectedHabitId.value = visibleHabits.value[0].id
+    }
   } catch (error) {
     console.error('加载习惯列表失败', error)
     showToast('加载失败')
@@ -153,7 +190,6 @@ const loadHabits = async () => {
   }
 }
 
-// 刷新
 const onRefresh = async () => {
   try {
     refreshing.value = true
@@ -167,7 +203,11 @@ const onRefresh = async () => {
   }
 }
 
-// 显示记录表单
+const selectHabit = (habit) => {
+  selectedHabitId.value = habit.id
+  showRecordForm(habit, 'add')
+}
+
 const showRecordForm = (habit, type) => {
   showFormPopup.value = true
   showFormPopupType.value = type
@@ -184,7 +224,7 @@ const showRecordForm = (habit, type) => {
     formValue.value.value = habit.value
   }
 }
-// 关闭记录表单
+
 const closePopup = () => {
   showFormPopup.value = false
   showFormPopupType.value = ''
@@ -192,11 +232,11 @@ const closePopup = () => {
     habit_id: '',
     value: 0,
     note: '',
-    record_start_time: getCurrentTime(), // 当前时间
+    record_start_time: getCurrentTime(),
     note_image: '',
   }
 }
-// 删除记录
+
 const handleDelete = async (id) => {
   try {
     await habitStore.deleteValueRecord(id)
@@ -209,7 +249,6 @@ const handleDelete = async (id) => {
   }
 }
 
-// 保存记录
 const saveRecord = async () => {
   if (!formValue.value.value) {
     showToast('请输入数值')
@@ -218,13 +257,8 @@ const saveRecord = async () => {
 
   try {
     saving.value = true
-    // 这里您可以添加具体的保存逻辑
 
     let record_start_time = formValue.value.record_start_time.replace('年', '-').replace('月', '-').replace('日', '')
-    // // 分别替换月份和日期
-    // record_start_time = record_start_time.replace(/-(\d+)-(\d+)$/, (match, month, day) => {
-    //   return `-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    // });
 
     if (showFormPopupType.value == 'add') {
       habitStore.createValueRecord(
@@ -244,10 +278,8 @@ const saveRecord = async () => {
       )
     }
 
-
     showToast('保存成功')
     showFormPopup.value = false
-    // 可以在这里刷新记录列表
     await onRefresh()
   } catch (error) {
     console.error('保存记录失败', error)
@@ -257,7 +289,6 @@ const saveRecord = async () => {
   }
 }
 
-// 初始化
 onMounted(() => {
   loadHabits()
 })
@@ -267,151 +298,162 @@ onMounted(() => {
 .value-habits {
   display: flex;
   flex-direction: column;
-
+  background-color: #f4f5f7;
+  min-height: 100%;
 }
 
-/* 页面头部 */
-.page-header {
-  padding: 16px 20px;
+.category-row {
+  display: flex;
+  gap: var(--px-12);
+  padding: var(--px-12) var(--px-16);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.category-row::-webkit-scrollbar {
+  display: none;
+}
+
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 88px;
+  padding: var(--px-12) var(--px-8);
+  border-radius: var(--radius-12);
+  background-color: var(--white);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.category-card.active {
+  border-color: #3d8f82;
+}
+
+.category-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-12);
+  margin-bottom: var(--px-8);
+}
+
+.category-name {
+  font-size: var(--rem-8);
+  font-weight: var(--number-500);
+  color: var(--black300);
   text-align: center;
-  border-bottom: 1px solid #ebedf0;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
-
-/* 记录列表容器 */
 .records-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0 12px 12px;
+  padding: 0 var(--px-16) var(--px-16);
 }
 
 .empty-state {
   text-align: center;
   padding: 60px 20px;
+  color: var(--gray500);
 }
 
-
-
-/* 习惯列表 */
-.habit-list {
-  display: flex;
-  gap: 16px;
-  padding: 16px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  overflow-x: auto;
-  white-space: nowrap;
-  scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.empty-state p {
+  margin-top: var(--px-12);
+  font-size: var(--rem-9);
 }
 
-.habit-list::-webkit-scrollbar {
-  display: none;
-  /* Chrome, Safari, Opera */
-}
-
-.habit-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  min-width: 80px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  /* 防止收缩 */
-  white-space: nowrap;
-  /* 防止文字换行 */
-}
-
-.record-name {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
-.habit-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 8px;
-}
-
-.habit-icon svg {
-  width: 24px;
-  height: 24px;
-}
-
-.habit-name {
-  text-align: center;
-  font-weight: 500;
-}
-
-/* 记录列表 */
 .records-list {
-  padding: 12px 0;
+  padding-bottom: var(--px-16);
 }
 
-.record-item {
-  /* overflow: hidden; */
-  gap: 16px;
-  padding: 16px;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  overflow-x: auto;
-  white-space: nowrap;
-  scrollbar-width: none;
-  /* Firefox */
-  -ms-overflow-style: none;
-  /* IE and Edge */
-  box-shadow: 0 2px 8px 2px rgba(0, 0, 0, 0.05);
+.date-group {
+  margin-bottom: var(--px-16);
+}
 
+.date-header {
+  font-size: var(--rem-9);
+  color: var(--gray500);
+  margin-bottom: var(--px-10);
+  padding-left: var(--px-4);
+}
+
+.record-card {
+  display: flex;
+  align-items: center;
+  gap: var(--px-12);
+  padding: var(--px-14) var(--px-16);
+  margin-bottom: var(--px-10);
+  border-radius: var(--radius-16);
+  background-color: var(--white);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+}
+
+.record-card:last-child {
+  margin-bottom: 0;
+}
+
+.record-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-12);
+  flex-shrink: 0;
 }
 
 .record-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  border: 1px solid var(--border-light);
-  height: 60px;
-}
-
-.record-habit {
   flex: 1;
-  font-weight: 500;
+  min-width: 0;
 }
 
-
+.record-name {
+  font-size: var(--rem-10);
+  font-weight: var(--number-500);
+  color: var(--black300);
+  line-height: 1.4;
+}
 
 .record-time {
-  min-width: 60px;
-  text-align: right;
+  margin-top: var(--px-2);
+  font-size: var(--rem-8);
+  color: var(--gray500);
+  line-height: 1.4;
 }
 
-.record-value-container {
-  width: 40%;
-
-  >div {
-    min-width: 80px;
-    max-width: 80px;
-    text-align: left;
-    text-align: center;
-  }
-
-  /*第二个div */
-  >div:nth-child(2) {
-    background: var(--primary100);
-    color: var(--primary);
-    border-radius: 8px;
-  }
+.record-value-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--px-4);
+  flex-shrink: 0;
 }
 
-/* 记录表单弹出窗样式 */
+.record-value {
+  font-size: var(--rem-12);
+  font-weight: var(--number-700);
+  color: #3d8f82;
+  line-height: 1.2;
+}
+
+.recent-badge {
+  padding: 2px var(--px-8);
+  border-radius: var(--radius-9999);
+  background-color: var(--primary100);
+  color: var(--primary);
+  font-size: var(--rem-7);
+  line-height: 1.4;
+}
 
 .popup-header {
   display: flex;
@@ -444,19 +486,9 @@ onMounted(() => {
   overflow-y: auto;
   border-radius: 8px;
   max-height: 70vh;
-  /* 垂直居中 */
   background: var(--white);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   margin: 0 2;
-}
-
-.habit-info-display {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
 }
 
 .form-footer {

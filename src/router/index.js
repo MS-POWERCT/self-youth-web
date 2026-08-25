@@ -65,6 +65,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/weight',
+      name: 'weight',
+      component: () => import('../views/WeightView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/mark',
       name: 'mark',
       component: () => import('../views/MarkView.vue'),

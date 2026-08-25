@@ -1,45 +1,43 @@
 <template>
-  <div class="habit-page bg-gray50">
-    <div class="text-center font-bold">
-      <br />
-      <IconifyIcon icon="streamline-stickies-color:validation-1" width="14" class="mr-2" />
-      &nbsp;
-      习惯管理
-      &nbsp;
-      <IconifyIcon icon="streamline-stickies-color:wrench" width="14" class="ml-2"
-        @click="$router.push('/habits/edit?tab=' + (activeTab === 'check' ? '1' : '2'))" />
-    </div>
-    <!-- left-arrow
-      @click-left="$router.go(-1)" -->
-    <!-- <template #right>
-        <van-icon
-          name="edit"
-          size="18"
+  <div class="habit-page">
+    <header class="habit-header">
+      <div class="habit-header-top mt-12">
+        <h3 class="habit-title">习惯管理</h3>
+        <button
+          class="edit-btn"
+          aria-label="编辑习惯"
           @click="$router.push('/habits/edit?tab=' + (activeTab === 'check' ? '1' : '2'))"
-          style="cursor: pointer;"
-        />
-      </template>
-</van-nav-bar> -->
-    <div class="habit-tabs mt-12">
-      <van-tabs v-model:active="activeTab" @update:active="onTabChange">
-        <van-tab title="打卡习惯" name="check">
-          <CheckHabits />
-        </van-tab>
-        <van-tab title="数值习惯" name="value">
-          <ValueHabits />
-        </van-tab>
-      </van-tabs>
+        >
+          <IconifyIcon icon="fluent-color:edit-16" width="16" />
+        </button>
+      </div>
+      <br/>
+      <div class="habit-tab-bar">
+        <button
+          class="habit-tab"
+          :class="{ active: activeTab === 'check' }"
+          @click="onTabChange('check')"
+        >
+          打卡习惯
+        </button>
+        <button
+          class="habit-tab"
+          :class="{ active: activeTab === 'value' }"
+          @click="onTabChange('value')"
+        >
+          数值习惯
+        </button>
+      </div>
+    </header>
+
+    <div class="habit-content">
+      <CheckHabits v-show="activeTab === 'check'" />
+      <ValueHabits v-show="activeTab === 'value'" />
     </div>
 
-    <!-- 统计入口 -->
-    <div class="stats-button" @click="$router.push('/habits/stats')">
-      <!-- <van-icon name="chart-trending-o" size="24" /> -->
+    <!-- <div class="stats-button" @click="$router.push('/habits/stats')">
       <IconifyIcon icon="streamline-stickies-color:graph-bar" width="24" />
-    </div>
-
-    <br />
-    <br />
-    <br />
+    </div> -->
   </div>
 </template>
 
@@ -51,27 +49,99 @@ import { useHabitStore } from '../stores/habit'
 
 const habitStore = useHabitStore()
 
-// 从localStorage恢复标签页状态
 const savedTab = localStorage.getItem('habit-active-tab')
 const activeTab = ref(savedTab || 'check')
 
-// 标签页切换
 const onTabChange = (name) => {
   activeTab.value = name
-  // 保存到localStorage
   localStorage.setItem('habit-active-tab', name)
-  // 切换标签时重新加载数据
   const type = name === 'check' ? '1' : '2'
   habitStore.fetchHabits(type)
 }
+
 onMounted(() => {
-  // 根据保存的标签页状态加载对应的数据
   const type = activeTab.value === 'check' ? '1' : '2'
   habitStore.fetchHabits(type)
 })
 </script>
 
 <style scoped>
+.habit-page {
+  min-height: 100vh;
+  background-color: #f4f5f7;
+}
+
+.habit-header {
+  padding: var(--px-16) var(--px-16) 0;
+  background-color: #f4f5f7;
+}
+
+.habit-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.habit-title {
+  font-size: var(--rem-18);
+  font-weight: var(--number-700);
+  color: var(--black300);
+  line-height: 1.2;
+}
+
+.edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background-color: #e4dcf5;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.habit-tab-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--px-24);
+  margin-top: var(--px-20);
+  border-bottom: 1px solid var(--gray300);
+}
+
+.habit-tab {
+  position: relative;
+  padding: 0 0 var(--px-12);
+  border: none;
+  background: none;
+  font-size: var(--rem-10);
+  font-weight: var(--number-500);
+  color: var(--gray500);
+  cursor: pointer;
+}
+
+.habit-tab.active {
+  color: var(--black300);
+  font-weight: var(--number-700);
+}
+
+.habit-tab.active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background-color: #3d8f82;
+}
+
+.habit-content {
+  padding-bottom: 80px;
+}
+
 .stats-button {
   position: fixed;
   bottom: 80px;
