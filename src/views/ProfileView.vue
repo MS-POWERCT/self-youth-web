@@ -1,6 +1,6 @@
 <template>
   <div class="primary-tab-page profile-container">
-    <PrimaryPageHeader :title="TAB_PAGE_LABELS.profile" />
+    <PrimaryPageHeader />
 
     <template v-if="userStore.token && userStore.user">
       <div class="profile-section">

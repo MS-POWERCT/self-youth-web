@@ -1,6 +1,7 @@
 // src/stores/global.js
 import { defineStore } from 'pinia'
 import { globalApi } from '../api/global'
+import { APP_VERSION } from '@/constants/app'
 
 export const useGlobalStore = defineStore('global', {
   state: () => ({
@@ -9,7 +10,7 @@ export const useGlobalStore = defineStore('global', {
     APP_NAME: import.meta.env.VITE_APP_NAME,
     API_URL: import.meta.env.VITE_API_URL,
     APP_ENV: import.meta.env.VITE_APP_ENV,
-    APP_VERSION: '1.0.0',
+    APP_VERSION,
     FARM_NAME: '修仙农场'
   }),
   actions: {

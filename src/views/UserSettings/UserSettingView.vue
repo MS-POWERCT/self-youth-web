@@ -16,7 +16,7 @@
           <div class="setting-item" @click="showEmailPopup = true">
             <div class="item-left">
               <div class="item-icon email-icon">
-                <IconifyIcon icon="streamline-stickies-color:mail-duo" width="22" />
+                <IconifyIcon icon="material-icon-theme:folder-mail" width="22" />
               </div>
               <div class="item-info">
                 <div class="item-label">邮箱</div>
@@ -26,7 +26,6 @@
             <div class="item-right">
               <span v-if="user?.email" class="item-value">{{ user?.email }}</span>
               <span v-else class="item-action">绑定</span>
-              <IconifyIcon icon="streamline-stickies-color:arrow-right-2" width="16" class="arrow-icon" />
             </div>
           </div>
 
@@ -34,7 +33,7 @@
           <div class="setting-item" :class="{ 'disabled': !user?.email }" @click="handlePasswordClick">
             <div class="item-left">
               <div class="item-icon password-icon">
-                <IconifyIcon icon="streamline-stickies-color:passport" width="22" />
+                <IconifyIcon icon="material-icon-theme:folder-review" width="22" />
               </div>
               <div class="item-info">
                 <div class="item-label">密码</div>
@@ -45,8 +44,6 @@
               <span v-if="user?.has_password" class="item-value status-done">已设置</span>
               <span v-else-if="user?.email" class="item-action">设置</span>
               <span v-else class="item-disabled">请先绑定邮箱</span>
-              <IconifyIcon v-if="user?.email" icon="streamline-stickies-color:arrow-right-2" width="16"
-                class="arrow-icon" />
             </div>
           </div>
 
@@ -54,7 +51,7 @@
           <div class="setting-item" @click="showWeb3Popup = true">
             <div class="item-left">
               <div class="item-icon web3-icon">
-                <IconifyIcon icon="streamline-stickies-color:nuclear-2-duo" width="22" />
+                <IconifyIcon icon="material-icon-theme:folder-graphql" width="22" />
               </div>
               <div class="item-info">
                 <div class="item-label">Web3钱包</div>
@@ -64,7 +61,6 @@
             <div class="item-right">
               <span v-if="user?.address" class="item-value">{{ formatAddress(user?.address) }}</span>
               <span v-else class="item-action">绑定</span>
-              <IconifyIcon icon="streamline-stickies-color:arrow-right-2" width="16" class="arrow-icon" />
             </div>
           </div>
         </div>
@@ -81,11 +77,30 @@
           <div v-if="globalStore.APP_ENV === 'development'" class="setting-item"
             @click="$router.push('/demo/test-tool')">
             <div class="item-left">
+              <div class="item-icon test-icon">
+                <IconifyIcon icon="material-icon-theme:folder-test" width="22" />
+              </div>
               <div class="item-info">
                 <div class="item-label">测试组件</div>
               </div>
             </div>
             <IconifyIcon icon="streamline-stickies-color:arrow-right-2" width="16" class="arrow-icon" />
+          </div>
+
+          <!-- 版本信息 -->
+          <div class="setting-item" @click="$router.push('/userSettings/version')">
+            <div class="item-left">
+              <div class="item-icon version-icon">
+                <IconifyIcon icon="material-icon-theme:dependencies-update" width="22" />
+              </div>
+              <div class="item-info">
+                <div class="item-label">版本信息</div>
+                <div class="item-hint">查看当前 App 版本</div>
+              </div>
+            </div>
+            <div class="item-right">
+              <span class="item-value">v{{ globalStore.APP_VERSION }}</span>
+            </div>
           </div>
 
           <!-- 退出登录 -->
@@ -95,15 +110,14 @@
                 <div class="item-label">退出登录</div>
               </div>
             </div>
-            <IconifyIcon icon="streamline-stickies-color:arrow-right-2" width="16" class="arrow-icon" />
           </div>
         </div>
       </div>
 
       <!-- 版本信息 -->
-      <div class="version-info">
-        <span class="version-text">版本 {{ globalStore.APP_VERSION }}</span>
-      </div>
+      <!-- <div class="version-info" @click="$router.push('/userSettings/version')">
+        <span class="version-text">版本 v{{ globalStore.APP_VERSION }}</span>
+      </div> -->
     </div>
 
     <!-- 邮箱绑定弹窗 -->
@@ -111,7 +125,7 @@
       <div class="popup-container">
         <div class="popup-header">
           <div class="popup-icon email-bg">
-            <IconifyIcon icon="streamline-stickies-color:mail-duo" width="32" />
+            <IconifyIcon icon="material-icon-theme:folder-mail" width="32" />
           </div>
           <h3 class="popup-title">绑定邮箱</h3>
           <p class="popup-desc">绑定邮箱后可用于找回密码、接收重要通知</p>
@@ -143,7 +157,7 @@
       <div class="popup-container">
         <div class="popup-header">
           <div class="popup-icon password-bg">
-            <IconifyIcon icon="streamline-stickies-color:passport" width="32" />
+            <IconifyIcon icon="material-icon-theme:folder-review" width="32" />
           </div>
           <h3 class="popup-title">设置密码</h3>
           <p class="popup-desc">{{ user?.email }} 将收到验证码</p>
@@ -177,7 +191,7 @@
       <div class="popup-container">
         <div class="popup-header">
           <div class="popup-icon web3-bg">
-            <IconifyIcon icon="streamline-stickies-color:nuclear-2-duo" width="32" />
+            <IconifyIcon icon="material-icon-theme:folder-graphql" width="32" />
           </div>
           <h3 class="popup-title">绑定Web3钱包</h3>
           <p class="popup-desc">连接您的钱包以使用Web3功能</p>
@@ -186,7 +200,7 @@
         <div class="popup-body web3-body">
           <div v-if="!web3Address" class="connect-section">
             <div class="connect-icon">
-              <IconifyIcon icon="streamline-stickies-color:nuclear-2-duo" width="64" />
+              <IconifyIcon icon="material-icon-theme:folder-graphql" width="64" />
             </div>
             <p class="connect-text">使用 Web3 钱包进行身份验证</p>
             <p class="connect-hint">连接您的钱包即可完成绑定</p>
@@ -523,6 +537,14 @@ onMounted(() => {
   color: #74b9ff;
 }
 
+.version-icon {
+  background: rgba(45, 143, 95, 0.12);
+}
+
+.version-icon :deep(svg) {
+  color: #2d8f5f;
+}
+
 .test-icon {
   background: rgba(253, 203, 110, 0.1);
 }
@@ -585,6 +607,7 @@ onMounted(() => {
 .version-info {
   text-align: center;
   padding: 30px 0;
+  cursor: pointer;
 }
 
 .version-text {

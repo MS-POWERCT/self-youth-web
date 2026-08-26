@@ -1,7 +1,7 @@
 <template>
   <div class="mark-view">
     <header class="mark-header primary-page-header">
-      <h1 class="primary-page-title">{{ TAB_PAGE_LABELS.mark }}</h1>
+      <h1 class="primary-page-title"></h1>
       <!-- <div class="search-row">
         <van-search
           v-model="searchKeyword"
