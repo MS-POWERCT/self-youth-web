@@ -1,88 +1,155 @@
 <template>
-  <div class="mark-detail-view bg-gray300">
-    <!-- y右边 -->
-    <van-nav-bar :title="moduleName" left-arrow @click-left="$router.go(-1)" />
-    <div class="bg-white radius-bottom-12 p-8">
-      <br />
-      <!-- <div class="text28 font-bold">{{ moduleName }}</div> -->
-      <div class="text-14 ml-8">{{ moduleTitle }}</div>
-      <ProgressBar :current="itemListCurrent" :total="itemListTotal" />
-    </div>
-    <div class="p-8">
-      <div class="filter-tabs text-12">
-        <div class="filter-tab" :class="{ active: filterStatus === 'all' }" @click="filterStatus = 'all'">
-          全部 ({{ counts.all }})
+  <div class="mark-detail-view">
+    <header class="detail-nav">
+      <button type="button" class="nav-back" aria-label="返回" @click="$router.go(-1)">
+        <van-icon name="arrow-left" size="20" />
+      </button>
+      <h1 class="nav-title">合集详情</h1>
+      <div class="nav-actions">
+        <button type="button" class="nav-action-btn" aria-label="分享">
+          <van-icon name="link-o" size="18" />
+        </button>
+        <button type="button" class="nav-action-btn" aria-label="更多">
+          <van-icon name="ellipsis" size="18" />
+        </button>
+      </div>
+    </header>
+
+    <section class="summary-card">
+      <div class="summary-head">
+        <h2 class="summary-title">{{ moduleName }}</h2>
+        <p class="summary-meta">{{ summaryMeta }}</p>
+      </div>
+      <div class="summary-body">
+        <div v-if="hasDetailItems" class="detail-hint">
+          <van-icon name="info-o" size="14" />
+          <span>{{ detailHintText }}</span>
         </div>
-        <div class="filter-tab" :class="{ active: filterStatus === 0 }" @click="filterStatus = 0">
-          {{ moduleTypeList[0] }} ({{ counts[0] }})
+        <div class="progress-row">
+          <span class="progress-label">完成进度</span>
+          <span class="progress-percent">{{ progressPercent }}%</span>
         </div>
-        <div class="filter-tab" :class="{ active: filterStatus === 1 }" @click="filterStatus = 1">
-          {{ moduleTypeList[1] }} ({{ counts[1] }})
+        <div class="progress-track">
+          <div class="progress-fill" :style="{ width: `${progressPercent}%` }" />
         </div>
-        <div class="filter-tab" :class="{ active: filterStatus === 2 }" @click="filterStatus = 2">
-          {{ moduleTypeList[2] }} ({{ counts[2] }})
+        <div class="summary-stats">
+          <span>{{ counts[1] }} {{ moduleTypeList[1] }}</span>
+          <span>{{ counts[2] }} {{ moduleTypeList[2] }}</span>
+          <span>{{ counts[0] }} {{ moduleTypeList[0] }}</span>
         </div>
       </div>
-      <div class="bg-primary text-white py-4 text-center radius-8 mb-8 " @click="showPosterPopup = true">
+    </section>
+
+    <div class="detail-content">
+      <div class="filter-tabs">
+        <button
+          v-for="option in filterOptions"
+          :key="option.value"
+          type="button"
+          class="filter-chip"
+          :class="{ active: filterStatus === option.value }"
+          @click="filterStatus = option.value"
+        >
+          {{ option.label }} {{ option.count }}
+        </button>
+      </div>
+
+      <button type="button" class="poster-btn" @click="showPosterPopup = true">
+        <span class="poster-icon" aria-hidden="true">🎨</span>
         生成标记海报
-      </div>
-      <!-- 二段筛选 部分类型可以有-->
-      <div class="province-filter" v-if="moduleTypeAAAAAProvince.length > 1">
-        <div v-for="option in moduleTypeAAAAAProvince" :key="option.value" class="province-tag"
-          :class="{ active: dropdownValue === option.value }" @click="dropdownValue = option.value">
+      </button>
+
+      <div v-if="moduleTypeAAAAAProvince.length > 1" class="province-filter">
+        <button
+          v-for="option in moduleTypeAAAAAProvince"
+          :key="option.value"
+          type="button"
+          class="province-tag"
+          :class="{ active: dropdownValue === option.value }"
+          @click="dropdownValue = option.value"
+        >
           {{ option.text }}
-          <span class="province-count">({{ option.value === 'all' ? itemList.length : (provinceCounts[option.value] ||
-            0) }})</span>
+          <span class="province-count">
+            ({{ option.value === 'all' ? itemList.length : (provinceCounts[option.value] || 0) }})
+          </span>
           <van-icon v-if="dropdownValue === option.value" name="success" size="12" />
-        </div>
+        </button>
       </div>
 
-      <van-row v-for="(item, index) in filteredList" :key="item.id" class="bg-white radius-12 mb-8 p-8 text-14">
-        <van-col span="5">
-          <van-image radius="8" width="65" lazy-load loading-icon="photo-o"
-            :src="item.img_url || getDefaultCover(item.name)" />
-        </van-col>
-        <van-col span="15">
-          <div class="item-name text-14 ml-8" :class="{ 'small-font': item.name.length > 8 }"
-            @click="handleItemClick(item)">
-            <div>
-              <span>{{ (index + 1) + ' . ' + item.name }}</span>
-            </div>
+      <div class="item-list">
+        <article v-for="(item, index) in filteredList" :key="item.id" class="item-card">
+          <span class="item-index">{{ index + 1 }}</span>
+          <div class="item-cover">
+            <van-image
+              class="cover-image"
+              radius="12"
+              width="100%"
+              height="100%"
+              fit="cover"
+              lazy-load
+              loading-icon="photo-o"
+              :src="item.img_url || getDefaultCover(item.name)"
+            />
+          </div>
+          <div class="item-body">
+            <h3
+              class="item-name"
+              :class="{ 'is-clickable': isDetailItem(item) }"
+              @click="handleItemClick(item)"
+            >
+              {{ item.name }}
+            </h3>
 
-            <div class="item-title mt-8 text-12">
-              <div v-if="item.star > 0" class="font-bold">{{ item.star_ }}</div>
-              <div v-if="item.title" @click="itemTitleClick(item.title)">{{ item.title_ }}</div>
-              <div v-if="['AAAAA', 'hiking'].includes(item.type)" class="item-type-tags">
-                <span v-for="tag in item.tags.tags" :key="tag" class="item-type-tag" :class="getItemTagClass(tag)">
+            <div class="item-desc-wrap">
+              <p v-if="item.star > 0" class="item-desc item-rating">{{ item.star_ }}</p>
+              <p v-else-if="item.title" class="item-desc" @click.stop="itemTitleClick(item.title)">
+                {{ item.title }}
+              </p>
+              <div v-if="['AAAAA', 'hiking'].includes(item.type) && item.tags?.tags?.length" class="item-type-tags">
+                <span
+                  v-for="tag in item.tags.tags"
+                  :key="tag"
+                  class="item-type-tag"
+                  :class="getItemTagClass(tag)"
+                >
                   {{ tag }}
                 </span>
               </div>
-              <div v-if="item.type === 'AAAAA'">
-                <span>{{ item.tags.province || '未知位置' }}</span>
-                <span class="text-12">&nbsp; · &nbsp;</span>
-                <span>{{ item.tags.city || '未知位置' }}</span>
-              </div>
+              <p v-if="item.type === 'AAAAA'" class="item-location">
+                {{ item.tags.province || '未知位置' }} · {{ item.tags.city || '未知位置' }}
+              </p>
+            </div>
+
+            <div class="item-actions">
+              <template v-if="item.mark_type === 0">
+                <button type="button" class="action-btn action-want" @click.stop="markItem(item, 2)">
+                  {{ moduleTypeList[2] }}
+                </button>
+                <button type="button" class="action-btn action-done" @click.stop="markItem(item, 1)">
+                  {{ moduleTypeList[1] }}
+                </button>
+              </template>
+              <template v-else>
+                <span class="mark-status" :class="item.mark_type === 2 ? 'status-want' : 'status-done'">
+                  {{ moduleTypeList[item.mark_type] }}
+                  <van-icon
+                    name="cross"
+                    size="14"
+                    @click.stop="markItem(item, 0)"
+                  />
+                </span>
+              </template>
             </div>
           </div>
-        </van-col>
-        <van-col span="4" class="flex flex-col justify-center items-end">
-          <template v-if="item.mark_type === 0">
-            <div class="item-btn text-12 text-white bg-yellow-gold" @click="markItem(item, 2)">{{ moduleTypeList[2] }}
-            </div>
-            <div class="item-btn text-12 text-white bg-primary" @click="markItem(item, 1)">{{ moduleTypeList[1] }}</div>
-          </template>
-          <template v-else>
-            <span class="text-12 text-bold" :class="item.mark_type === 2 ? 'text-yellow-gold' : 'text-primary'">
-              {{ moduleTypeList[item.mark_type] }}
-              <van-icon name="close" :class="item.mark_type === 2 ? 'text-yellow-gold' : 'text-primary'"
-                @click="markItem(item, 0)" size="16" />
-            </span>
-          </template>
-        </van-col>
-      </van-row>
+        </article>
 
-      <van-back-top right="42%" bottom="10vh">
-        <IconifyIcon icon="glyphs:arrow-bold" width="24" />
+        <van-empty v-if="filteredList.length === 0" description="暂无匹配合集" />
+      </div>
+
+      <van-back-top class="mark-back-top" right="42%" bottom="10vh">
+        <div class="mark-back-top-inner">
+          <IconifyIcon icon="glyphs:arrow-bold" width="22" />
+        </div>
       </van-back-top>
     </div>
 
@@ -292,7 +359,7 @@
         <div class="export-content">
           <div class="text-center text-16 font-bold">{{ exportTextContent['name'] }} 海报</div>
           <div class="export-status flex justify-center items-center">
-            <span class="m-8 text-10 bg-primary100 py-2 px-8 font-bold text-primary radius-8">{{
+            <span class="m-8 text-10 bg-green100 py-2 px-8 font-bold text-green radius-8">{{
               exportTextContent['yes']
               }}</span>
             <span class="m-8 text-10 bg-yellow-gold100 py-2 px-8 font-bold text-yellow-gold radius-8">{{
@@ -306,7 +373,7 @@
             <span v-for="(item, index) in exportTextContent['itemList']" :key="index"
               class="item-tag mr-4 text-8 font-bold radius-8 py-2 px-8" :class="{
                 'bg-gray300 text-gray': item.markType === 0,
-                'bg-primary100 text-primary': item.markType === 1,
+                'bg-green100 text-green': item.markType === 1,
                 'bg-yellow-gold100 text-yellow-gold': item.markType === 2,
                 'line-through': item.markType === 1
               }">
@@ -328,10 +395,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { NavBar as VanNavBar, showToast } from 'vant'
+import { showToast } from 'vant'
 import { useMarkStore } from '../stores/mark'
 import { markApi } from '../api/mark'
-import ProgressBar from '@/components/tools/ProgressBar.vue'
 import { getDefaultCover } from '@/utils/common'
 
 const markStore = useMarkStore()
@@ -369,8 +435,9 @@ const moduleTypeConfig = ref({
 const pv = ref(0)
 const participant = ref(0)
 const itemList = ref([])
-const itemListCurrent = ref(0)
 const itemListTotal = ref(0)
+const DETAIL_ITEM_TYPES = ['AAAAA', 'hiking']
+
 const filterStatus = ref('all')
 const showDetailPopup = ref(false)
 const showHikingDetailPopup = ref(false)
@@ -399,6 +466,7 @@ const provinceCounts = computed(() => {
 })
 
 const handleItemClick = (item) => {
+  if (!isDetailItem(item)) return
   selectedItem.value = item
   if (item.type === 'AAAAA') {
     showDetailPopup.value = true
@@ -406,6 +474,17 @@ const handleItemClick = (item) => {
     showHikingDetailPopup.value = true
   }
 }
+
+const isDetailItem = (item) => DETAIL_ITEM_TYPES.includes(item.type)
+
+const hasDetailItems = computed(() => itemList.value.some(isDetailItem))
+
+const detailHintText = computed(() => {
+  const types = new Set(itemList.value.filter(isDetailItem).map((item) => item.type))
+  if (types.size === 1 && types.has('hiking')) return '点击路线名称可查看详细介绍'
+  if (types.size === 1 && types.has('AAAAA')) return '点击景区名称可查看详细介绍'
+  return '部分条目支持点击查看详情'
+})
 
 const getItemTagClass = (tag) => {
   // 自然景观类
@@ -487,12 +566,28 @@ const counts = computed(() => {
   }
 })
 
+const progressPercent = computed(() => {
+  if (itemListTotal.value <= 0) return 0
+  return Math.floor((counts.value[1] / itemListTotal.value) * 100)
+})
+
+const summaryMeta = computed(() => {
+  const doneLabel = moduleTypeList.value[1] || '已完成'
+  return `${itemListTotal.value} 项 · ${doneLabel} ${counts.value[1]}`
+})
+
+const filterOptions = computed(() => [
+  { value: 'all', label: '全部', count: counts.value.all },
+  { value: 0, label: moduleTypeList.value[0] || '未标记', count: counts.value[0] },
+  { value: 2, label: moduleTypeList.value[2] || '想去', count: counts.value[2] },
+  { value: 1, label: moduleTypeList.value[1] || '已完成', count: counts.value[1] },
+])
+
 const filteredList = computed(() => {
   let result = itemList.value
 
-  // 按状态筛选
   if (filterStatus.value !== 'all') {
-    result = result.filter(item => item.mark_type === filterStatus.value)
+    result = result.filter((item) => item.mark_type === filterStatus.value)
   }
 
   // 按省份筛选
@@ -542,7 +637,6 @@ const getItemList = async () => {
     pv.value = data.pv || 0
     participant.value = data.participant || 0
     itemListTotal.value = itemList.value.length
-    itemListCurrent.value = itemList.value.filter(item => item.mark_type == 2).length
   } catch (error) {
     console.error('获取项目列表失败:', error)
   }
@@ -565,7 +659,7 @@ const exportText = () => {
   filterStatus.value = 'all'
   dropdownValue.value = 'all'
 
-  filteredList.value.forEach((item) => {
+  itemList.value.forEach((item) => {
     exportTextContent.value.itemList.push({
       name: item.name,
       markType: item.mark_type
@@ -584,8 +678,6 @@ const saveToAlbum = () => {
 const markItem = async (item, markType) => {
   await markApi.markItem(item.id, markType)
   item.mark_type = markType
-  // 刷新进度条
-  itemListCurrent.value = itemList.value.filter(item => item.mark_type == 1).length
 }
 
 onMounted(() => {
@@ -602,82 +694,424 @@ onMounted(() => {
 <style lang="scss" scoped>
 .mark-detail-view {
   min-height: 100vh;
+  padding-bottom: 24px;
+  background: #f5f6f8;
+}
+
+.detail-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #fff;
+}
+
+.nav-back {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.nav-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--black300);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 12px;
+  background: #f0faf6;
+}
+
+.nav-action-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #2d8f5f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.summary-card {
+  margin: 12px 16px 0;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.summary-head {
+  padding: 18px 16px 16px;
+  background: linear-gradient(135deg, #2d8f5f 0%, #3cb371 100%);
+  color: #fff;
+}
+
+.summary-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.summary-meta {
+  margin: 8px 0 0;
+  font-size: 13px;
+  opacity: 0.92;
+}
+
+.summary-body {
+  padding: 16px;
+}
+
+.detail-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #eef8f3;
+  color: #2d8f5f;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.progress-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--black300);
+}
+
+.progress-percent {
+  font-size: 13px;
+  font-weight: 800;
+  color: #2d8f5f;
+}
+
+.progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: #e8edf0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #8fd3b5 0%, #3cb371 100%);
+  transition: width 0.3s ease;
+}
+
+.summary-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--gray500);
+}
+
+.detail-content {
+  padding: 16px;
 }
 
 .filter-tabs {
   display: flex;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   overflow-x: auto;
-}
+  scrollbar-width: none;
 
-.filter-tab {
-  flex-shrink: 0;
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: var(--white);
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &.active {
-    background: var(--primary);
-    color: var(--white);
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
+.filter-chip {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray500);
+  cursor: pointer;
+  transition: all 0.2s ease;
 
-.item-title {
-  align-items: center;
-  gap: 8px;
+  &.active {
+    border-color: #2d6655;
+    background: #2d6655;
+    color: #fff;
+  }
 }
 
-.item-btn {
-  border-radius: 4px;
+.poster-btn {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  border: 1.5px dashed #3cb371;
+  border-radius: 14px;
+  background: #fff;
+  color: #2d8f5f;
+  font-size: 14px;
   font-weight: 600;
-  padding: 2px 6px;
-  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+
+  &:active {
+    opacity: 0.85;
+  }
+}
+
+.poster-icon {
+  font-size: 16px;
+  line-height: 1;
 }
 
 .province-filter {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  padding: 4px 8px;
-  margin-top: 2px;
-  margin-bottom: 8px;
-  background: var(--gray400);
-  border-radius: 8px;
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   .province-tag {
+    flex-shrink: 0;
     display: inline-flex;
     align-items: center;
-    gap: 2px;
-    padding: 2px 4px;
-    border-radius: 8px;
-    font-size: var(--rem-7);
-    background: var(--white);
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    background: #fff;
     cursor: pointer;
     transition: all 0.2s;
-    border: 1px solid var(--gray200);
+    border: 1px solid #e5e7eb;
+    color: var(--gray500);
 
     &.active {
-      background: var(--primary);
-      color: var(--white);
-      border-color: var(--primary);
+      background: #2d6655;
+      color: #fff;
+      border-color: #2d6655;
 
       .province-count {
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.85);
       }
     }
 
     .province-count {
-      font-size: var(--rem-6);
+      font-size: 11px;
       color: var(--gray500);
-      margin-left: 2px;
     }
   }
 }
 
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item-card {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  padding: 14px 12px 12px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.item-index {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--black300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-cover {
+  flex-shrink: 0;
+  width: 88px;
+  height: 88px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #e8f8ef;
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+}
+
+.item-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.item-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--black300);
+  line-height: 1.3;
+
+  &.is-clickable {
+    cursor: pointer;
+  }
+}
+
+.item-desc-wrap {
+  flex: 1;
+  margin-top: 6px;
+}
+
+.item-desc {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--gray500);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.item-rating {
+  font-weight: 700;
+  color: var(--black500);
+}
+
+.item-location {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--gray500);
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.action-btn {
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &.action-want {
+    background: #fff4e5;
+    color: #e6a020;
+  }
+
+  &.action-done {
+    background: #eef8f3;
+    color: #2d8f5f;
+  }
+}
+
+.mark-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+
+  &.status-want {
+    background: #fff4e5;
+    color: #e6a020;
+  }
+
+  &.status-done {
+    background: #eef8f3;
+    color: #2d8f5f;
+  }
+}
+
+:deep(.mark-back-top) {
+  width: 46px;
+  height: 46px;
+  background: linear-gradient(135deg, #2d8f5f 0%, #3cb371 100%);
+  box-shadow: 0 4px 14px rgba(45, 143, 95, 0.32);
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  color: #fff;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+
+  &:active {
+    opacity: 0.88;
+    transform: scale(0.96);
+  }
+}
+
+.mark-back-top-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+}
+
+.item-body .item-type-tags {
+  margin-top: 8px;
+  margin-bottom: 0;
+  gap: 6px;
+
+  .item-type-tag {
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+}
 
 /* AAAAA景区详情弹窗样式 */
 .detail-popup {

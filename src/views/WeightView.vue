@@ -1,12 +1,6 @@
 <template>
-  <div class="weight-page">
-    <header class="weight-header mt-8">
-      <h1 class="page-title">体重记录</h1>
-      <!-- <button class="stats-btn" type="button" aria-label="统计数据" @click="showStatsTip">
-        <IconifyIcon icon="fluent-emoji-flat:bar-chart" width="20" />
-      </button> -->
-    </header>
-    <br/>
+  <div class="primary-tab-page weight-page">
+    <PrimaryPageHeader :title="TAB_PAGE_LABELS.weight" />
 
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
       <div class="summary-card">
@@ -269,6 +263,10 @@ import { useWeightStore } from '../stores/weight'
 import { useUserStore } from '../stores/user'
 import { getCurrentTime, formatDate, formatTime, getRelativeTime } from '@/utils/common'
 import { calcBmi, calcBodyFatPercent, toWeightKg, hasCompleteBodyProfile } from '@/utils/weight'
+import { TAB_PAGE_LABELS } from '@/constants/tabPages'
+import PrimaryPageHeader from '@/components/layout/PrimaryPageHeader.vue'
+
+defineOptions({ name: 'WeightView' })
 
 const router = useRouter()
 const weightStore = useWeightStore()
@@ -661,26 +659,6 @@ onActivated(async () => {
 </script>
 
 <style scoped>
-.weight-page {
-  min-height: 100vh;
-  background-color: #f4f5f7;
-  padding: var(--px-12) var(--px-16) 84px;
-}
-
-.weight-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--px-8);
-}
-
-.page-title {
-  font-size: var(--rem-16);
-  font-weight: var(--number-700);
-  color: var(--black300);
-  line-height: 1.2;
-}
-
 .stats-btn {
   display: flex;
   align-items: center;

@@ -305,7 +305,6 @@ onMounted(() => {
 .category-row {
   display: flex;
   gap: var(--px-12);
-  padding: var(--px-12) var(--px-16);
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -354,10 +353,6 @@ onMounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
-}
-
-.records-container {
-  padding: 0 var(--px-16) var(--px-16);
 }
 
 .empty-state {

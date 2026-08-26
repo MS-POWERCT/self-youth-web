@@ -1,32 +1,21 @@
 <template>
   <div id="app">
-    <router-view />
+    <router-view v-slot="{ Component, route }">
+      <keep-alive :include="PRIMARY_TAB_PAGE_NAMES">
+        <component :is="Component" :key="route.name" />
+      </keep-alive>
+    </router-view>
     <van-tabbar class="app-van-tabbar" v-model="active" route v-if="showTabbar">
-      <van-tabbar-item to="/weight">
+      <van-tabbar-item
+        v-for="tab in PRIMARY_TAB_PAGES"
+        :key="tab.name"
+        :to="tab.route"
+      >
         <template #icon>
-          <IconifyIcon icon="fluent-emoji-flat:balance-scale" width="24" />
+          <IconifyIcon :icon="tab.icon" width="24" />
         </template>
-        <div>体重</div>
+        <div>{{ tab.label }}</div>
       </van-tabbar-item>
-      <van-tabbar-item to="/habits">
-        <template #icon>
-          <IconifyIcon icon="flat-color-icons:ok" width="24" />
-        </template>
-        <div>习惯</div>
-      </van-tabbar-item>
-      <van-tabbar-item to="/mark">
-        <template #icon>
-          <IconifyIcon icon="twemoji:pushpin" width="24" />
-        </template>
-        <div>标记</div>
-      </van-tabbar-item>
-      <van-tabbar-item to="/profile">
-        <template #icon>
-          <IconifyIcon icon="twemoji:anguished-face" width="24" />
-        </template>
-        <div>我</div>
-      </van-tabbar-item>
-
     </van-tabbar>
   </div>
 </template>
@@ -34,13 +23,15 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { PRIMARY_TAB_PAGES } from '@/constants/tabPages'
+
+const PRIMARY_TAB_PAGE_NAMES = PRIMARY_TAB_PAGES.map((tab) => tab.componentName)
 
 const route = useRoute()
 const active = ref(0)
 
 const showTabbar = computed(() => {
-  // 在这里定义需要显示 tabbar 的路由名称
-  const showTabbarRoutes = ['profile', 'habits', 'weight', 'mark', 'find', 'home']
+  const showTabbarRoutes = PRIMARY_TAB_PAGES.map((tab) => tab.name)
   return showTabbarRoutes.includes(route.name)
 })
 </script>

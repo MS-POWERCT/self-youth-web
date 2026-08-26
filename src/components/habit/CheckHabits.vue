@@ -115,10 +115,6 @@ onMounted(() => {
   background-color: #f4f5f7;
 }
 
-.habits-list {
-  padding: var(--px-12) var(--px-16) var(--px-16);
-}
-
 .habit-item {
   display: flex;
   align-items: center;

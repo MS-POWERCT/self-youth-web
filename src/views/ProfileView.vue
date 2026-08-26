@@ -1,8 +1,8 @@
 <template>
-  <div class="profile-container">
-    <template v-if="userStore.token && userStore.user">
-      <h3 class="page-title">我的</h3>
+  <div class="primary-tab-page profile-container">
+    <PrimaryPageHeader :title="TAB_PAGE_LABELS.profile" />
 
+    <template v-if="userStore.token && userStore.user">
       <div class="profile-section">
         <div class="avatar-wrap">
           <div class="avatar-inner">
@@ -18,7 +18,6 @@
         <div class="profile-name">{{ userStore.user.name || '用户名' }}</div>
       </div>
 
-      <br />
       <div class="statistics-card">
         <div class="stat-item">
           <div class="stat-value">{{ userStore.user.continuous_days_check || 0 }}<span class="stat-unit">天</span></div>
@@ -60,6 +59,10 @@ import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
 import { useUserStore } from '../stores/user'
+import { TAB_PAGE_LABELS } from '@/constants/tabPages'
+import PrimaryPageHeader from '@/components/layout/PrimaryPageHeader.vue'
+
+defineOptions({ name: 'ProfileView' })
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -120,25 +123,11 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.profile-container {
-  min-height: 100vh;
-  background-color: #f4f5f7;
-  padding: var(--px-16) var(--px-16) 80px;
-}
-
-.page-title {
-  font-size: var(--rem-18);
-  font-weight: var(--number-700);
-  color: var(--black300);
-  line-height: 1.2;
-  margin-bottom: var(--px-24);
-}
-
 .profile-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: var(--px-24);
+  margin-bottom: var(--px-16);
 }
 
 .avatar-wrap {
