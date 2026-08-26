@@ -77,5 +77,13 @@ export const userApi = {
       url: '/api/my/getUserLog',
       method: 'get',
     })
+  },
+  // 设置用户信息
+  fillInfo(data) {
+    return request({
+      url: '/api/my/fillInfo',
+      method: 'post',
+      data,
+    })
   }
 }

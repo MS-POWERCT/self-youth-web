@@ -94,6 +94,16 @@ export const useUserStore = defineStore('user', {
         throw error
       }
     },
+    async fillInfo(data) {
+      try {
+        const response = await userApi.fillInfo(data)
+        await this.getUserInfo()
+        return response
+      } catch (error) {
+        console.error('fillInfo failed', error)
+        throw error
+      }
+    },
     logout() {
       this.user = null
       this.token = null

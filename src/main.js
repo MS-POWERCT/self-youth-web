@@ -61,6 +61,8 @@ import {
   BackTop,
   Col,
   Row,
+  Radio,
+  RadioGroup,
 } from 'vant'
 
 // 1. 引入 Capacitor 核心和平台判断
@@ -106,6 +108,8 @@ async function initApp() {
   app.use(BackTop)
   app.use(Col)
   app.use(Row)
+  app.use(Radio)
+  app.use(RadioGroup)
 
   // 获取全局 store
   // 💡 建议: globalStore 在此处获取但未在组件中使用，需确认是否必需

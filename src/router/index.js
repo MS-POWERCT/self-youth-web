@@ -71,6 +71,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/weight/body-profile',
+      name: 'weight-body-profile',
+      component: () => import('../views/WeightBodyProfileView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
       path: '/mark',
       name: 'mark',
       component: () => import('../views/MarkView.vue'),

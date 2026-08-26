@@ -2,7 +2,7 @@
   <div id="app">
     <router-view />
     <van-tabbar class="app-van-tabbar" v-model="active" route v-if="showTabbar">
-      <van-tabbar-item to="/mark">
+      <van-tabbar-item to="/weight">
         <template #icon>
           <IconifyIcon icon="fluent-emoji-flat:balance-scale" width="24" />
         </template>
@@ -40,7 +40,7 @@ const active = ref(0)
 
 const showTabbar = computed(() => {
   // 在这里定义需要显示 tabbar 的路由名称
-  const showTabbarRoutes = ['profile', 'habits', 'mark', 'find', 'home']
+  const showTabbarRoutes = ['profile', 'habits', 'weight', 'mark', 'find', 'home']
   return showTabbarRoutes.includes(route.name)
 })
 </script>
