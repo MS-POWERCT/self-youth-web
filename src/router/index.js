@@ -7,9 +7,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: () => import('../views/ProfileView.vue'),
-      meta: { requiresAuth: true },
+      redirect: '/profile',
     },
     {
       path: '/login',
@@ -110,7 +108,7 @@ router.beforeEach((to, from, next) => {
 
   // 如果用户已认证且访问登录页，自动跳转到首页
   if (to.path === '/login' && isAuthenticated) {
-    next('/')
+    next('/profile')
     return
   }
 
